@@ -1,0 +1,10 @@
+C:\Projects\Backend\src\main\java\com\terraria\calamity\api\controller\WeaponController.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\api\exception\GlobalExceptionHandler.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\application\mapper\WeaponMapper.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\application\service\WeaponService.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\domain\dto\CreateWeaponDTO.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\domain\dto\WeaponResponseDTO.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\domain\entity\BaseEntity.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\domain\entity\Weapon.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\domain\repository\WeaponRepository.java
+C:\Projects\Backend\src\main\java\com\terraria\calamity\TerrariaCalamityApplication.java

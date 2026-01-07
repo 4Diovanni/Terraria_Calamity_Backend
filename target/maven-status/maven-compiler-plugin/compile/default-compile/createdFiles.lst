@@ -1,0 +1,13 @@
+com\terraria\calamity\domain\entity\Weapon$WeaponClass.class
+com\terraria\calamity\domain\entity\Weapon.class
+com\terraria\calamity\domain\entity\Weapon$Element.class
+com\terraria\calamity\api\controller\WeaponController.class
+com\terraria\calamity\domain\entity\Weapon$WeaponBuilder.class
+com\terraria\calamity\domain\dto\WeaponResponseDTO.class
+com\terraria\calamity\api\exception\GlobalExceptionHandler.class
+com\terraria\calamity\application\mapper\WeaponMapper.class
+com\terraria\calamity\domain\repository\WeaponRepository.class
+com\terraria\calamity\application\service\WeaponService.class
+com\terraria\calamity\domain\dto\CreateWeaponDTO.class
+com\terraria\calamity\domain\entity\BaseEntity.class
+com\terraria\calamity\TerrariaCalamityApplication.class
