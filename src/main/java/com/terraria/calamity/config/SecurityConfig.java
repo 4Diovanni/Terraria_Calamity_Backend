@@ -57,21 +57,21 @@ public class SecurityConfig {
             // Autorização de requisições
             .authorizeHttpRequests(authz -> authz
                 // ========== ENDPOINTS PÚBLICOS (GET) ==========
-                // Listar todas as armas
+                // Listar todas as armas - GET /api/weapons
                 .requestMatchers("GET", "/api/weapons").permitAll()
-                // Obter arma por ID
-                .requestMatchers("GET", "/api/weapons/**").permitAll()
+                // Obter arma por ID - GET /api/weapons/1
+                .requestMatchers("GET", "/api/weapons/*").permitAll()
                 // Health checks e actuator
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 
                 // ========== ENDPOINTS PROTEGIDOS ==========
-                // Criar arma (requer autenticação - admin)
+                // Criar arma (requer autenticação - admin) - POST /api/weapons
                 .requestMatchers("POST", "/api/weapons").authenticated()
-                // Atualizar arma (requer autenticação - admin)
-                .requestMatchers("PUT", "/api/weapons/**").authenticated()
-                // Deletar arma (requer autenticação - admin)
-                .requestMatchers("DELETE", "/api/weapons/**").authenticated()
+                // Atualizar arma (requer autenticação - admin) - PUT /api/weapons/1
+                .requestMatchers("PUT", "/api/weapons/*").authenticated()
+                // Deletar arma (requer autenticação - admin) - DELETE /api/weapons/1
+                .requestMatchers("DELETE", "/api/weapons/*").authenticated()
                 
                 // Qualquer outra requisição requer autenticação
                 .anyRequest().authenticated()
