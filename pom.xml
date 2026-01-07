@@ -43,6 +43,14 @@
         </dependency>
 
         <!-- ========================================== -->
+        <!-- SECURITY -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- ========================================== -->
         <!-- DATABASE & JPA -->
         <!-- ========================================== -->
         <dependency>
@@ -144,6 +152,15 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
             <version>1.21.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ========================================== -->
+        <!-- SECURITY TEST -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
