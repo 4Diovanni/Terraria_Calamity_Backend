@@ -11,6 +11,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 /**
  * Configuração de Segurança da Aplicação
@@ -41,12 +46,30 @@ public class SecurityConfig {
     }
 
     /**
+     * Configuração de CORS
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    /**
      * Configuração de segurança HTTP
      * Define permissões de acesso para cada endpoint
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            // Habilita CORS
+            .cors().and()
+            
             // Desabilita CSRF (frontend SPA)
             .csrf().disable()
             
@@ -58,20 +81,21 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // ========== ENDPOINTS PÚBLICOS (GET) ==========
                 // Listar todas as armas - GET /api/weapons
-                .requestMatchers("GET", "/api/weapons").permitAll()
+                .requestMatchers("GET", "/weapons").permitAll()
                 // Obter arma por ID - GET /api/weapons/1
-                .requestMatchers("GET", "/api/weapons/*").permitAll()
+                .requestMatchers("GET", "/weapons/*").permitAll()
+                
                 // Health checks e actuator
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 
                 // ========== ENDPOINTS PROTEGIDOS ==========
                 // Criar arma (requer autenticação - admin) - POST /api/weapons
-                .requestMatchers("POST", "/api/weapons").authenticated()
+                .requestMatchers("POST", "/weapons").authenticated()
                 // Atualizar arma (requer autenticação - admin) - PUT /api/weapons/1
-                .requestMatchers("PUT", "/api/weapons/*").authenticated()
+                .requestMatchers("PUT", "/weapons/*").authenticated()
                 // Deletar arma (requer autenticação - admin) - DELETE /api/weapons/1
-                .requestMatchers("DELETE", "/api/weapons/*").authenticated()
+                .requestMatchers("DELETE", "/weapons/*").authenticated()
                 
                 // Qualquer outra requisição requer autenticação
                 .anyRequest().authenticated()
