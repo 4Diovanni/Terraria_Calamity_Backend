@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS weapons (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     weapon_class VARCHAR(50) NOT NULL,
     element VARCHAR(50) NOT NULL,
