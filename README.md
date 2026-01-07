@@ -4,7 +4,7 @@ Um backend robusto para um RPG inspirado em Terraria Calamity, desenvolvido com 
 
 ## 📋 Sobre o Projeto
 
-Este é o backend de uma aplicação de RPG que implementa o universo de Terraria Calamity. A arquitetura segue padrões de desenvolvimento profissionais com separação clara de responsabilidades entre camadas.
+Este é o backend de uma aplicação de RPG que implementa o universo de Terraria Calamity. A arquitetura segue padrões de desenvolvimento profissionais com separação clara de responsabilidades entre camadas e segurança implementada.
 
 ## 🏗️ Arquitetura
 
@@ -18,10 +18,12 @@ src/main/java/com/terraria/calamity/
 ├── application/                  # Camada de Aplicação
 │   ├── service/                  # Lógica de negócio
 │   └── mapper/                   # Mappers (Entity <-> DTO)
-└── domain/                       # Camada de Domínio
-    ├── entity/                   # Entidades JPA
-    ├── dto/                      # Data Transfer Objects
-    └── repository/               # Interfaces de Repositório
+├── domain/                       # Camada de Domínio
+│   ├── entity/                   # Entidades JPA
+│   ├── dto/                      # Data Transfer Objects
+│   └── repository/               # Interfaces de Repositório
+└── config/                       # Configurações
+    └── SecurityConfig.java       # Segurança Spring Security
 ```
 
 ## 🛠️ Stack Tecnológico
@@ -30,10 +32,11 @@ src/main/java/com/terraria/calamity/
 - **Spring Boot 3.5.9** - Framework web e DI
 - **Spring Data JPA** - ORM para acesso a dados
 - **Spring Validation** - Validação de dados
+- **Spring Security** - Autenticação e autorização
 - **Spring Boot Actuator** - Monitoramento e health checks
 
 ### Banco de Dados
-- **PostgreSQL** - Banco de dados relacional
+- **PostgreSQL** (via Supabase) - Banco de dados relacional
 - **Flyway** - Versionamento e migrations
 
 ### Ferramentas de Desenvolvimento
@@ -44,18 +47,18 @@ src/main/java/com/terraria/calamity/
 
 ### Testes
 - **Spring Boot Test** - Framework de testes
+- **Spring Security Test** - Testes de segurança
 - **H2 Database** - Banco em memória para testes
 - **Testcontainers** - PostgreSQL em container para testes
 
 ## 📦 Funcionalidades Implementadas
 
-### Weapon (Armas)
-- **CRUD completo** de armas
-  - `GET /api/weapons` - Listar todas as armas
-  - `GET /api/weapons/{id}` - Obter arma por ID
-  - `POST /api/weapons` - Criar nova arma
-  - `PUT /api/weapons/{id}` - Atualizar arma
-  - `DELETE /api/weapons/{id}` - Deletar arma
+### Weapon (Armas) - CRUD
+- **GET /api/weapons** - Listar todas as armas (✅ PÚBLICO)
+- **GET /api/weapons/{id}** - Obter arma por ID (✅ PÚBLICO)
+- **POST /api/weapons** - Criar nova arma (🔐 PROTEGIDO)
+- **PUT /api/weapons/{id}** - Atualizar arma (🔐 PROTEGIDO)
+- **DELETE /api/weapons/{id}** - Deletar arma (🔐 PROTEGIDO)
 
 **Atributos da Arma:**
 - Nome único
@@ -64,12 +67,23 @@ src/main/java/com/terraria/calamity/
 - Dano base
 - Velocidade de ataque
 - Tipo de dano
+- E mais!
+
+## 🔐 Segurança Implementada
+
+✅ **Spring Security Configurado**
+- Endpoints GET públicos (qualquer um pode listar armas)
+- Endpoints POST/PUT/DELETE protegidos (requer autenticação)
+- BCrypt para hash de senhas
+- Sessão stateless (pronto para JWT)
+
+📚 **Documentação:** Veja [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md)
 
 ## 🚀 Como Rodar Localmente
 
 ### Pré-requisitos
 - **Java 21** LTS instalado
-- **PostgreSQL** 12+ instalado e rodando
+- **PostgreSQL** (local ou Supabase)
 - **Maven** 3.6+ (ou usar o wrapper incluído)
 
 ### Setup do Projeto
@@ -84,18 +98,21 @@ src/main/java/com/terraria/calamity/
    
    Crie um arquivo `.env` na raiz do projeto:
    ```env
-   SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/terraria_calamity
-   SPRING_DATASOURCE_USERNAME=seu_usuario
-   SPRING_DATASOURCE_PASSWORD=sua_senha
+   DB_HOST=db.elshjfsuxnmargpxqads.supabase.co
+   DB_PORT=5432
+   DB_NAME=postgres
+   DB_USER=postgres
+   DB_PASSWORD=sua_senha_supabase_aqui
+   
    SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+   SPRING_JPA_SHOW_SQL=false
+   
+   SERVER_PORT=8080
    ```
+   
+   > **Veja [SETUP_SUPABASE.md](./SETUP_SUPABASE.md) para um guia detalhado!**
 
-3. **Crie o banco de dados PostgreSQL**
-   ```sql
-   CREATE DATABASE terraria_calamity;
-   ```
-
-4. **Execute o projeto**
+3. **Execute o projeto**
    ```bash
    ./mvnw spring-boot:run
    ```
@@ -106,14 +123,29 @@ src/main/java/com/terraria/calamity/
    java -jar target/Calamity-0.0.1-SNAPSHOT.jar
    ```
 
+## 🗄️ Integração com Supabase
+
+Este projeto está configurado para usar **PostgreSQL do Supabase**.
+
+### Configuração Rápida
+1. Crie uma conta em [Supabase](https://supabase.com)
+2. Obtenha as credenciais do seu projeto
+3. Preencha o arquivo `.env` com as credenciais
+4. Execute o projeto!
+
+Para um guia passo a passo, veja [SETUP_SUPABASE.md](./SETUP_SUPABASE.md).
+
 ## 📝 Variáveis de Ambiente
 
 | Variável | Descrição | Exemplo |
-|----------|-----------|---------|
-| `SPRING_DATASOURCE_URL` | URL de conexão PostgreSQL | `jdbc:postgresql://localhost:5432/terraria_calamity` |
-| `SPRING_DATASOURCE_USERNAME` | Usuário do banco | `postgres` |
-| `SPRING_DATASOURCE_PASSWORD` | Senha do banco | `sua_senha_segura` |
+|----------|-----------|----------|
+| `DB_HOST` | Host do PostgreSQL | `db.elshjfsuxnmargpxqads.supabase.co` |
+| `DB_PORT` | Porta PostgreSQL | `5432` |
+| `DB_NAME` | Nome do banco | `postgres` |
+| `DB_USER` | Usuário do banco | `postgres` |
+| `DB_PASSWORD` | Senha do banco | `sua_senha_segura` |
 | `SPRING_JPA_HIBERNATE_DDL_AUTO` | Estratégia de schema | `validate` (production) |
+| `SPRING_JPA_SHOW_SQL` | Mostrar SQL no log | `false` |
 | `SERVER_PORT` | Porta da aplicação | `8080` |
 
 ## 🧪 Testando a API
@@ -121,10 +153,10 @@ src/main/java/com/terraria/calamity/
 ### Com cURL
 
 ```bash
-# Listar todas as armas
+# Listar todas as armas (PUBLIC ✅)
 curl http://localhost:8080/api/weapons
 
-# Criar nova arma
+# Criar nova arma (PROTECTED 🔐 - vai retornar 401)
 curl -X POST http://localhost:8080/api/weapons \
   -H "Content-Type: application/json" \
   -d '{
@@ -139,10 +171,12 @@ curl -X POST http://localhost:8080/api/weapons \
 
 ### Com Postman
 
-1. Importe os endpoints da API
-2. Configure as variáveis:
-   - Base URL: `http://localhost:8080`
-3. Teste os endpoints em `api/weapons`
+1. Crie uma nova requisição GET
+2. URL: `http://localhost:8080/api/weapons`
+3. Clique em Send
+4. Deve retornar `200 OK` com um array JSON
+
+> **Se tiver erro no Postman:** Veja [FIX_POSTMAN_ERROR.md](./FIX_POSTMAN_ERROR.md)
 
 ## 📊 Migrations (Flyway)
 
@@ -155,10 +189,13 @@ O Flyway gerencia automaticamente as versões do schema PostgreSQL.
 
 ## 🔒 Segurança
 
-- Validação de entrada em todos os endpoints
-- Tratamento centralizado de exceções
-- Logs estruturados
-- Preparado para integração futura de autenticação (JWT)
+- ✅ Validação de entrada em todos os endpoints
+- ✅ Tratamento centralizado de exceções
+- ✅ Logs estruturados
+- ✅ Arquivo `.env` nunca é commitado (adicione ao `.gitignore`)
+- ✅ Spring Security com endpoints públicos/protegidos
+- ✅ BCrypt para hash de senhas
+- ✅ Preparado para autenticação JWT futura
 
 ## 📚 Dependências Principais
 
@@ -167,10 +204,12 @@ O Flyway gerencia automaticamente as versões do schema PostgreSQL.
 - spring-boot-starter-web
 - spring-boot-starter-data-jpa
 - spring-boot-starter-validation
+- spring-boot-starter-security
 - flyway-core + flyway-database-postgresql
 - lombok
 - mapstruct
 - postgresql driver
+- spring-dotenv (variáveis de ambiente)
 ```
 
 ## 🔄 CI/CD & Deploy
@@ -179,16 +218,26 @@ Aplicação preparada para deploy em:
 - **Docker** (via Spring Boot Maven Plugin)
 - **Heroku** / **Railway**
 - **AWS / Google Cloud**
+- **Render** (com PostgreSQL do Supabase)
 
 ## 🛣️ Roadmap Futuro
 
-- [ ] Autenticação JWT
-- [ ] Autorização baseada em roles
-- [ ] Endpoints adicionais (Bosses, Items, Players)
+- [ ] Autenticação JWT completa
+- [ ] Endpoints de Login/Register
+- [ ] Autorização baseada em roles (ADMIN, USER)
+- [ ] Endpoints adicionais (Bosses, Items, Players, Inventory)
 - [ ] Caching com Redis
 - [ ] Testes unitários e integração expandidos
 - [ ] Documentação com Swagger/OpenAPI
 - [ ] Rate limiting e throttling
+- [ ] WebSocket para multiplayer
+
+## 📖 Documentação Adicional
+
+- [SETUP_SUPABASE.md](./SETUP_SUPABASE.md) - Guia de configuração do Supabase
+- [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md) - Detalhes de segurança
+- [FIX_POSTMAN_ERROR.md](./FIX_POSTMAN_ERROR.md) - Solução de erros do Postman
+- [FIX_SCHEMA_VALIDATION_ERROR.md](./FIX_SCHEMA_VALIDATION_ERROR.md) - Solução de erros de schema
 
 ## 📄 Licença
 
@@ -208,7 +257,8 @@ Contribuições são bem-vindas! Para contribuir:
 
 Para dúvidas ou problemas:
 - Abra uma issue no GitHub
-- Verifique a documentação do Spring Boot: https://spring.io/projects/spring-boot
+- Verifique a documentação relevante (veja links acima)
+- Consulte a documentação do Spring Boot: https://spring.io/projects/spring-boot
 
 ---
 
