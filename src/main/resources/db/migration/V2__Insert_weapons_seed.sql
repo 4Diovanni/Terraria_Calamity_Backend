@@ -3,7 +3,9 @@
 -- =====================================================================
 -- Esta migration popula a tabela weapons com armas do Terraria vanilla
 -- e do mod Calamity, organizadas por classe e progressão de jogo.
--- Estatísticas baseadas em: wiki.gg e calamitymod.wiki.gg
+-- Elementos baseados em wiki.gg e calamitymod.wiki.gg
+-- 
+-- Nota: Os elementos agora são mapeados conforme enum Element.java
 -- =====================================================================
 
 INSERT INTO public.weapons (
@@ -82,7 +84,7 @@ INSERT INTO public.weapons (
   800,
   3,
   'Dispara projéteis mágicos azuis',
-  'Espada encantada encontrada em cofres. Útil mid-game.',
+  'Espada encantada encontrada em cofres. útil mid-game.',
   'https://terraria.wiki.gg/images/thumb/0/0a/Enchanted_Sword_%28item%29.png/40px-Enchanted_Sword_%28item%29.png'
 ),
 (
@@ -97,7 +99,7 @@ INSERT INTO public.weapons (
   3500,
   5,
   'Combinação de 4 espadas demoníacas. Projéteis sombrios.',
-  'Arma lendária crafável a partir de espadas demoníacas e do Underworld.',
+  'Arma lendária craftável a partir de espadas demoníacas e do Underworld.',
   'https://terraria.wiki.gg/images/thumb/2/21/Night%27s_Edge.png/40px-Night%27s_Edge.png'
 ),
 (
@@ -367,7 +369,7 @@ INSERT INTO public.weapons (
 (
   'Feller of Evergreens',
   'MELEE',
-  'NEUTRAL',
+  'NATURE',
   15,
   5,
   1.4,
@@ -461,7 +463,7 @@ INSERT INTO public.weapons (
 (
   'Onyx Blaster',
   'RANGED',
-  'SHADOW',
+  'SHADOWFLAME',
   55,
   8,
   1.7,
@@ -480,7 +482,7 @@ INSERT INTO public.weapons (
 (
   'Calamity Blade',
   'MELEE',
-  'SHADOW',
+  'BRIMSTONE',
   120,
   10,
   1.2,
@@ -563,7 +565,7 @@ INSERT INTO public.weapons (
 (
   'Contagion',
   'MAGIC',
-  'TOXIC',
+  'PLAGUE',
   85,
   8,
   2.0,
@@ -676,7 +678,7 @@ INSERT INTO public.weapons (
 (
   'Lionfish',
   'ROGUE',
-  'TOXIC',
+  'SULPHURIC',
   45,
   9,
   2.8,
@@ -691,7 +693,7 @@ INSERT INTO public.weapons (
 (
   'Seraph Tracers',
   'ROGUE',
-  'HOLY',
+  'HOLY_FLAMES',
   110,
   12,
   3.2,
@@ -706,7 +708,7 @@ INSERT INTO public.weapons (
 (
   'Murasama',
   'ROGUE',
-  'SHADOW',
+  'GOD_SLAYER',
   180,
   13,
   2.5,
