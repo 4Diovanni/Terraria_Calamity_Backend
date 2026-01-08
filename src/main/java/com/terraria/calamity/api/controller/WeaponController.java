@@ -3,8 +3,9 @@ package com.terraria.calamity.api.controller;
 import com.terraria.calamity.domain.entity.Element;
 import com.terraria.calamity.domain.entity.Weapon;
 import com.terraria.calamity.domain.dto.WeaponResponseDTO;
-import com.terraria.calamity.application.service.WeaponElementService;
 import com.terraria.calamity.application.service.WeaponService;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,46 +16,49 @@ import java.util.List;
 /**
  * Controller para operações com Armas (Weapons)
  *
- * Demonstra como usar o enum Element separado em endpoints REST.
- * Inclui validação, conversão segura de tipos e tratamento de erros.
+ * Fornece endpoints CRUD completos para gerenciar armas.
+ * Demonstra boas práticas:
+ * - Dependency Injection correto com Lombok @RequiredArgsConstructor
+ * - Nomes de variáveis em camelCase
+ * - Tratamento de tipos com conversão segura (String → Element)
+ * - Documentação clara em cada endpoint
  */
 @RestController
 @RequestMapping("/api/v1/weapons")
 @RequiredArgsConstructor
 public class WeaponController {
 
-    private final WeaponElementService WeaponElementService;
+    private final WeaponService weaponService;
 
     // ====================================================================
     // GET - Listar todas as armas
     // ====================================================================
+    /**
+     * GET /api/v1/weapons
+     *
+     * Retorna lista de TODAS as armas cadastradas.
+     *
+     * @return ResponseEntity com lista de WeaponResponseDTO
+     *
+     * Exemplo de resposta:
+     * [
+     *   {
+     *     "id": 1,
+     *     "name": "Excalibur",
+     *     "weaponClass": "MELEE",
+     *     "element": "HOLY",
+     *     "baseDamage": 44,
+     *     "criticalChance": 8,
+     *     "attacksPerTurn": 1.3,
+     *     "range": 65,
+     *     "rarity": 5,
+     *     "price": 8000,
+     *     "quality": 6
+     *   }
+     * ]
+     */
     @GetMapping
     public ResponseEntity<List<WeaponResponseDTO>> getAllWeapons() {
-//        """
-//        GET /api/v1/weapons
-//
-//        Retorna lista de TODAS as armas cadastradas.
-//
-//        Resposta exemplo:
-//        [
-//          {
-//            "id": 1,
-//            "name": "Excalibur",
-//            "weaponClass": "MELEE",
-//            "element": "HOLY",
-//            "baseDamage": 44,
-//            "criticalChance": 8,
-//            "attacksPerTurn": 1.3,
-//            "range": 65,
-//            "rarity": 5,
-//            "price": 8000,
-//            "quality": 6,
-//            "abilities": "Dispara beams de luz sagrados",
-//            "description": "Espada legendária que dispara raios de luz..."
-//          },
-//          {...}
-//        ]
-//        """
         List<WeaponResponseDTO> weapons = weaponService.getAllWeapons();
         return ResponseEntity.ok(weapons);
     }
@@ -62,114 +66,87 @@ public class WeaponController {
     // ====================================================================
     // GET - Obter arma por ID
     // ====================================================================
+    /**
+     * GET /api/v1/weapons/{id}
+     *
+     * Retorna uma arma específica por ID.
+     *
+     * @param id ID da arma a buscar
+     * @return ResponseEntity com WeaponResponseDTO
+     *
+     * Resposta de sucesso (200 OK):
+     * {
+     *   "id": 1,
+     *   "name": "Excalibur",
+     *   ...
+     * }
+     *
+     * Se não encontrar: 404 Not Found
+     */
     @GetMapping("/{id}")
     public ResponseEntity<WeaponResponseDTO> getWeaponById(@PathVariable Long id) {
-//        """
-//        GET /api/v1/weapons/{id}
-//        Exemplo: GET /api/v1/weapons/1
-//
-//        Retorna uma arma específica por ID.
-//
-//        Resposta:
-//        {
-//          "id": 1,
-//          "name": "Excalibur",
-//          "weaponClass": "MELEE",
-//          "element": "HOLY",
-//          ...
-//        }
-//
-//        Se não encontrar:
-//        404 Not Found
-//        """
         WeaponResponseDTO weapon = weaponService.getWeaponById(id);
         return ResponseEntity.ok(weapon);
     }
 
     // ====================================================================
-    // GET - Filtrar armas por ELEMENTO (OPÇÃO 2: String com fallback)
+    // GET - Filtrar armas por ELEMENTO
     // ====================================================================
     /**
-     * ✅ OPÇÃO 2 - RECOMENDADA
+     * GET /api/v1/weapons/element/{element}
      *
-     * Recebe elemento como STRING
-     * Converte com fallback seguro usando Element.fromString()
+     * Retorna lista de armas com um elemento específico.
+     * Implementa conversão segura de String → Element com fallback.
      *
-     * Vantagens:
-     * - Seguro: client envia "FIRE", "fire", ou "Fire" → todos funcionam
-     * - Sem erro 400: elemento inválido → fallback para NEUTRAL
-     * - Melhor UX para API pública
-     * - Fácil de usar no Postman
+     * @param element Nome do elemento (case-insensitive)
+     * @return ResponseEntity com lista de WeaponResponseDTO
+     *
+     * Exemplos de uso:
+     * - GET /api/v1/weapons/element/FIRE        → Retorna armas de fogo
+     * - GET /api/v1/weapons/element/fire        → Funciona (auto-uppercase)
+     * - GET /api/v1/weapons/element/Fire        → Funciona (auto-uppercase)
+     * - GET /api/v1/weapons/element/BRIMSTONE   → Retorna armas enxofre
+     * - GET /api/v1/weapons/element/INEXISTENT  → Retorna vazio (fallback NEUTRAL)
      */
     @GetMapping("/element/{element}")
     public ResponseEntity<List<WeaponResponseDTO>> findByElement(
-            @PathVariable String element  // ✅ String ao invés de Element
+            @PathVariable String element
     ) {
-//        """
-//        GET /api/v1/weapons/element/{element}
-//
-//        Exemplos válidos:
-//        - GET /api/v1/weapons/element/FIRE
-//        - GET /api/v1/weapons/element/fire (converte automaticamente)
-//        - GET /api/v1/weapons/element/Fire (converte automaticamente)
-//        - GET /api/v1/weapons/element/BRIMSTONE
-//        - GET /api/v1/weapons/element/COSMIC
-//        - GET /api/v1/weapons/element/INEXISTENT (fallback para NEUTRAL)
-//
-//        Retorna lista de armas com o elemento especificado.
-//
-//        Resposta (elemento FIRE):
-//        [
-//          {
-//            "id": X,
-//            "name": "Meteor Staff",
-//            "element": "FIRE",
-//            ...
-//          },
-//          {
-//            "id": Y,
-//            "name": "Boomstick",
-//            "element": "FIRE",
-//            ...
-//          }
-//        ]
-//        """
-        // ✅ Converte String para Element com fallback seguro
+        // ✅ Conversão segura: String → Element com fallback NEUTRAL
         Element elementEnum = Element.fromString(element);
-
-        // Busca armas com este elemento
         List<WeaponResponseDTO> weapons = weaponService.findByElement(elementEnum);
-
         return ResponseEntity.ok(weapons);
     }
 
     // ====================================================================
     // GET - Filtrar armas por CLASSE
     // ====================================================================
+    /**
+     * GET /api/v1/weapons/class/{weaponClass}
+     *
+     * Retorna lista de armas de uma classe específica.
+     *
+     * @param weaponClass Classe da arma (MELEE, RANGED, MAGE, SUMMON, ROGUE)
+     * @return ResponseEntity com lista de WeaponResponseDTO
+     *
+     * Exemplos:
+     * - GET /api/v1/weapons/class/MELEE
+     * - GET /api/v1/weapons/class/RANGED
+     * - GET /api/v1/weapons/class/MAGE
+     *
+     * Se classe inválida: 400 Bad Request
+     */
     @GetMapping("/class/{weaponClass}")
     public ResponseEntity<List<WeaponResponseDTO>> findByWeaponClass(
             @PathVariable String weaponClass
     ) {
-//        """
-//        GET /api/v1/weapons/class/{weaponClass}
-//
-//        Exemplos:
-//        - GET /api/v1/weapons/class/MELEE
-//        - GET /api/v1/weapons/class/RANGED
-//        - GET /api/v1/weapons/class/MAGE
-//        - GET /api/v1/weapons/class/SUMMON
-//        - GET /api/v1/weapons/class/ROGUE
-//
-//        Retorna lista de armas de uma classe específica.
-//        """
         try {
-            Weapon.WeaponClass weaponClassEnum = Weapon.WeaponClass.valueOf(
+            Weapon.WeaponClass classEnum = Weapon.WeaponClass.valueOf(
                     weaponClass.toUpperCase()
             );
-            List<WeaponResponseDTO> weapons = weaponService.findByWeaponClass(weaponClassEnum);
+            List<WeaponResponseDTO> weapons = weaponService.findByWeaponClass(classEnum);
             return ResponseEntity.ok(weapons);
         } catch (IllegalArgumentException e) {
-            // Classe inválida
             return ResponseEntity.badRequest().build();
         }
     }
@@ -177,42 +154,48 @@ public class WeaponController {
     // ====================================================================
     // GET - Filtrar por RARIDADE
     // ====================================================================
+    /**
+     * GET /api/v1/weapons/rarity/{rarity}
+     *
+     * Retorna lista de armas com uma raridade específica.
+     *
+     * @param rarity Nível de raridade (1-10, 5 = lendária, 8+ = suprema)
+     * @return ResponseEntity com lista de WeaponResponseDTO
+     *
+     * Exemplos:
+     * - GET /api/v1/weapons/rarity/5  → Lendárias
+     * - GET /api/v1/weapons/rarity/3  → Raras
+     * - GET /api/v1/weapons/rarity/8  → Supremas
+     */
     @GetMapping("/rarity/{rarity}")
     public ResponseEntity<List<WeaponResponseDTO>> findByRarity(
             @PathVariable Integer rarity
     ) {
-//        """
-//        GET /api/v1/weapons/rarity/{rarity}
-//
-//        Exemplos:
-//        - GET /api/v1/weapons/rarity/5 (lendárias)
-//        - GET /api/v1/weapons/rarity/3 (raras)
-//        - GET /api/v1/weapons/rarity/8 (supremas)
-//
-//        Retorna lista de armas com a raridade especificada.
-//        """
         List<WeaponResponseDTO> weapons = weaponService.findByRarity(rarity);
         return ResponseEntity.ok(weapons);
     }
 
     // ====================================================================
-    // GET - Buscar por NOME (com LIKE)
+    // GET - Buscar por NOME (com busca parcial)
     // ====================================================================
+    /**
+     * GET /api/v1/weapons/search?name={name}
+     *
+     * Busca armas por nome usando busca parcial (LIKE).
+     * Case-insensitive.
+     *
+     * @param name Parte do nome da arma
+     * @return ResponseEntity com lista de WeaponResponseDTO
+     *
+     * Exemplos:
+     * - GET /api/v1/weapons/search?name=Excalibur  → Busca exata
+     * - GET /api/v1/weapons/search?name=sword      → Busca parcial
+     * - GET /api/v1/weapons/search?name=Calamity   → Busca parcial
+     */
     @GetMapping("/search")
     public ResponseEntity<List<WeaponResponseDTO>> searchByName(
             @RequestParam String name
     ) {
-//        """
-//        GET /api/v1/weapons/search?name={name}
-//
-//        Exemplos:
-//        - GET /api/v1/weapons/search?name=Excalibur
-//        - GET /api/v1/weapons/search?name=sword
-//        - GET /api/v1/weapons/search?name=Calamity
-//
-//        Busca case-insensitive por nome de arma.
-//        Usa LIKE para busca parcial.
-//        """
         List<WeaponResponseDTO> weapons = weaponService.searchByName(name);
         return ResponseEntity.ok(weapons);
     }
@@ -220,39 +203,40 @@ public class WeaponController {
     // ====================================================================
     // POST - Criar nova arma
     // ====================================================================
+    /**
+     * POST /api/v1/weapons
+     *
+     * Cria uma nova arma com os dados fornecidos.
+     *
+     * @param requestDTO Dados da arma a criar
+     * @return ResponseEntity com 201 Created e dados da arma criada
+     *
+     * Exemplo de body:
+     * {
+     *   "name": "Nova Arma",
+     *   "weaponClass": "MELEE",
+     *   "element": "FIRE",
+     *   "baseDamage": 50,
+     *   "criticalChance": 5,
+     *   "attacksPerTurn": 1.5,
+     *   "range": 50,
+     *   "rarity": 3,
+     *   "price": 1000,
+     *   "quality": 5
+     * }
+     *
+     * Resposta (201 Created):
+     * {
+     *   "id": 100,
+     *   "name": "Nova Arma",
+     *   "element": "FIRE",
+     *   ...
+     * }
+     */
     @PostMapping
     public ResponseEntity<WeaponResponseDTO> createWeapon(
             @RequestBody WeaponRequestDTO requestDTO
     ) {
-//        """
-//        POST /api/v1/weapons
-//
-//        Body:
-//        {
-//          "name": "Nova Arma",
-//          "weaponClass": "MELEE",
-//          "element": "FIRE",
-//          "baseDamage": 50,
-//          "criticalChance": 5,
-//          "attacksPerTurn": 1.5,
-//          "range": 50,
-//          "rarity": 3,
-//          "price": 1000,
-//          "quality": 5,
-//          "abilities": "Queima inimigos",
-//          "description": "Uma arma que queima...",
-//          "imageUrl": "https://..."
-//        }
-//
-//        Retorna:
-//        201 Created
-//        {
-//          "id": 100,
-//          "name": "Nova Arma",
-//          "element": "FIRE",
-//          ...
-//        }
-//        """
         WeaponResponseDTO created = weaponService.createWeapon(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -260,26 +244,33 @@ public class WeaponController {
     // ====================================================================
     // PUT - Atualizar arma existente
     // ====================================================================
+    /**
+     * PUT /api/v1/weapons/{id}
+     *
+     * Atualiza uma arma existente com novos dados.
+     *
+     * @param id ID da arma a atualizar
+     * @param requestDTO Novos dados da arma
+     * @return ResponseEntity com 200 OK e dados atualizados
+     *
+     * Exemplo: PUT /api/v1/weapons/1
+     *
+     * Body: (mesmo do POST com campos atualizados)
+     *
+     * Resposta (200 OK):
+     * {
+     *   "id": 1,
+     *   "name": "Excalibur Melhorado",
+     *   ...
+     * }
+     *
+     * Se não encontrar: 404 Not Found
+     */
     @PutMapping("/{id}")
     public ResponseEntity<WeaponResponseDTO> updateWeapon(
             @PathVariable Long id,
             @RequestBody WeaponRequestDTO requestDTO
     ) {
-//        """
-//        PUT /api/v1/weapons/{id}
-//
-//        Exemplo: PUT /api/v1/weapons/1
-//
-//        Body: (mesmo do POST com campos atualizados)
-//
-//        Retorna:
-//        200 OK
-//        {
-//          "id": 1,
-//          "name": "Excalibur Melhorado",
-//          ...
-//        }
-//        """
         WeaponResponseDTO updated = weaponService.updateWeapon(id, requestDTO);
         return ResponseEntity.ok(updated);
     }
@@ -287,17 +278,21 @@ public class WeaponController {
     // ====================================================================
     // DELETE - Deletar arma
     // ====================================================================
+    /**
+     * DELETE /api/v1/weapons/{id}
+     *
+     * Deleta uma arma existente.
+     *
+     * @param id ID da arma a deletar
+     * @return ResponseEntity com 204 No Content
+     *
+     * Exemplo: DELETE /api/v1/weapons/1
+     *
+     * Resposta (204 No Content): Sucesso (sem body)
+     * Resposta (404 Not Found): Arma não existe
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWeapon(@PathVariable Long id) {
-//        """
-//        DELETE /api/v1/weapons/{id}
-//
-//        Exemplo: DELETE /api/v1/weapons/1
-//
-//        Retorna:
-//        204 No Content (sucesso)
-//        404 Not Found (arma não existe)
-//        """
         weaponService.deleteWeapon(id);
         return ResponseEntity.noContent().build();
     }
@@ -306,21 +301,24 @@ public class WeaponController {
     // REQUEST/RESPONSE DTOs
     // ====================================================================
 
-    @lombok.Data
-    @lombok.Builder
+    /**
+     * DTO para requisições de criação/atualização de armas
+     */
+    @Data
+    @Builder
     public static class WeaponRequestDTO {
-        private String name;
-        private String weaponClass;  // String, conversão no service
-        private String element;      // String, conversão com Element.fromString()
-        private Integer baseDamage;
-        private Integer criticalChance;
-        private Double attacksPerTurn;
-        private Integer range;
-        private Integer rarity;
-        private Integer price;
-        private Integer quality;
-        private String abilities;
-        private String description;
-        private String imageUrl;
+        private String name;                 // Nome da arma
+        private String weaponClass;          // Classe: MELEE, RANGED, MAGE, SUMMON, ROGUE
+        private String element;              // Elemento: FIRE, ICE, LIGHTNING, etc
+        private Integer baseDamage;          // Dano base
+        private Integer criticalChance;      // Chance de crítico (0-100)
+        private Double attacksPerTurn;       // Ataques por turno
+        private Integer range;               // Alcance
+        private Integer rarity;              // Raridade (1-10)
+        private Integer price;               // Preço em moeda
+        private Integer quality;             // Qualidade da crafting (1-10)
+        private String abilities;            // Descrição de habilidades
+        private String description;          // Descrição completa
+        private String imageUrl;             // URL da imagem
     }
 }
