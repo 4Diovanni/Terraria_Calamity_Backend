@@ -7,6 +7,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity que representa uma arma no jogo Terraria + Calamity Mod
+ *
+ * Mapeia para a tabela 'weapons' no banco de dados.
+ * Contém toda a informação da arma: nome, classe, elemento, dano, etc.
+ *
+ * 👀 OBSERVAÇÃO:
+ * - Utiliza {@link Element} como enum separado (em package raiz)
+ * - Utiliza {@link WeaponClass} como enum interno (específico desta entidade)
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -71,14 +81,39 @@ public class Weapon extends BaseEntity {
     @Column(length = 500)
     private String imageUrl;
 
+    // ====================================================================
+    // NESTED ENUM - Classe da Arma (MELEE, RANGED, MAGE, SUMMON, ROGUE)
+    // ====================================================================
+    /**
+     * Enum que define a classe/tipo da arma.
+     * Específico desta entidade pois não é reutilizado em outraséticas.
+     */
     public enum WeaponClass {
-        MELEE, RANGED, MAGE, SUMMON, ROGUE
+        MELEE,    // Combate próximo (espadas, machados)
+        RANGED,   // Combate à distância (arcos, rifles)
+        MAGE,     // Mágico (varinhas, cajados, livros)
+        SUMMON,   // Convocação (cajados de minions)
+        ROGUE     // Rogue - classe exclusiva Calamity (facas, shurikens)
     }
 
-    public enum Element {
-        // Vanilla
-        FIRE, ICE, LIGHTNING, EARTH, WATER, WIND, NATURE,
-        // Calamity
-        BRIMSTONE, HOLY_FLAMES, SHADOWFLAME, ASTRAL, PLAGUE, GOD_SLAYER, SULPHURIC
-    }
+    // ====================================================================
+    // REFERÜNCIA AO ENUM SEPARADO - Elemento da Arma
+    // ====================================================================
+    // 👀 O enum Element agora está em arquivo separado:
+    //    com.terraria.calamity.domain.entity.Element
+    //
+    // Beneficios:
+    // ✅ Reutilizável em outras entidades (Inimigos, Habilidades, etc)
+    // ✅ Más fácil de manter
+    // ✅ Lógica de elementos centralizada
+    // ✅ Métodos auxiliares disponíveis (getColor(), isVanilla(), etc)
+    //
+    // Uso na classe:
+    //   @Enumerated(EnumType.STRING)
+    //   private Element element;  // Já importado no topo
+    //
+    // Uso em queries/lógica:
+    //   if (weapon.getElement() == Element.FIRE) { ... }
+    //   if (weapon.getElement().isCalamity()) { ... }
+    //   Color color = weapon.getElement().getColor();
 }
