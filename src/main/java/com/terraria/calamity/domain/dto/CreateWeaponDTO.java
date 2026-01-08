@@ -1,6 +1,7 @@
 package com.terraria.calamity.domain.dto;
 
 import com.terraria.calamity.domain.entity.Weapon;
+import com.terraria.calamity.domain.entity.Element;
 import jakarta.validation.constraints.*;
 
 public record CreateWeaponDTO(
@@ -11,7 +12,7 @@ public record CreateWeaponDTO(
     Weapon.WeaponClass weaponClass,
 
     @NotNull(message = "Element cannot be null")
-    Weapon.Element element,
+    Element element,
 
     @NotNull(message = "Base damage cannot be null")
     @Min(1)

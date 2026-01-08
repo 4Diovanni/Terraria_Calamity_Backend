@@ -1,4 +1,4 @@
-package com.terraria.calamity.service;
+package com.terraria.calamity.application.service;
 
 import com.terraria.calamity.domain.entity.Element;
 import com.terraria.calamity.domain.entity.Weapon;

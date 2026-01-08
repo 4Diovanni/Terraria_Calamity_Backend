@@ -1,5 +1,6 @@
 package com.terraria.calamity.domain.dto;
 
+import com.terraria.calamity.domain.entity.Element;
 import com.terraria.calamity.domain.entity.Weapon;
 import java.time.LocalDateTime;
 
@@ -7,7 +8,7 @@ public record WeaponResponseDTO(
     Long id,
     String name,
     Weapon.WeaponClass weaponClass,
-    Weapon.Element element,
+    Element element,
     Integer baseDamage,
     Integer criticalChance,
     Double attacksPerTurn,

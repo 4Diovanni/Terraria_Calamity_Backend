@@ -2,6 +2,7 @@ package com.terraria.calamity.application.service;
 
 import com.terraria.calamity.domain.dto.CreateWeaponDTO;
 import com.terraria.calamity.domain.dto.WeaponResponseDTO;
+import com.terraria.calamity.domain.entity.Element;
 import com.terraria.calamity.domain.entity.Weapon;
 import com.terraria.calamity.domain.repository.WeaponRepository;
 import com.terraria.calamity.application.mapper.WeaponMapper;
@@ -47,7 +48,7 @@ public class WeaponService {
     }
 
     @Transactional(readOnly = true)
-    public List<WeaponResponseDTO> findByElement(Weapon.Element element) {
+    public List<WeaponResponseDTO> findByElement(Element element) {
         return weaponRepository.findByElement(element).stream()
             .map(weaponMapper::toResponseDTO)
             .collect(Collectors.toList());

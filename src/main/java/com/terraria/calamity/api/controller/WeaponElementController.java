@@ -1,8 +1,8 @@
-package com.terraria.calamity.controller;
+package com.terraria.calamity.api.controller;
 
 import com.terraria.calamity.domain.entity.Element;
 import com.terraria.calamity.domain.entity.Weapon;
-import com.terraria.calamity.service.WeaponElementService;
+import com.terraria.calamity.application.service.WeaponElementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,31 +27,31 @@ public class WeaponElementController {
     // ====================================================================
     @GetMapping
     public ResponseEntity<List<WeaponElementService.ElementInfoDTO>> getAllElements() {
-        """
-        GET /api/v1/elements
-        
-        Retorna lista de TODOS os elementos disponíveis com:
-        - Nome interno (FIRE, BRIMSTONE, etc)
-        - Nome legible (Fogo, Enxofre, etc)
-        - Descrição de efeito
-        - Cor para UI
-        - Informações de grupo (Vanilla, Calamity, Supreme)
-        
-        Resposta exemplo:
-        [
-          {
-            "name": "FIRE",
-            "displayName": "Fogo",
-            "description": "Causa queimadura...",
-            "color": "#FF6B35",
-            "hasEffect": true,
-            "isVanilla": true,
-            "isCalamity": false,
-            "isSupreme": false
-          },
-          {...}
-        ]
-        """
+//        """
+//        GET /api/v1/elements
+//
+//        Retorna lista de TODOS os elementos disponíveis com:
+//        - Nome interno (FIRE, BRIMSTONE, etc)
+//        - Nome legible (Fogo, Enxofre, etc)
+//        - Descrição de efeito
+//        - Cor para UI
+//        - Informações de grupo (Vanilla, Calamity, Supreme)
+//
+//        Resposta exemplo:
+//        [
+//          {
+//            "name": "FIRE",
+//            "displayName": "Fogo",
+//            "description": "Causa queimadura...",
+//            "color": "#FF6B35",
+//            "hasEffect": true,
+//            "isVanilla": true,
+//            "isCalamity": false,
+//            "isSupreme": false
+//          },
+//          {...}
+//        ]
+//        """
         List<WeaponElementService.ElementInfoDTO> elements = elementService.getAllElementsInfo();
         return ResponseEntity.ok(elements);
     }
@@ -63,13 +63,13 @@ public class WeaponElementController {
     public ResponseEntity<WeaponElementService.ElementInfoDTO> getElementInfo(
             @PathVariable String elementName
     ) {
-        """
-        GET /api/v1/elements/{elementName}
-        Exemplo: GET /api/v1/elements/FIRE
-        
-        Retorna informações detalhadas de um elemento específico.
-        Se não existir, retorna NEUTRAL.
-        """
+//        """
+//        GET /api/v1/elements/{elementName}
+//        Exemplo: GET /api/v1/elements/FIRE
+//
+//        Retorna informações detalhadas de um elemento específico.
+//        Se não existir, retorna NEUTRAL.
+//        """
         Element element = elementService.parseElement(elementName);
         
         WeaponElementService.ElementInfoDTO info = WeaponElementService.ElementInfoDTO.builder()
@@ -93,15 +93,15 @@ public class WeaponElementController {
     public ResponseEntity<List<String>> getElementsByGroup(
             @PathVariable String group
     ) {
-        """
-        GET /api/v1/elements/group/{group}
-        Exemplos:
-        - GET /api/v1/elements/group/vanilla
-        - GET /api/v1/elements/group/calamity
-        - GET /api/v1/elements/group/supreme
-        
-        Retorna nomes dos elementos de um grupo específico.
-        """
+//        """
+//        GET /api/v1/elements/group/{group}
+//        Exemplos:
+//        - GET /api/v1/elements/group/vanilla
+//        - GET /api/v1/elements/group/calamity
+//        - GET /api/v1/elements/group/supreme
+//
+//        Retorna nomes dos elementos de um grupo específico.
+//        """
         List<String> elementNames = List.of(Element.values()).stream()
             .filter(element -> {
                 return switch (group.toLowerCase()) {
@@ -124,16 +124,16 @@ public class WeaponElementController {
     public ResponseEntity<ElementValidationResponse> validateElement(
             @RequestBody ElementValidationRequest request
     ) {
-        """
-        POST /api/v1/elements/validate
-        
-        Body:
-        {
-          "elementName": "FIRE"
-        }
-        
-        Valida se um elemento existe e é válido.
-        """
+//        """
+//        POST /api/v1/elements/validate
+//
+//        Body:
+//        {
+//          "elementName": "FIRE"
+//        }
+//
+//        Valida se um elemento existe e é válido.
+//        """
         Element element = elementService.parseElement(request.getElementName());
         
         ElementValidationResponse response = ElementValidationResponse.builder()
@@ -153,17 +153,17 @@ public class WeaponElementController {
     public ResponseEntity<ElementBonusResponse> calculateElementBonus(
             @RequestBody ElementBonusRequest request
     ) {
-        """
-        POST /api/v1/elements/bonus
-        
-        Body:
-        {
-          "baseDamage": 50,
-          "elementName": "FIRE"
-        }
-        
-        Calcula o dano total com bônus de elemento.
-        """
+//        """
+//        POST /api/v1/elements/bonus
+//
+//        Body:
+//        {
+//          "baseDamage": 50,
+//          "elementName": "FIRE"
+//        }
+//
+//        Calcula o dano total com bônus de elemento.
+//        """
         Element element = elementService.parseElement(request.getElementName());
         double bonus = elementService.calculateElementBonus(
             Weapon.builder().element(element).build()
@@ -190,17 +190,17 @@ public class WeaponElementController {
     public ResponseEntity<ElementCompatibilityResponse> checkCompatibility(
             @RequestBody ElementCompatibilityRequest request
     ) {
-        """
-        POST /api/v1/elements/compatibility
-        
-        Body:
-        {
-          "element1": "FIRE",
-          "element2": "BRIMSTONE"
-        }
-        
-        Verifica se dois elementos são compatíveis para craft/combinação.
-        """
+//        """
+//        POST /api/v1/elements/compatibility
+//
+//        Body:
+//        {
+//          "element1": "FIRE",
+//          "element2": "BRIMSTONE"
+//        }
+//
+//        Verifica se dois elementos são compatíveis para craft/combinação.
+//        """
         Element elem1 = elementService.parseElement(request.getElement1());
         Element elem2 = elementService.parseElement(request.getElement2());
         
