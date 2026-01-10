@@ -59,7 +59,7 @@ public class WeaponController {
      */
     @GetMapping
     public ResponseEntity<List<WeaponResponseDTO>> getAllWeapons() {
-        List<WeaponResponseDTO> weapons = weaponService.getAllWeapons();
+        List<WeaponResponseDTO> weapons = weaponService.findAll();
         return ResponseEntity.ok(weapons);
     }
 
@@ -85,7 +85,7 @@ public class WeaponController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<WeaponResponseDTO> getWeaponById(@PathVariable Long id) {
-        WeaponResponseDTO weapon = weaponService.getWeaponById(id);
+        WeaponResponseDTO weapon = weaponService.findById(id);
         return ResponseEntity.ok(weapon);
     }
 
@@ -144,7 +144,7 @@ public class WeaponController {
             Weapon.WeaponClass classEnum = Weapon.WeaponClass.valueOf(
                     weaponClass.toUpperCase()
             );
-            List<WeaponResponseDTO> weapons = weaponService.findByWeaponClass(classEnum);
+            List<WeaponResponseDTO> weapons = weaponService.findByClass(classEnum);
             return ResponseEntity.ok(weapons);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -237,7 +237,7 @@ public class WeaponController {
     public ResponseEntity<WeaponResponseDTO> createWeapon(
             @RequestBody WeaponRequestDTO requestDTO
     ) {
-        WeaponResponseDTO created = weaponService.createWeapon(requestDTO);
+        WeaponResponseDTO created = weaponService.create(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -271,7 +271,7 @@ public class WeaponController {
             @PathVariable Long id,
             @RequestBody WeaponRequestDTO requestDTO
     ) {
-        WeaponResponseDTO updated = weaponService.updateWeapon(id, requestDTO);
+        WeaponResponseDTO updated = weaponService.update(id, requestDTO);
         return ResponseEntity.ok(updated);
     }
 
@@ -293,7 +293,7 @@ public class WeaponController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWeapon(@PathVariable Long id) {
-        weaponService.deleteWeapon(id);
+        weaponService.delete(id);
         return ResponseEntity.noContent().build();
     }
 

@@ -1,6 +1,6 @@
 package com.terraria.calamity.application.service;
 
-import com.terraria.calamity.domain.dto.CreateWeaponDTO;
+import com.terraria.calamity.api.controller.WeaponController;
 import com.terraria.calamity.domain.dto.WeaponResponseDTO;
 import com.terraria.calamity.domain.entity.Element;
 import com.terraria.calamity.domain.entity.Weapon;
@@ -20,7 +20,7 @@ public class WeaponService {
     private final WeaponRepository weaponRepository;
     private final WeaponMapper weaponMapper;
 
-    public WeaponResponseDTO create(CreateWeaponDTO dto) {
+    public WeaponResponseDTO create(WeaponController.WeaponRequestDTO dto) {
         Weapon weapon = weaponMapper.toEntity(dto);
         Weapon saved = weaponRepository.save(weapon);
         return weaponMapper.toResponseDTO(saved);
@@ -68,7 +68,7 @@ public class WeaponService {
             .collect(Collectors.toList());
     }
 
-    public WeaponResponseDTO update(Long id, CreateWeaponDTO dto) {
+    public WeaponResponseDTO update(Long id, WeaponController.WeaponRequestDTO CreateWeaponDTO dto) {
         Weapon weapon = weaponRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Weapon not found with ID: " + id));
 
