@@ -20,8 +20,13 @@ public class WeaponService {
     private final WeaponRepository weaponRepository;
     private final WeaponMapper weaponMapper;
 
-    public WeaponResponseDTO create(WeaponController.WeaponRequestDTO dto) {
-        Weapon weapon = weaponMapper.toEntity(dto);
+    /**
+     * Cria uma nova arma a partir dos dados da requisição
+     * Usa o mapper para converter WeaponRequestDTO → Weapon entity
+     */
+    public WeaponResponseDTO create(WeaponController.WeaponRequestDTO requestDTO) {
+        // ✅ Usar o mapper que realiza conversão segura de String → Enum
+        Weapon weapon = weaponMapper.toEntity(requestDTO);
         Weapon saved = weaponRepository.save(weapon);
         return weaponMapper.toResponseDTO(saved);
     }
@@ -68,28 +73,39 @@ public class WeaponService {
             .collect(Collectors.toList());
     }
 
-    public WeaponResponseDTO update(Long id, WeaponController.WeaponRequestDTO CreateWeaponDTO dto) {
+    /**
+     * Atualiza uma arma existente
+     * Usa o mapper para converter WeaponRequestDTO → atributos da entity
+     */
+    public WeaponResponseDTO update(Long id, WeaponController.WeaponRequestDTO requestDTO) {
         Weapon weapon = weaponRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Weapon not found with ID: " + id));
 
-        weapon.setName(dto.name());
-        weapon.setWeaponClass(dto.weaponClass());
-        weapon.setElement(dto.element());
-        weapon.setBaseDamage(dto.baseDamage());
-        weapon.setCriticalChance(dto.criticalChance());
-        weapon.setAttacksPerTurn(dto.attacksPerTurn());
-        weapon.setRange(dto.range());
-        weapon.setRarity(dto.rarity());
-        weapon.setPrice(dto.price());
-        weapon.setQuality(dto.quality());
-        weapon.setAbilities(dto.abilities());
-        weapon.setDescription(dto.description());
-        weapon.setImageUrl(dto.imageUrl());
+        // ✅ Usar a nova entidade convertida do mapper
+        Weapon updatedWeapon = weaponMapper.toEntity(requestDTO);
+        
+        // ✅ Copiar valores para manter o ID e auditoria
+        weapon.setName(updatedWeapon.getName());
+        weapon.setWeaponClass(updatedWeapon.getWeaponClass());
+        weapon.setElement(updatedWeapon.getElement());
+        weapon.setBaseDamage(updatedWeapon.getBaseDamage());
+        weapon.setCriticalChance(updatedWeapon.getCriticalChance());
+        weapon.setAttacksPerTurn(updatedWeapon.getAttacksPerTurn());
+        weapon.setRange(updatedWeapon.getRange());
+        weapon.setRarity(updatedWeapon.getRarity());
+        weapon.setPrice(updatedWeapon.getPrice());
+        weapon.setQuality(updatedWeapon.getQuality());
+        weapon.setAbilities(updatedWeapon.getAbilities());
+        weapon.setDescription(updatedWeapon.getDescription());
+        weapon.setImageUrl(updatedWeapon.getImageUrl());
 
-        Weapon updated = weaponRepository.save(weapon);
-        return weaponMapper.toResponseDTO(updated);
+        Weapon saved = weaponRepository.save(weapon);
+        return weaponMapper.toResponseDTO(saved);
     }
 
+    /**
+     * Deleta uma arma
+     */
     public void delete(Long id) {
         if (!weaponRepository.existsById(id)) {
             throw new RuntimeException("Weapon not found with ID: " + id);
