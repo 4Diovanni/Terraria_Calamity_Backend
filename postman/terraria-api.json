@@ -1,0 +1,271 @@
+{
+  "info": {
+    "name": "Terraria Calamity API",
+    "description": "Coleção completa de testes para a API Terraria Calamity RPG - Endpoints para gerenciar armas, elementos e autenticação",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔫 Weapons",
+      "description": "Endpoints para gerenciar armas da API",
+      "item": [
+        {
+          "name": "GET - Listar todas as armas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons"]
+            },
+            "description": "Retorna lista de TODAS as armas cadastradas no sistema\n\nAutenticação: ❌ NÃO REQUERIDA\nStatus esperado: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Arma por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons", "1"]
+            },
+            "description": "Retorna uma arma específica pelo ID\n\nAutenticação: ❌ NÃO REQUERIDA\nStatus esperado: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Armas por ELEMENTO",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons/element/FIRE",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons", "element", "FIRE"]
+            },
+            "description": "Retorna armas filtradas por elemento\n\nElementos disponíveis:\n- FIRE (Fogo)\n- ICE (Gelo)\n- LIGHTNING (Relâmpago)\n- HOLY (Sagrado)\n- NEUTRAL (Neutro)\n\nAutenticação: ❌ NÃO REQUERIDA\nStatus esperado: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Armas por CLASSE",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons/class/MELEE",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons", "class", "MELEE"]
+            },
+            "description": "Retorna armas filtradas por classe\n\nClasses disponíveis:\n- MELEE (Melee)\n- RANGED (À distância)\n- MAGE (Magia)\n- SUMMON (Invocação)\n- ROGUE (Rogue)\n\nAutenticação: ❌ NÃO REQUERIDA\nStatus esperado: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Armas por RARIDADE",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons/rarity/5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons", "rarity", "5"]
+            },
+            "description": "Retorna armas filtradas por raridade\n\nRaridades:\n- 1-2 (Comum)\n- 3-4 (Rara)\n- 5-6 (Lendária)\n- 7-8 (Suprema)\n- 9-10 (Mítica)\n\nAutenticação: ❌ NÃO REQUERIDA\nStatus esperado: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Buscar por NOME",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons/search?name=sword",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "sword"
+                }
+              ]
+            },
+            "description": "Busca armas por nome (busca parcial, case-insensitive)\n\nAutenticação: ❌ NÃO REQUERIDA\nStatus esperado: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Criar arma",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nova Arma de Teste\",\n  \"weaponClass\": \"MELEE\",\n  \"element\": \"FIRE\",\n  \"baseDamage\": 50,\n  \"criticalChance\": 5,\n  \"attacksPerTurn\": 1.5,\n  \"range\": 50,\n  \"rarity\": 3,\n  \"price\": 1000,\n  \"quality\": 5,\n  \"abilities\": \"Ataque com fogo\",\n  \"description\": \"Uma arma de teste com elemento fogo\",\n  \"imageUrl\": \"https://example.com/weapon.png\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons"]
+            },
+            "description": "Cria uma nova arma\n\nAutenticação: ⚠️ REQUER JWT (implementar depois)\nStatus esperado: 201 CREATED"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Atualizar arma",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Arma Atualizada\",\n  \"weaponClass\": \"MELEE\",\n  \"element\": \"HOLY\",\n  \"baseDamage\": 60,\n  \"criticalChance\": 8,\n  \"attacksPerTurn\": 1.8,\n  \"range\": 55,\n  \"rarity\": 4,\n  \"price\": 2000,\n  \"quality\": 7,\n  \"abilities\": \"Ataque sagrado melhorado\",\n  \"description\": \"Uma arma sagrada atualizada\",\n  \"imageUrl\": \"https://example.com/weapon-updated.png\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons", "1"]
+            },
+            "description": "Atualiza uma arma existente pelo ID\n\nAutenticação: ⚠️ REQUER JWT (implementar depois)\nStatus esperado: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Deletar arma",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weapons/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weapons", "1"]
+            },
+            "description": "Deleta uma arma pelo ID\n\nAutenticação: ⚠️ REQUER JWT (implementar depois)\nStatus esperado: 204 NO CONTENT"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🌡️ Elements",
+      "description": "Endpoints para gerenciar elementos (futuros)",
+      "item": [
+        {
+          "name": "GET - Listar elementos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/elements",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "elements"]
+            },
+            "description": "Retorna lista de todos os elementos disponíveis\n\n⏳ Status: A ser implementado"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👤 Auth",
+      "description": "Endpoints de autenticação e autorização (futuros)",
+      "item": [
+        {
+          "name": "POST - Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Autentica usuário e retorna JWT token\n\n⏳ Status: A ser implementado"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Registra novo usuário\n\n⏳ Status: A ser implementado"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "❤️ Health",
+      "description": "Endpoints de verificação de saúde da API",
+      "item": [
+        {
+          "name": "GET - Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/health",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica se a API está saudável e respondendo\n\nAutenticação: ❌ NÃO REQUERIDA\nStatus esperado: 200 OK"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string",
+      "description": "URL base da API (padrão: localhost:8080)"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string",
+      "description": "Token JWT para autenticação (será preenchido após login)"
+    }
+  ]
+}
