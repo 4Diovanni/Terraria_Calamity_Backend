@@ -1,0 +1,151 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Marcellus+SC&display=swap');
+
+/* Root Variables */
+:root {
+  /* Mystical Colors */
+  --color-primary: #8b0000;
+  --color-primary-light: #a00000;
+  --color-primary-dark: #6b0000;
+
+  --color-bg-dark: #1a0f0f;
+  --color-bg-secondary: #2d1a1a;
+  --color-bg-tertiary: #3d2626;
+
+  --color-accent-purple: #6a0dad;
+  --color-accent-gold: #b8860b;
+  --color-accent-green: #556b2f;
+  --color-accent-cyan: #4a7c7e;
+
+  --color-text-primary: #e0d5d0;
+  --color-text-secondary: #a89080;
+  --color-text-tertiary: #6d5d50;
+
+  --color-border: #5a3a3a;
+  --color-border-light: #7a5a5a;
+}
+
+/* Smooth Font Rendering */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Crimson Text', serif;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-light);
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-color: var(--color-primary) var(--color-bg-dark);
+  scrollbar-width: thin;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+}
+
+::-moz-selection {
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+}
+
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-primary-light);
+}
+
+/* Focus Outline */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Animation Utilities */
+@keyframes mysticalGlow {
+  0% {
+    text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(139, 0, 0, 0.8);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+  }
+}
+
+.animate-glow-text {
+  animation: mysticalGlow 3s ease-in-out infinite;
+}
+
+/* Container Query Support */
+@supports (container-type: inline-size) {
+  .container-wrapper {
+    container-type: inline-size;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+}
