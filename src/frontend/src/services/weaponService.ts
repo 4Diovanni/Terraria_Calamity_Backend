@@ -1,207 +1,135 @@
-/**
- * Weapon API Service
- * Métodos para comunicar com endpoints de armas
- */
-
-import apiClient from './apiClient';
-import { Weapon, CreateWeaponRequest, WeaponFilters, Element, WeaponClass } from '../types';
-
-const WEAPON_ENDPOINT = '/api/v1/weapons';
+import { apiClient } from './apiClient';
+import { Weapon, WeaponFilters } from '../types/weapon';
+import { ApiResponse } from '../types/api';
 
 /**
- * Interface para opções de requisição
+ * Serviço para gerenciar armas
+ * Comunica com a API em /api/v1/weapons
  */
-interface RequestOptions {
-  signal?: AbortSignal;
-}
 
-/**
- * Listar todas as armas
- */
-export const getAllWeapons = async (options?: RequestOptions): Promise<Weapon[]> => {
-  try {
-    const response = await apiClient.get<Weapon[]>(WEAPON_ENDPOINT, {
-      signal: options?.signal,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+const BASE_URL = '/api/v1/weapons';
 
-/**
- * Buscar arma por ID
- */
-export const getWeaponById = async (
-  id: number,
-  options?: RequestOptions
-): Promise<Weapon> => {
-  try {
-    const response = await apiClient.get<Weapon>(`${WEAPON_ENDPOINT}/${id}`, {
-      signal: options?.signal,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+export const weaponService = {
+  /**
+   * Busca todas as armas
+   * ✅ EXECUTA UMA VEZ ao montar o componente
+   */
+  async getAllWeapons(): Promise<Weapon[]> {
+    try {
+      const response = await apiClient.get<Weapon[]>(BASE_URL);
+      console.log('✅ [WeaponService] Armas carregadas:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('❌ [WeaponService] Erro ao buscar armas:', error);
+      throw error;
+    }
+  },
 
-/**
- * Filtrar armas por elemento
- */
-export const getWeaponsByElement = async (
-  element: Element | string,
-  options?: RequestOptions
-): Promise<Weapon[]> => {
-  try {
-    const response = await apiClient.get<Weapon[]>(
-      `${WEAPON_ENDPOINT}/element/${element}`,
-      { signal: options?.signal }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  /**
+   * Busca uma arma por ID
+   */
+  async getWeaponById(id: string): Promise<Weapon> {
+    try {
+      const response = await apiClient.get<Weapon>(`${BASE_URL}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`❌ [WeaponService] Erro ao buscar arma ${id}:`, error);
+      throw error;
+    }
+  },
 
-/**
- * Filtrar armas por classe
- */
-export const getWeaponsByClass = async (
-  weaponClass: WeaponClass | string,
-  options?: RequestOptions
-): Promise<Weapon[]> => {
-  try {
-    const response = await apiClient.get<Weapon[]>(
-      `${WEAPON_ENDPOINT}/class/${weaponClass}`,
-      { signal: options?.signal }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  /**
+   * Busca armas por elemento
+   */
+  async getWeaponsByElement(element: string): Promise<Weapon[]> {
+    try {
+      const response = await apiClient.get<Weapon[]>(`${BASE_URL}/element/${element}`);
+      return response.data;
+    } catch (error) {
+      console.error(`❌ [WeaponService] Erro ao buscar armas do elemento ${element}:`, error);
+      throw error;
+    }
+  },
 
-/**
- * Filtrar armas por raridade
- */
-export const getWeaponsByRarity = async (
-  rarity: number,
-  options?: RequestOptions
-): Promise<Weapon[]> => {
-  try {
-    const response = await apiClient.get<Weapon[]>(
-      `${WEAPON_ENDPOINT}/rarity/${rarity}`,
-      { signal: options?.signal }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  /**
+   * Busca armas por classe
+   */
+  async getWeaponsByClass(weaponClass: string): Promise<Weapon[]> {
+    try {
+      const response = await apiClient.get<Weapon[]>(`${BASE_URL}/class/${weaponClass}`);
+      return response.data;
+    } catch (error) {
+      console.error(`❌ [WeaponService] Erro ao buscar armas da classe ${weaponClass}:`, error);
+      throw error;
+    }
+  },
 
-/**
- * Buscar armas por nome
- */
-export const searchWeaponsByName = async (
-  name: string,
-  options?: RequestOptions
-): Promise<Weapon[]> => {
-  try {
-    const response = await apiClient.get<Weapon[]>(
-      `${WEAPON_ENDPOINT}/search`,
-      {
+  /**
+   * Busca armas por raridade
+   */
+  async getWeaponsByRarity(rarity: string): Promise<Weapon[]> {
+    try {
+      const response = await apiClient.get<Weapon[]>(`${BASE_URL}/rarity/${rarity}`);
+      return response.data;
+    } catch (error) {
+      console.error(`❌ [WeaponService] Erro ao buscar armas de raridade ${rarity}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Busca armas por nome
+   */
+  async searchWeapons(name: string): Promise<Weapon[]> {
+    try {
+      const response = await apiClient.get<Weapon[]>(`${BASE_URL}/search`, {
         params: { name },
-        signal: options?.signal,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`❌ [WeaponService] Erro ao buscar armas com nome ${name}:`, error);
+      throw error;
+    }
+  },
 
-/**
- * Criar nova arma (Requer autenticação)
- */
-export const createWeapon = async (
-  weaponData: CreateWeaponRequest,
-  options?: RequestOptions
-): Promise<Weapon> => {
-  try {
-    const response = await apiClient.post<Weapon>(
-      WEAPON_ENDPOINT,
-      weaponData,
-      { signal: options?.signal }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  /**
+   * Criar nova arma (Admin)
+   */
+  async createWeapon(weapon: Omit<Weapon, 'id' | 'createdAt' | 'updatedAt'>): Promise<Weapon> {
+    try {
+      const response = await apiClient.post<Weapon>(BASE_URL, weapon);
+      console.log('✅ [WeaponService] Arma criada:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('❌ [WeaponService] Erro ao criar arma:', error);
+      throw error;
+    }
+  },
 
-/**
- * Atualizar arma (Requer autenticação)
- */
-export const updateWeapon = async (
-  id: number,
-  weaponData: Partial<CreateWeaponRequest>,
-  options?: RequestOptions
-): Promise<Weapon> => {
-  try {
-    const response = await apiClient.put<Weapon>(
-      `${WEAPON_ENDPOINT}/${id}`,
-      weaponData,
-      { signal: options?.signal }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  /**
+   * Atualizar arma (Admin)
+   */
+  async updateWeapon(id: string, weapon: Partial<Weapon>): Promise<Weapon> {
+    try {
+      const response = await apiClient.put<Weapon>(`${BASE_URL}/${id}`, weapon);
+      console.log('✅ [WeaponService] Arma atualizada:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error(`❌ [WeaponService] Erro ao atualizar arma ${id}:`, error);
+      throw error;
+    }
+  },
 
-/**
- * Deletar arma (Requer autenticação)
- */
-export const deleteWeapon = async (
-  id: number,
-  options?: RequestOptions
-): Promise<void> => {
-  try {
-    await apiClient.delete(`${WEAPON_ENDPOINT}/${id}`, {
-      signal: options?.signal,
-    });
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * Aplicar múltiplos filtros
- */
-export const getFilteredWeapons = async (
-  filters: WeaponFilters,
-  options?: RequestOptions
-): Promise<Weapon[]> => {
-  try {
-    const params = new URLSearchParams();
-
-    if (filters.element) params.append('element', filters.element);
-    if (filters.weaponClass) params.append('weaponClass', filters.weaponClass);
-    if (filters.rarity !== undefined) params.append('rarity', filters.rarity.toString());
-    if (filters.name) params.append('name', filters.name);
-    if (filters.minDamage !== undefined) params.append('minDamage', filters.minDamage.toString());
-    if (filters.maxDamage !== undefined) params.append('maxDamage', filters.maxDamage.toString());
-
-    const response = await apiClient.get<Weapon[]>(
-      `${WEAPON_ENDPOINT}/filter`,
-      {
-        params: Object.fromEntries(params),
-        signal: options?.signal,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  /**
+   * Deletar arma (Admin)
+   */
+  async deleteWeapon(id: string): Promise<void> {
+    try {
+      await apiClient.delete(`${BASE_URL}/${id}`);
+      console.log(`✅ [WeaponService] Arma ${id} deletada`);
+    } catch (error) {
+      console.error(`❌ [WeaponService] Erro ao deletar arma ${id}:`, error);
+      throw error;
+    }
+  },
 };
