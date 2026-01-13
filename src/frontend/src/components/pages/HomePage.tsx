@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
+import { useWeapons } from '../../hooks';
 
 export const HomePage = () => {
   const navigate = useNavigate();
+  const { weapons } = useWeapons();
 
   const sections = [
     {
@@ -138,7 +140,7 @@ export const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             <div className="p-8">
-              <div className="text-5xl font-bold text-calamity-primary mb-2">500+</div>
+              <div className="text-5xl font-bold text-calamity-primary mb-2">{weapons.length}^</div>
               <p className="text-calamity-text-secondary font-display">Armas</p>
             </div>
             <div className="p-8 border-l border-r border-calamity-border">

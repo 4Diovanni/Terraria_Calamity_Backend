@@ -26,7 +26,7 @@ public class WeaponElementController {
     // ENDPOINT: Listar todos os elementos com informações
     // ====================================================================
     @GetMapping
-    public ResponseEntity<List<WeaponElementService.ElementInfoDTO>> getAllElements() {
+    public ResponseEntity<List<WeaponElementService.ElementInfoDTO>> getAllElementsInfo() {
 //        """
 //        GET /api/v1/elements
 //

@@ -12,6 +12,7 @@ public class WeaponMapper {
     
     /**
      * Converte CreateWeaponDTO (com tipos Enum) para Weapon entity
+     * Ele n usa essa convesão mas não sei porque se eu tirar isso o app n roda :)
      */
     public Weapon toEntity(CreateWeaponDTO dto) {
         return Weapon.builder()

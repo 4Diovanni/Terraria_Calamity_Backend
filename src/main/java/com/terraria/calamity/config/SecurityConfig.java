@@ -59,8 +59,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:3000",
             "http://localhost:5173",
-            "http://localhost:8000",
-            "*"
+            "http://localhost:8000"
+
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
@@ -111,6 +111,9 @@ public class SecurityConfig {
                 
                 // ✅ Buscar armas por nome - GET /api/v1/weapons/search**
                 .requestMatchers("GET", "/api/v1/weapons/search**").permitAll()
+
+                    // ✅ Buscar elementos por nome - GET /api/v1/elements**
+                    .requestMatchers("GET", "/api/v1/elements**").permitAll()
                 
                 // Health checks e actuator
                 .requestMatchers("/actuator/**").permitAll()

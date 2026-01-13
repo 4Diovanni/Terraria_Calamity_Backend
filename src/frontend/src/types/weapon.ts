@@ -2,12 +2,44 @@
  * Tipos para Armas
  */
 
-export enum ElementType {
+
+
+export enum WeaponTypeClass {
   MELEE = 'MELEE',
   RANGED = 'RANGED',
-  MAGIC = 'MAGIC',
-  SUMMONER = 'SUMMONER',
+  MAGE = 'MAGE',
+  SUMMON = 'SUMMON',
   ROGUE = 'ROGUE',
+}
+
+export enum Element {
+  NEUTRAL = 'NEUTRAL',
+  FIRE = 'FIRE',
+  ICE = 'ICE',
+  LIGHTNING = 'LIGHTNING',
+  EARTH = 'EARTH',
+  WATER = 'WATER',
+  WIND = 'WIND',
+  NATURE = 'NATURE',
+  HOLY = 'HOLY',
+  BRIMSTONE = 'BRIMSTONE',
+  HOLY_FLAMES = 'HOLY_FLAMES',
+  SHADOWFLAME = 'SHADOWFLAME',
+  ASTRAL = 'ASTRAL',
+  PLAGUE = 'PLAGUE',
+  GOD_SLAYER = 'GOD_SLAYER',
+  SULPHURIC = 'SULPHURIC',
+  SHADOW = 'SHADOW',
+  BLOOD = 'BLOOD',
+  CRYSTAL = 'CRYSTAL',
+  ARCANE = 'ARCANE',
+  ELEMENTAL = 'ELEMENTAL',
+  COSMIC = 'COSMIC',
+  TEMPORAL = 'TEMPORAL',
+  ABYSSAL = 'ABYSSAL',
+  TOXIC = 'TOXIC',
+  OMNI = 'OMNI',
+  MAGIC = 'MAGIC',
 }
 
 export enum RarityLevel {
@@ -22,20 +54,22 @@ export interface Weapon {
   id: string;
   name: string;
   description: string;
-  element: ElementType;
+  weaponClass: WeaponTypeClass;
+  element: Element;
   rarity: RarityLevel;
-  damage: number;
-  critChance: number;
-  speed: number;
-  knockback: number;
+  baseDamage: number;
+  criticalChance: number;
+  attacksPerTurn: number;
+  range: number;
+  imageUrl: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface WeaponFilters {
-  element?: ElementType;
+  weaponClass?: WeaponTypeClass;
   rarity?: RarityLevel;
-  minDamage?: number;
-  maxDamage?: number;
+  minBaseDamage?: number;
+  maxBaseDamage?: number;
   search?: string;
 }
