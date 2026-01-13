@@ -1,99 +1,66 @@
-/**
- * Generic useFetch Hook
- * Hook genérico para fazer requisições e gerenciar estado
- */
+import { useState, useEffect } from 'react';
+import axios, { AxiosError } from 'axios';
 
-import { useState, useEffect, useCallback } from 'react';
-import { ApiError, LoadingState } from '../types';
-
-/**
- * Interface para estado de requisição
- */
-interface UseFetchState<T> {
-  data: T | null;
-  loading: boolean;
-  error: ApiError | null;
-  state: LoadingState;
+interface UseFetchOptions {
+  skip?: boolean;
+  dependencies?: unknown[];
 }
 
-/**
- * Opções para o hook
- */
-interface UseFetchOptions {
-  skip?: boolean; // Pular requisição inicial
-  timeout?: number; // Timeout da requisição
-  retry?: number; // Número de tentativas em caso de erro
+interface UseFetchReturn<T> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
 }
 
 /**
  * Hook genérico para fetching de dados
+ * @param url - URL para fazer requisição
+ * @param options - Opções (skip: pula a requisição, dependencies: quando refetch)
  */
-export const useFetch = <T,>(
-  fn: (signal?: AbortSignal) => Promise<T>,
-  options?: UseFetchOptions
-): UseFetchState<T> & { refetch: () => void } => {
-  const [state, setState] = useState<UseFetchState<T>>({
-    data: null,
-    loading: true,
-    error: null,
-    state: LoadingState.LOADING,
-  });
+export const useFetch = <T>(
+  url: string,
+  options: UseFetchOptions = {}
+): UseFetchReturn<T> => {
+  const { skip = false, dependencies = [] } = options;
 
-  const [retryCount, setRetryCount] = useState(0);
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(!skip);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetch = useCallback(async () => {
-    setState({
-      data: null,
-      loading: true,
-      error: null,
-      state: LoadingState.LOADING,
-    });
-
-    const abortController = new AbortController();
-
-    try {
-      const data = await fn(abortController.signal);
-      setState({
-        data,
-        loading: false,
-        error: null,
-        state: LoadingState.SUCCESS,
-      });
-      setRetryCount(0);
-    } catch (error) {
-      const apiError = error as ApiError;
-
-      // Tentar novamente se não atingiu o limite
-      if (retryCount < (options?.retry ?? 0)) {
-        setRetryCount((prev) => prev + 1);
-        setTimeout(() => {
-          fetch();
-        }, 1000); // Aguardar 1s antes de tentar novamente
-      } else {
-        setState({
-          data: null,
-          loading: false,
-          error: apiError,
-          state: LoadingState.ERROR,
-        });
-      }
+  const fetchData = async () => {
+    if (skip) {
+      setLoading(false);
+      return;
     }
 
-    return () => abortController.abort();
-  }, [fn, options?.retry, retryCount]);
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await axios.get<T>(url);
+      setData(response.data);
+      console.log(`✅ Dados carregados de ${url}:`, response.data);
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      const errorMessage = axiosError.message || 'Erro ao carregar dados';
+      setError(errorMessage);
+      console.error(`❌ Erro ao buscar ${url}:`, errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // ✅ IMPORTANTE: Array de dependências = executa quando dependências mudam
+  // Se vazio [] = executa UMA VEZ ao montar
   useEffect(() => {
-    if (options?.skip) return;
-    fetch();
-  }, [fetch, options?.skip]);
-
-  const refetch = useCallback(() => {
-    setRetryCount(0);
-    fetch();
-  }, [fetch]);
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies); // ← Seu array de dependências aqui
 
   return {
-    ...state,
-    refetch,
+    data,
+    loading,
+    error,
+    refetch: fetchData,
   };
 };
