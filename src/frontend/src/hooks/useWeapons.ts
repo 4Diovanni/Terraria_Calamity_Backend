@@ -1,222 +1,49 @@
-/**
- * useWeapons Hook
- * Hook específico para gerenciar dados de armas
- */
+import { useState, useEffect } from 'react';
+import { weaponService } from '../services/weaponService';
+import { Weapon } from '../types/weapon';
 
-import { useState, useCallback } from 'react';
-import {
-  getAllWeapons,
-  getWeaponById,
-  getWeaponsByElement,
-  getWeaponsByClass,
-  getWeaponsByRarity,
-  searchWeaponsByName,
-  createWeapon,
-  updateWeapon,
-  deleteWeapon,
-  getFilteredWeapons,
-} from '../services';
-import { Weapon, CreateWeaponRequest, WeaponFilters, Element, WeaponClass, ApiError, LoadingState } from '../types';
-import { useFetch } from './useFetch';
-
-/**
- * Estado do hook useWeapons
- */
-interface UseWeaponsState {
+interface UseWeaponsReturn {
   weapons: Weapon[];
-  selectedWeapon: Weapon | null;
   loading: boolean;
-  error: ApiError | null;
-  state: LoadingState;
+  error: string | null;
+  refetch: () => Promise<void>;
 }
 
 /**
- * Opções para o hook
+ * Hook para gerenciar armas da API
+ * Executa requisição uma única vez ao montar o componente
  */
-interface UseWeaponsOptions {
-  autoLoad?: boolean; // Carregar armas automaticamente
-}
-
-/**
- * Hook para gerenciar armas
- */
-export const useWeapons = (options?: UseWeaponsOptions) => {
+export const useWeapons = (): UseWeaponsReturn => {
   const [weapons, setWeapons] = useState<Weapon[]>([]);
-  const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch inicial de todas as armas
-  const { data, loading, error, state, refetch } = useFetch(
-    () => getAllWeapons(),
-    { skip: options?.autoLoad === false }
-  );
-
-  // Atualizar estado local quando dados chegam
-  if (data && JSON.stringify(data) !== JSON.stringify(weapons)) {
-    setWeapons(data);
-  }
-
-  /**
-   * Buscar arma por ID
-   */
-  const getWeapon = useCallback(async (id: number) => {
+  const fetchWeapons = async () => {
     try {
-      const weapon = await getWeaponById(id);
-      setSelectedWeapon(weapon);
-      return weapon;
+      setLoading(true);
+      setError(null);
+      const data = await weaponService.getAllWeapons();
+      setWeapons(data);
+      console.log('✅ Armas carregadas com sucesso:', data.length);
     } catch (err) {
-      console.error('Erro ao buscar arma:', err);
-      throw err;
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar armas';
+      setError(errorMessage);
+      console.error('❌ Erro ao carregar armas:', errorMessage);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  };
 
-  /**
-   * Buscar armas por elemento
-   */
-  const filterByElement = useCallback(async (element: Element | string) => {
-    try {
-      const result = await getWeaponsByElement(element);
-      setWeapons(result);
-      return result;
-    } catch (err) {
-      console.error('Erro ao filtrar por elemento:', err);
-      throw err;
-    }
-  }, []);
-
-  /**
-   * Buscar armas por classe
-   */
-  const filterByClass = useCallback(async (weaponClass: WeaponClass | string) => {
-    try {
-      const result = await getWeaponsByClass(weaponClass);
-      setWeapons(result);
-      return result;
-    } catch (err) {
-      console.error('Erro ao filtrar por classe:', err);
-      throw err;
-    }
-  }, []);
-
-  /**
-   * Buscar armas por raridade
-   */
-  const filterByRarity = useCallback(async (rarity: number) => {
-    try {
-      const result = await getWeaponsByRarity(rarity);
-      setWeapons(result);
-      return result;
-    } catch (err) {
-      console.error('Erro ao filtrar por raridade:', err);
-      throw err;
-    }
-  }, []);
-
-  /**
-   * Buscar armas por nome
-   */
-  const searchByName = useCallback(async (name: string) => {
-    try {
-      if (!name.trim()) {
-        setWeapons(data || []);
-        return data || [];
-      }
-      const result = await searchWeaponsByName(name);
-      setWeapons(result);
-      return result;
-    } catch (err) {
-      console.error('Erro ao buscar por nome:', err);
-      throw err;
-    }
-  }, [data]);
-
-  /**
-   * Aplicar múltiplos filtros
-   */
-  const applyFilters = useCallback(async (filters: WeaponFilters) => {
-    try {
-      const result = await getFilteredWeapons(filters);
-      setWeapons(result);
-      return result;
-    } catch (err) {
-      console.error('Erro ao aplicar filtros:', err);
-      throw err;
-    }
-  }, []);
-
-  /**
-   * Criar arma
-   */
-  const addWeapon = useCallback(async (weaponData: CreateWeaponRequest) => {
-    try {
-      const newWeapon = await createWeapon(weaponData);
-      setWeapons((prev) => [...prev, newWeapon]);
-      return newWeapon;
-    } catch (err) {
-      console.error('Erro ao criar arma:', err);
-      throw err;
-    }
-  }, []);
-
-  /**
-   * Atualizar arma
-   */
-  const editWeapon = useCallback(async (id: number, weaponData: Partial<CreateWeaponRequest>) => {
-    try {
-      const updatedWeapon = await updateWeapon(id, weaponData);
-      setWeapons((prev) =>
-        prev.map((w) => (w.id === id ? updatedWeapon : w))
-      );
-      if (selectedWeapon?.id === id) {
-        setSelectedWeapon(updatedWeapon);
-      }
-      return updatedWeapon;
-    } catch (err) {
-      console.error('Erro ao atualizar arma:', err);
-      throw err;
-    }
-  }, [selectedWeapon?.id]);
-
-  /**
-   * Deletar arma
-   */
-  const removeWeapon = useCallback(async (id: number) => {
-    try {
-      await deleteWeapon(id);
-      setWeapons((prev) => prev.filter((w) => w.id !== id));
-      if (selectedWeapon?.id === id) {
-        setSelectedWeapon(null);
-      }
-    } catch (err) {
-      console.error('Erro ao deletar arma:', err);
-      throw err;
-    }
-  }, [selectedWeapon?.id]);
-
-  /**
-   * Resetar filtros
-   */
-  const resetFilters = useCallback(() => {
-    refetch();
-  }, [refetch]);
+  // ✅ IMPORTANTE: Array vazio = executa UMA VEZ ao montar
+  // Sem o array vazio, executa infinitamente!
+  useEffect(() => {
+    fetchWeapons();
+  }, []); // ← Dependências vazias = executa 1x
 
   return {
-    // Estado
     weapons,
-    selectedWeapon,
     loading,
     error,
-    state,
-
-    // Ações
-    getWeapon,
-    filterByElement,
-    filterByClass,
-    filterByRarity,
-    searchByName,
-    applyFilters,
-    addWeapon,
-    editWeapon,
-    removeWeapon,
-    resetFilters,
+    refetch: fetchWeapons, // Permite refetch manual
   };
 };
