@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -61,7 +62,10 @@ public class SecurityConfig {
             "http://localhost:3000",
             "http://localhost:5173",
             "http://localhost:8000"
-
+        ));
+        // Domínio de produção e previews do frontend no Vercel
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+            "https://terraria-calamity-backend*.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
@@ -94,25 +98,25 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // ========== ENDPOINTS PÚBLICOS (GET) ==========
                 // ✅ Listar todas as armas - GET /api/v1/weapons
-                .requestMatchers("GET", "/api/v1/weapons").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/weapons").permitAll()
                 
                 // ✅ Obter arma por ID - GET /api/v1/weapons/{id}
-                .requestMatchers("GET", "/api/v1/weapons/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/**").permitAll()
                 
                 // ✅ Buscar armas por elemento - GET /api/v1/weapons/element/{element}
-                .requestMatchers("GET", "/api/v1/weapons/element/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/element/**").permitAll()
                 
                 // ✅ Buscar armas por classe - GET /api/v1/weapons/class/**
-                .requestMatchers("GET", "/api/v1/weapons/class/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/class/**").permitAll()
                 
                 // ✅ Buscar armas por raridade - GET /api/v1/weapons/rarity/**
-                .requestMatchers("GET", "/api/v1/weapons/rarity/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/rarity/**").permitAll()
                 
                 // ✅ Buscar armas por nome - GET /api/v1/weapons/search**
-                .requestMatchers("GET", "/api/v1/weapons/search**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/search**").permitAll()
 
                     // ✅ Buscar elementos por nome - GET /api/v1/elements**
-                    .requestMatchers("GET", "/api/v1/elements**").permitAll()
+                    .requestMatchers(HttpMethod.GET,"/api/v1/elements**").permitAll()
                 
                 // Health checks e actuator
                 .requestMatchers("/actuator/**").permitAll()
@@ -120,13 +124,13 @@ public class SecurityConfig {
                 
                 // ========== ENDPOINTS PROTEGIDOS ==========
                 // ❌ Criar arma (requer autenticação - admin) - POST /api/v1/weapons
-                .requestMatchers("POST", "/api/v1/weapons").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/weapons").authenticated()
                 
                 // ❌ Atualizar arma (requer autenticação - admin) - PUT /api/v1/weapons/{id}
-                .requestMatchers("PUT", "/api/v1/weapons/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/weapons/**").authenticated()
                 
                 // ❌ Deletar arma (requer autenticação - admin) - DELETE /api/v1/weapons/{id}
-                .requestMatchers("DELETE", "/api/v1/weapons/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/weapons/**").authenticated()
                 
                 // ========== Qualquer outra requisição requer autenticação ==========
                 .anyRequest().authenticated()
