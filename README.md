@@ -98,10 +98,14 @@ src/main/java/com/terraria/calamity/
    
    Crie um arquivo `.env` na raiz do projeto:
    ```env
-   DB_HOST=db.elshjfsuxnmargpxqads.supabase.co
+   # Use o Session Pooler do Supabase (IPv4) - a conexão direta
+   # "db.<project_ref>.supabase.co" só responde em IPv6 e falha na
+   # maioria das redes. Veja host/região em:
+   # Project Settings > Database > Connect > Session pooler
+   DB_HOST=aws-1-sa-east-1.pooler.supabase.com
    DB_PORT=5432
    DB_NAME=postgres
-   DB_USER=postgres
+   DB_USER=postgres.seu_project_ref_aqui
    DB_PASSWORD=sua_senha_supabase_aqui
    
    SPRING_JPA_HIBERNATE_DDL_AUTO=validate
@@ -139,10 +143,10 @@ Para um guia passo a passo, veja [SETUP_SUPABASE.md](./SETUP_SUPABASE.md).
 
 | Variável | Descrição | Exemplo |
 |----------|-----------|----------|
-| `DB_HOST` | Host do PostgreSQL | `db.elshjfsuxnmargpxqads.supabase.co` |
-| `DB_PORT` | Porta PostgreSQL | `5432` |
+| `DB_HOST` | Host do Session Pooler (IPv4) | `aws-1-sa-east-1.pooler.supabase.com` |
+| `DB_PORT` | Porta do Session Pooler | `5432` |
 | `DB_NAME` | Nome do banco | `postgres` |
-| `DB_USER` | Usuário do banco | `postgres` |
+| `DB_USER` | Usuário do pooler (`postgres.<project_ref>`) | `postgres.uysjyvaxukxekdeqwqob` |
 | `DB_PASSWORD` | Senha do banco | `sua_senha_segura` |
 | `SPRING_JPA_HIBERNATE_DDL_AUTO` | Estratégia de schema | `validate` (production) |
 | `SPRING_JPA_SHOW_SQL` | Mostrar SQL no log | `false` |
