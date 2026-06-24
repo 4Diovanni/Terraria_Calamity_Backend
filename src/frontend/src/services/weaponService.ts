@@ -32,7 +32,7 @@ export const weaponService = {
       const response = await apiClient.get<Weapon>(`${BASE_URL}/${id}`);
       return response.data;
     } catch (error) {
-      console.error(`❌ [WeaponService] Erro ao buscar arma ${id}:`, error);
+      console.error('❌ [WeaponService] Erro ao buscar arma %s:', id, error);
       throw error;
     }
   },

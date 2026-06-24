@@ -3,6 +3,7 @@ package com.terraria.calamity.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -82,14 +83,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             // Habilita CORS
-            .cors().and()
-            
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
             // Mantém CSRF habilitado (padrão do Spring Security)
-            
+
             // Define política de sessão (stateless para APIs REST)
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
             // Autorização de requisições
             .authorizeHttpRequests(authz -> authz
                 // ========== ENDPOINTS PÚBLICOS (GET) ==========
@@ -133,7 +133,7 @@ public class SecurityConfig {
             )
             
             // HTTP Basic Auth (temporário, será substituído por JWT)
-            .httpBasic();
+            .httpBasic(Customizer.withDefaults());
         
         return http.build();
     }
