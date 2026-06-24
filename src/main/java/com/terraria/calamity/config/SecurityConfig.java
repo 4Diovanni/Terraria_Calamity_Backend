@@ -84,8 +84,7 @@ public class SecurityConfig {
             // Habilita CORS
             .cors().and()
             
-            // Desabilita CSRF (frontend SPA)
-            .csrf().disable()
+            // Mantém CSRF habilitado (padrão do Spring Security)
             
             // Define política de sessão (stateless para APIs REST)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
