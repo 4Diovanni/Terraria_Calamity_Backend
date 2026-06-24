@@ -1,6 +1,5 @@
 import apiClient from './apiClient';
-import { Weapon, WeaponFilters } from '../types/weapon';
-import { ApiResponse } from '../types/api';
+import { Weapon } from '../types/weapon';
 
 /**
  * Serviço para gerenciar armas

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { weaponService } from '../../services/weaponService';
 import { Weapon } from '../../types/weapon';
 import { Loading } from '../ui/Loading';
-import { Error } from '../ui/Error';
+import { Error as ErrorView } from '../ui/Error';
 
 export const WeaponDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -130,7 +130,7 @@ export const WeaponDetailPage = () => {
 
   if (error || !weapon) {
     return (
-      <Error
+      <ErrorView
         message={error || 'Arma não encontrada'}
         onRetry={() => window.location.reload()}
       />

@@ -4,7 +4,7 @@
  */
 
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { ApiError } from '../types';
+import { ErrorResponse } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -55,10 +55,9 @@ apiClient.interceptors.response.use(
   },
   (error: AxiosError) => {
     // Tratamento de erros
-    const apiError: ApiError = {
+    const apiError: ErrorResponse = {
       status: error.response?.status || 500,
       message: error.message || 'Erro desconhecido',
-      error: error.response?.statusText || 'Unknown Error',
       timestamp: new Date().toISOString(),
     };
 
@@ -97,8 +96,8 @@ apiClient.interceptors.response.use(
  * Limpar interceptors (útil para testes)
  */
 export const clearInterceptors = () => {
-  apiClient.interceptors.request.handlers = [];
-  apiClient.interceptors.response.handlers = [];
+  apiClient.interceptors.request.clear();
+  apiClient.interceptors.response.clear();
 };
 
 /**
