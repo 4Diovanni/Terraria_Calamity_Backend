@@ -20,3 +20,5 @@ export type { } from './StateComponents';
 export { ThemeToggle } from './ThemeToggle';
 
 export { Drawer } from './Drawer';
+
+export { Badge } from './Badge';
