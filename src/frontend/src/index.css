@@ -29,6 +29,28 @@
   --color-border-light: #7a5a5a;
 }
 
+:root.light {
+  --color-primary: #a30000;
+  --color-primary-light: #c41e1e;
+  --color-primary-dark: #800000;
+
+  --color-bg-dark: #f3ede4;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #e8ded2;
+
+  --color-accent-purple: #5a189a;
+  --color-accent-gold: #8a6508;
+  --color-accent-green: #45591f;
+  --color-accent-cyan: #2f5b5d;
+
+  --color-text-primary: #2a1810;
+  --color-text-secondary: #5c4a3a;
+  --color-text-tertiary: #8a7a6a;
+
+  --color-border: #d8c8b8;
+  --color-border-light: #c0a890;
+}
+
 /* Smooth Font Rendering */
 html {
   -webkit-font-smoothing: antialiased;
