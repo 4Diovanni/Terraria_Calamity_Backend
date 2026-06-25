@@ -14,6 +14,8 @@ The Calamity frontend (`src/frontend`) is desktop-only in practice:
 
 This work fixes both the visual identity (per `.claude/skills/visual-identity/SKILL.md`) and mobile/desktop usability across all 7 screens: Home, Weapons, Items, Enemies, Biomes, NPCs, WeaponDetail.
 
+**Correction found during planning:** Only `WeaponsPage` and `WeaponDetailPage` have real data/filters today. `ItemsPage`, `EnemiesPage`, `NPCsPage`, `BiomesPage` are placeholder "em desenvolvimento" screens with no listing or filter UI at all — there is nothing to put behind a filter drawer there yet. `src/components/pages/Home.tsx` is dead code (not referenced by any route in `App.tsx`, which uses `HomePage.tsx` for `/`) and will be deleted as part of this work.
+
 ## Goals
 
 - One shared design-token system (color, type, spacing) with working dark **and** light themes, toggle persisted in `localStorage`.
@@ -61,17 +63,21 @@ Radix UI primitives are added as a dependency specifically for `Dialog`/`Switch`
 
 `Header.tsx`: logo + `ThemeToggle` always visible. At `md` (768px) and above, the 6 nav links stay in the current horizontal bar. Below `md`, the links move into the `Drawer` opened by a hamburger icon button (≥44×44px tap target).
 
-### 4. Filters
+### 4. Filters (Weapons only — the only page with real filters today)
 
-Weapons/Items/Enemies/NPCs/Biomes pages: at `md` and above, filter controls stay inline at the top (current behavior). Below `md`, filters are hidden behind a "Filtrar (N ativos)" button; tapping opens the same filter controls inside a `Drawer` (bottom-sheet style — anchored bottom, full-width). Filter state and logic are unchanged; only the container/visibility is responsive.
+At `md` and above, filter controls stay inline at the top (current behavior). Below `md`, filters are hidden behind a "Filtrar (N ativos)" button; tapping opens the same filter controls inside a `Drawer` (bottom-sheet style — anchored bottom, full-width). Filter state and logic are unchanged; only the container/visibility is responsive.
 
-### 5. Listings
+### 5. Listings (Weapons only)
 
-Replace the wide horizontal-row listing (`flex items-center gap-6`) with the new `Card` component in a responsive grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`. Applies to Weapons, Items, Enemies, NPCs, Biomes listing pages.
+Replace the wide horizontal-row listing (`flex items-center gap-6`) with the new `Card` component in a responsive grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`.
 
-### 6. Home / WeaponDetail
+### 6. Placeholder pages (Items, Enemies, NPCs, Biomes)
 
-No structural change (no filter/dense-listing problem) — updated to consume the new tokens, type scale, and `Card`/`Badge` components where applicable.
+These four pages have no real data or filters yet — restyle only: swap hardcoded `calamity-*` classes for the new token system and type scale, keep the existing "em desenvolvimento" structure (icon, heading, message, back button) as-is. No filter/listing work invented for pages that don't have content yet; the filter/`Card`/`Drawer` pattern from Weapons is the template to reuse once these pages get real data in a future round.
+
+### 7. Home / WeaponDetail
+
+`Home.tsx` is deleted (dead code, unreferenced by any route). `HomePage.tsx` (the actual `/` route) and `WeaponDetailPage.tsx` get no structural change — updated to consume the new tokens, type scale, and `Badge` component (replacing `WeaponDetailPage`'s duplicated `getWeaponClassColor`/`getRarityColor`/`getElementColor` functions).
 
 ## Testing
 
@@ -80,7 +86,7 @@ Using the vitest + `@testing-library/react` setup already added to `src/frontend
 - `ThemeToggle`: toggling persists to `localStorage` and flips the `dark`/`light` class on `<html>`.
 - `Drawer`: opens/closes via trigger, closes on `Escape`, traps focus while open.
 - `Badge` / `Card`: render correct variant styling/content for given props.
-- One integration test per filter-bearing page (representative: Weapons) — filter button opens the drawer on a mobile viewport, listing renders as a grid.
+- Integration test for Weapons (the one real filter-bearing page) — filter button opens the drawer on a mobile viewport, listing renders as a grid.
 
 Out of scope: visual/screenshot regression testing.
 
@@ -91,5 +97,6 @@ One commit/PR per step (detailed in the implementation plan):
 1. Tokens + Tailwind config (dark/light) + fonts
 2. Shared components: `ThemeToggle`, `Badge`, `Card`, `Drawer`
 3. `Header`/`Layout` (mobile nav + theme toggle)
-4. Filter-bearing pages, one at a time: Weapons → Items → Enemies → NPCs → Biomes
-5. Home + WeaponDetail (token/type adjustments only)
+4. Weapons + WeaponDetail (full pattern: filter drawer, card grid, shared `Badge`)
+5. Placeholder pages restyle: Items, Enemies, NPCs, Biomes (tokens only, no new functionality)
+6. `HomePage` (token/type adjustments) + delete dead `Home.tsx`
