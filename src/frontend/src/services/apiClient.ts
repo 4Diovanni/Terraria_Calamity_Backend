@@ -9,11 +9,41 @@ import { ErrorResponse } from '../types';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 /**
+ * O backend roda no plano free do Render, que coloca o serviço para "dormir"
+ * após inatividade. O primeiro request após esse período (cold start) pode
+ * levar bem mais que alguns segundos para responder, então o timeout por
+ * tentativa e a retentativa com backoff existem para sobreviver a esse
+ * cenário sem expor um erro de timeout ao usuário.
+ */
+const REQUEST_TIMEOUT_MS = 15000;
+const MAX_RETRIES = 3;
+const RETRY_BASE_DELAY_MS = 3000;
+
+export interface RetryInfo {
+  attempt: number;
+  maxRetries: number;
+  delayMs: number;
+}
+
+type RetryListener = (info: RetryInfo) => void;
+let retryListener: RetryListener | null = null;
+
+/** Registrar/remover um listener chamado antes de cada retentativa (ex: UI "acordando servidor") */
+export const onRetry = (listener: RetryListener | null) => {
+  retryListener = listener;
+};
+
+type RetryableConfig = InternalAxiosRequestConfig & { __retryCount?: number };
+
+const isRetryableError = (error: AxiosError): boolean =>
+  error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK' || !error.response;
+
+/**
  * Criar instância do axios com configuração padrão
  */
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_URL,
-  timeout: 10000,
+  timeout: REQUEST_TIMEOUT_MS,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -54,6 +84,20 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    const config = error.config as RetryableConfig | undefined;
+
+    if (config && isRetryableError(error)) {
+      const attempt = (config.__retryCount ?? 0) + 1;
+      if (attempt <= MAX_RETRIES) {
+        config.__retryCount = attempt;
+        const delayMs = RETRY_BASE_DELAY_MS * 2 ** (attempt - 1);
+        retryListener?.({ attempt, maxRetries: MAX_RETRIES, delayMs });
+        return new Promise((resolve) => setTimeout(resolve, delayMs)).then(() =>
+          apiClient(config)
+        );
+      }
+    }
+
     // Tratamento de erros
     const apiError: ErrorResponse = {
       status: error.response?.status || 500,
