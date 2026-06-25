@@ -33,16 +33,9 @@ This work fixes both the visual identity (per `.claude/skills/visual-identity/SK
 
 ### 1. Design tokens & theme system
 
-Replace the single dark `:root` palette in `index.css` with paired dark/light CSS variables, switched via a `dark`/`light` class on `<html>` (Tailwind `darkMode: 'class'`):
+**Implementation finding:** `tailwind.config.js` and `index.css` currently duplicate the same palette as two disconnected systems — Tailwind's `calamity.*` colors are hardcoded hex, while `index.css` separately defines matching `--color-*` CSS variables used only by raw CSS (body, scrollbar, selection). Rather than inventing a parallel token vocabulary, we wire them together: Tailwind's `calamity.*` values become `var(--color-*)` references to the *existing* variable names (`--color-bg-dark`, `--color-primary`, `--color-accent-gold`, etc.), and `index.css` gains a `:root.light` block giving each of those variables a light-mode value. This makes every existing `calamity-*` utility class theme-aware immediately, with no per-component class-name changes required anywhere in the app.
 
-| Token group | Tokens | Role |
-|---|---|---|
-| Surface | `bg`, `bg-elevated`, `bg-overlay` | page background, cards, modals/drawers |
-| Text | `ink`, `ink-muted`, `ink-faint` | primary/secondary/tertiary text |
-| Accent | `accent-blood`, `accent-gold`, `accent-arcane`, `accent-ember`, `accent-toxic` | primary action/MELEE, legendary/highlight, MAGE/special, fire-aligned elements, nature/toxic-aligned elements |
-| Border | `border`, `border-strong` | dividers, card outlines |
-
-Each token gets a dark and light value verified for WCAG AA contrast (4.5:1 body text). Decorative glow/gradient effects (`shadow-mystical`, `animate-glow`, mystical-gradient background) are removed except where they encode real state (e.g., legendary-rarity highlight).
+Switching is via a `dark`/`light` class on `<html>` (Tailwind `darkMode: 'class'`). Each variable's light value is verified for WCAG AA contrast (4.5:1 body text) against its light-mode background. Decorative glow/gradient effects (`shadow-mystical`, `animate-glow`, mystical-gradient background) are removed except where they encode real state (e.g., legendary-rarity highlight) — this part *does* touch consuming files, done incrementally in later steps, not in the tokens step.
 
 Typography keeps Cinzel (display) + Crimson Text (body) — confirmed identity, not replaced. The decorative golden-ratio `fontSize` scale is replaced with a predictable 4px/8px-based modular scale for reliable behavior at small viewport widths.
 
@@ -54,8 +47,9 @@ New components, used by every page (no page-local variants):
 
 - **`ThemeToggle`** — Radix `Switch` styled with tokens; persists choice.
 - **`Drawer`** — Radix `Dialog` styled as a slide-in panel; used for both the mobile nav menu and the mobile filter bottom-sheet (same primitive, different trigger/content).
-- **`Badge`** — replaces the duplicated `getWeaponClassColor`/`getRarityColor`/`getElementColor`-style functions; takes a `variant` (rarity/element/class) and value, returns consistently styled badge.
-- **`Card`** — single listing-item presentation (icon/image, title, description, badges, stat), used by every page's listing grid.
+- **`Badge`** — replaces the duplicated `getWeaponClassColor`/`getRarityColor`/`getElementColor`-style functions; takes a `variant` (`class`/`element`/`rarity`) and value, returns a consistently styled badge.
+
+**Implementation finding:** a generic `Card`/`CardHeader`/`CardBody`/`CardFooter` primitive already exists in `components/ui/Card.tsx` and is exported from the `ui` barrel — no new generic `Card` is created. The Weapons listing tile is a new `WeaponCard` component (colocated with the Weapons page) that composes the existing `Card`/`CardBody` primitive with the new `Badge` component, rather than a second competing "Card" concept.
 
 Radix UI primitives are added as a dependency specifically for `Dialog`/`Switch` — headless, unstyled, so the existing Tailwind+token visual language is unaffected; we get correct focus-trap/ESC/ARIA behavior for free instead of hand-rolling it.
 
