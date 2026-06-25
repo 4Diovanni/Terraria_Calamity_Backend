@@ -1,5 +1,8 @@
 type BadgeVariant = 'class' | 'element' | 'rarity';
 
+// Deliberately uses fixed Tailwind palette colors rather than calamity-* theme
+// tokens: these are semantic gameplay cues (rarity/element/class), not theme
+// chrome, and must stay visually distinct from each other in both themes.
 const VARIANT_COLORS: Record<BadgeVariant, Record<string, string>> = {
   class: {
     MELEE: 'bg-red-600/20 text-red-400',
