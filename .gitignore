@@ -35,6 +35,13 @@ build/
 ### VS Code ###
 .vscode/
 
+### Obsidian ###
+.obsidian/
+
+### npm (root-level artifacts) ###
+node_modules/
+package-lock.json
+
 # Compiled class file
 *.class
 
