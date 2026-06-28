@@ -271,9 +271,6 @@ export const HomePage = () => {
       <section id="hero" className="relative overflow-hidden py-16 md:py-24 bg-calamity-bg-secondary border-b border-calamity-border">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl">
-            <p className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary mb-4">
-              Codex — Versao 1.0
-            </p>
             <h1 className="text-5xl md:text-7xl font-bold font-display text-calamity-accent-gold mb-6 animate-fade-in leading-none">
               Terraria<br />Calamity
             </h1>
