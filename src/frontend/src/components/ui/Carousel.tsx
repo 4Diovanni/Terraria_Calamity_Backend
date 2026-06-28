@@ -27,7 +27,7 @@ const PortraitCard = ({ item, onClick }: PortraitCardProps) => {
         ? { type: 'button' as const, onClick }
         : {})}
       className={[
-        'relative flex-shrink-0 w-40 h-60',
+        'relative flex-shrink-0 w-full sm:w-52 h-48 sm:h-72',
         'border border-calamity-border bg-calamity-bg-secondary overflow-hidden',
         'transition-all duration-300',
         onClick
@@ -40,22 +40,22 @@ const PortraitCard = ({ item, onClick }: PortraitCardProps) => {
         <img
           src={item.imageUrl}
           alt={item.title}
-          className="absolute inset-0 w-full h-full object-cover opacity-50"
+          className="absolute inset-0 w-full h-full object-cover opacity-70"
         />
       ) : (
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(160deg, ${accent}28 0%, transparent 68%)`,
+            background: `linear-gradient(160deg, ${accent}40 0%, transparent 68%)`,
           }}
         />
       )}
 
-      {/* Bottom vignette for text legibility */}
+      {/* Bottom overlay for text legibility */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-24"
+        className="absolute bottom-0 left-0 right-0 h-32"
         style={{
-          background: `linear-gradient(to top, ${accent}38 0%, transparent 100%)`,
+          background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)',
         }}
       />
 
@@ -65,31 +65,21 @@ const PortraitCard = ({ item, onClick }: PortraitCardProps) => {
         style={{ background: accent }}
       />
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-between p-3">
-        <div
-          className="w-5 h-5 border"
-          style={{
-            borderColor: `${accent}55`,
-            background: `${accent}18`,
-          }}
-        />
-        <div className="space-y-0.5">
-          {item.subtitle && (
-            <p
-              className="text-xs font-display uppercase tracking-widest leading-none"
-              style={{ color: `${accent}90` }}
-            >
-              {item.subtitle}
-            </p>
-          )}
+      {/* Title overlay at bottom of portrait */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 p-3 space-y-0.5">
+        {item.subtitle && (
           <p
-            className="text-sm font-bold font-display leading-tight"
-            style={{ color: accent }}
+            className="text-xs font-display uppercase tracking-widest leading-none"
+            style={{ color: `${accent}cc` }}
           >
-            {item.title}
+            {item.subtitle}
           </p>
-        </div>
+        )}
+        <p
+          className="text-sm font-bold font-display leading-tight text-white"
+        >
+          {item.title}
+        </p>
       </div>
     </Tag>
   );
@@ -103,9 +93,17 @@ interface CarouselProps {
 export const Carousel = ({ items, onSelect }: CarouselProps) => {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [direction, setDirection] = useState<'right' | 'left'>('right');
 
-  const next = useCallback(() => setCurrent(i => (i + 1) % items.length), [items.length]);
-  const prev = useCallback(() => setCurrent(i => (i - 1 + items.length) % items.length), [items.length]);
+  const next = useCallback(() => {
+    setDirection('right');
+    setCurrent(i => (i + 1) % items.length);
+  }, [items.length]);
+
+  const prev = useCallback(() => {
+    setDirection('left');
+    setCurrent(i => (i - 1 + items.length) % items.length);
+  }, [items.length]);
 
   useEffect(() => { setCurrent(0); }, [items]);
 
@@ -119,18 +117,26 @@ export const Carousel = ({ items, onSelect }: CarouselProps) => {
 
   const item = items[current];
   const accent = item.accentColor ?? 'var(--color-primary)';
+  const isReversed = current % 2 === 1;
 
   return (
     <div
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Slide */}
-      <div className="flex flex-col sm:flex-row gap-6 items-start">
+      {/* Slide — portrait left on even, right on odd (desktop only) */}
+      <div
+        key={current}
+        className={[
+          'flex flex-col sm:flex-row gap-6 items-start',
+          isReversed ? 'sm:flex-row-reverse' : '',
+          direction === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left',
+        ].join(' ')}
+      >
         <PortraitCard item={item} onClick={onSelect ? () => onSelect(item) : undefined} />
 
         {/* Description panel */}
-        <div className="flex-1 flex flex-col justify-between py-1 min-h-[240px]">
+        <div className="flex-1 flex flex-col justify-between py-1 sm:min-h-[288px]">
           <div className="space-y-3">
             {item.subtitle && (
               <p className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary">
