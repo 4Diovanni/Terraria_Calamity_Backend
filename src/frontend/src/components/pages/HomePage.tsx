@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useWeapons } from '../../hooks';
 import { Badge, Carousel } from '../ui';
 import type { CarouselItem } from '../ui';
+import { PageSidebar } from '../ui/PageSidebar';
 
 const LORE_COLORS = {
   yharim:    '#d4a017',
@@ -19,7 +20,7 @@ const L = (text: string, color: string) => (
 );
 
 const LoreSection = () => (
-  <section className="py-12 md:py-20 border-b border-calamity-border">
+  <section id="lore" className="py-12 md:py-20 border-b border-calamity-border">
     <div className="container mx-auto px-4 md:px-8">
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary mb-8">
@@ -211,7 +212,7 @@ const SectionHeading = ({
     <div className="flex items-end justify-between mb-4">
       <div className="flex items-center gap-3">
         <div className="w-0.5 h-7 flex-shrink-0" style={{ background: accentColor }} />
-        <h2 className="text-2xl md:text-3xl font-bold font-display text-calamity-text-primary">
+        <h2 className="text-3xl md:text-4xl font-bold font-display text-calamity-text-primary">
           {title}
         </h2>
       </div>
@@ -229,6 +230,17 @@ const SectionHeading = ({
     )}
   </div>
 );
+
+const SIDEBAR_SECTIONS = [
+  { id: 'hero',     label: 'Inicio' },
+  { id: 'lore',     label: 'Prologo' },
+  { id: 'armas',    label: 'Armas' },
+  { id: 'inimigos', label: 'Inimigos' },
+  { id: 'biomas',   label: 'Biomas' },
+  { id: 'npcs',     label: 'NPCs' },
+  { id: 'historia', label: 'Historia' },
+  { id: 'stats',    label: 'Stats' },
+];
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -253,15 +265,16 @@ export const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-calamity-bg-dark text-calamity-text-primary">
+      <PageSidebar sections={SIDEBAR_SECTIONS} />
 
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-16 md:py-24 bg-calamity-bg-secondary border-b border-calamity-border">
+      <section id="hero" className="relative overflow-hidden py-16 md:py-24 bg-calamity-bg-secondary border-b border-calamity-border">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl">
             <p className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary mb-4">
               Codex — Versao 1.0
             </p>
-            <h1 className="text-5xl md:text-7xl font-bold font-display text-calamity-accent-gold text-glow-gold mb-6 animate-fade-in leading-none">
+            <h1 className="text-5xl md:text-7xl font-bold font-display text-calamity-accent-gold mb-6 animate-fade-in leading-none">
               Terraria<br />Calamity
             </h1>
             <p className="text-lg md:text-xl text-calamity-text-secondary font-body leading-relaxed mb-10 max-w-xl">
@@ -298,7 +311,7 @@ export const HomePage = () => {
       <LoreSection />
 
       {/* ── Armas ────────────────────────────────────────── */}
-      <section className="py-16 border-b border-calamity-border">
+      <section id="armas" className="py-16 border-b border-calamity-border">
         <div className="container mx-auto px-4 md:px-8">
           <SectionHeading
             title="Armas em Destaque"
@@ -332,7 +345,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── Inimigos ─────────────────────────────────────── */}
-      <section className="py-16 bg-calamity-bg-secondary border-b border-calamity-border">
+      <section id="inimigos" className="py-16 bg-calamity-bg-secondary border-b border-calamity-border">
         <div className="container mx-auto px-4 md:px-8">
           <SectionHeading
             title="Inimigos"
@@ -346,7 +359,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── Biomas ───────────────────────────────────────── */}
-      <section className="py-16 border-b border-calamity-border">
+      <section id="biomas" className="py-16 border-b border-calamity-border">
         <div className="container mx-auto px-4 md:px-8">
           <SectionHeading
             title="Biomas"
@@ -360,7 +373,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── NPCs ─────────────────────────────────────────── */}
-      <section className="py-16 bg-calamity-bg-secondary border-b border-calamity-border">
+      <section id="npcs" className="py-16 bg-calamity-bg-secondary border-b border-calamity-border">
         <div className="container mx-auto px-4 md:px-8">
           <SectionHeading
             title="NPCs"
@@ -374,7 +387,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── Lore ─────────────────────────────────────────── */}
-      <section className="py-16 border-b border-calamity-border">
+      <section id="historia" className="py-16 border-b border-calamity-border">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold font-display text-calamity-accent-gold mb-10 text-center">
@@ -408,7 +421,7 @@ export const HomePage = () => {
       </section>
 
       {/* ── Stats ────────────────────────────────────────── */}
-      <section className="py-16 bg-calamity-bg-secondary">
+      <section id="stats" className="py-16 bg-calamity-bg-secondary">
         <div className="container mx-auto px-4 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-calamity-border max-w-3xl mx-auto">
             <div className="bg-calamity-bg-secondary p-5 md:p-8 text-center">
