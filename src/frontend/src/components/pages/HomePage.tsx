@@ -19,13 +19,13 @@ const L = (text: string, color: string) => (
 );
 
 const LoreSection = () => (
-  <section className="py-20 border-b border-calamity-border">
+  <section className="py-12 md:py-20 border-b border-calamity-border">
     <div className="container mx-auto px-4 md:px-8">
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary mb-8">
           Prologo
         </p>
-        <div className="space-y-6 text-base md:text-lg font-body leading-relaxed text-calamity-text-secondary">
+        <div className="space-y-6 text-base md:text-xl font-body leading-relaxed text-calamity-text-secondary">
           <p>
             Em uma era em que os deuses governavam com punhos de ferro, um mortal chamado{' '}
             {L('Yharim', LORE_COLORS.yharim)} decidiu que isso era suficiente. Com a força
@@ -255,7 +255,7 @@ export const HomePage = () => {
     <div className="min-h-screen bg-calamity-bg-dark text-calamity-text-primary">
 
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-24 bg-calamity-bg-secondary border-b border-calamity-border">
+      <section className="relative overflow-hidden py-16 md:py-24 bg-calamity-bg-secondary border-b border-calamity-border">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl">
             <p className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary mb-4">
@@ -380,7 +380,7 @@ export const HomePage = () => {
               A Historia do Calamity
             </h2>
             <div className="grid md:grid-cols-2 gap-px bg-calamity-border">
-              <div className="bg-calamity-bg-dark p-8">
+              <div className="bg-calamity-bg-dark p-5 md:p-8">
                 <h3 className="text-lg font-bold text-calamity-primary mb-4 font-display uppercase tracking-wider">
                   O Começo
                 </h3>
@@ -391,7 +391,7 @@ export const HomePage = () => {
                   desta terra corrompida.
                 </p>
               </div>
-              <div className="bg-calamity-bg-dark p-8">
+              <div className="bg-calamity-bg-dark p-5 md:p-8">
                 <h3 className="text-lg font-bold text-calamity-accent-purple mb-4 font-display uppercase tracking-wider">
                   Seu Destino
                 </h3>
@@ -410,7 +410,7 @@ export const HomePage = () => {
       <section className="py-16 bg-calamity-bg-secondary">
         <div className="container mx-auto px-4 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-calamity-border max-w-3xl mx-auto">
-            <div className="bg-calamity-bg-secondary p-8 text-center">
+            <div className="bg-calamity-bg-secondary p-5 md:p-8 text-center">
               <div className="text-4xl font-bold text-calamity-primary font-display mb-1">
                 {weapons.length > 0 ? `${weapons.length}+` : '—'}
               </div>
@@ -418,7 +418,7 @@ export const HomePage = () => {
                 Armas
               </p>
             </div>
-            <div className="bg-calamity-bg-secondary p-8 text-center">
+            <div className="bg-calamity-bg-secondary p-5 md:p-8 text-center">
               <div className="text-4xl font-bold text-calamity-accent-purple font-display mb-1">
                 200+
               </div>
@@ -426,7 +426,7 @@ export const HomePage = () => {
                 Inimigos
               </p>
             </div>
-            <div className="bg-calamity-bg-secondary p-8 text-center">
+            <div className="bg-calamity-bg-secondary p-5 md:p-8 text-center">
               <div className="text-4xl font-bold text-calamity-accent-gold font-display mb-1">
                 50+
               </div>
@@ -434,7 +434,7 @@ export const HomePage = () => {
                 Chefes
               </p>
             </div>
-            <div className="bg-calamity-bg-secondary p-8 text-center">
+            <div className="bg-calamity-bg-secondary p-5 md:p-8 text-center">
               <div className="text-4xl font-bold text-calamity-accent-green font-display mb-1">
                 20+
               </div>
