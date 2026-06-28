@@ -27,7 +27,7 @@ const PortraitCard = ({ item, onClick }: PortraitCardProps) => {
         ? { type: 'button' as const, onClick }
         : {})}
       className={[
-        'relative flex-shrink-0 w-full sm:w-52 h-48 sm:h-72',
+        'relative flex-shrink-0 w-full h-56 sm:w-64 sm:h-64',
         'border border-calamity-border bg-calamity-bg-secondary overflow-hidden',
         'transition-all duration-300',
         onClick
@@ -137,7 +137,7 @@ export const Carousel = ({ items, layout = 'portrait-left', onSelect }: Carousel
         <PortraitCard item={item} onClick={onSelect ? () => onSelect(item) : undefined} />
 
         {/* Description panel */}
-        <div className="flex-1 flex flex-col justify-between py-1 sm:min-h-[288px]">
+        <div className="flex-1 flex flex-col justify-start gap-4 py-1">
           <div className="space-y-3">
             {item.subtitle && (
               <p className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary">
@@ -161,7 +161,7 @@ export const Carousel = ({ items, layout = 'portrait-left', onSelect }: Carousel
           {item.href && (
             <Link
               to={item.href}
-              className="self-start mt-4 text-xs font-display uppercase tracking-widest border-b pb-px transition-colors duration-300"
+              className="self-start mt-2 text-xs font-display uppercase tracking-widest border-b pb-px transition-colors duration-300"
               style={{ color: accent, borderColor: `${accent}55` }}
             >
               Ver detalhes

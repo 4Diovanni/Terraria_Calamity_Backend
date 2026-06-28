@@ -27,3 +27,5 @@ export { Carousel } from './Carousel';
 export type { CarouselItem } from './Carousel';
 
 export { ScrollToTop } from './ScrollToTop';
+
+export { PageSidebar } from './PageSidebar';

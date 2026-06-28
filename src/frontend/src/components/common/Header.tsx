@@ -12,18 +12,34 @@ const tabs = [
   { label: 'Itens', path: '/items' },
 ];
 
-const HamburgerIcon = () => (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    aria-hidden="true"
-  >
-    <rect y="3" width="20" height="2" />
-    <rect y="9" width="20" height="2" />
-    <rect y="15" width="20" height="2" />
-  </svg>
+interface HamburgerIconProps {
+  isOpen: boolean;
+}
+
+const HamburgerIcon = ({ isOpen }: HamburgerIconProps) => (
+  <span className="block w-5 h-[14px] relative" aria-hidden="true">
+    <span
+      className={[
+        'absolute left-0 right-0 h-0.5 bg-current origin-center',
+        'transition-all duration-300 ease-in-out',
+        isOpen ? 'top-1/2 -translate-y-1/2 rotate-45' : 'top-0',
+      ].join(' ')}
+    />
+    <span
+      className={[
+        'absolute left-0 right-0 h-0.5 bg-current top-1/2 -translate-y-1/2',
+        'transition-all duration-200 ease-in-out',
+        isOpen ? 'opacity-0 scale-x-0' : '',
+      ].join(' ')}
+    />
+    <span
+      className={[
+        'absolute left-0 right-0 h-0.5 bg-current origin-center',
+        'transition-all duration-300 ease-in-out',
+        isOpen ? 'top-1/2 -translate-y-1/2 -rotate-45' : 'bottom-0',
+      ].join(' ')}
+    />
+  </span>
 );
 
 export const Header = () => {
@@ -45,10 +61,10 @@ export const Header = () => {
         key={tab.path}
         to={tab.path}
         onClick={onNavigate}
-        className={`text-sm font-display uppercase tracking-wider hover:text-calamity-primary transition-all duration-300 pb-1 border-b-2 ${
+        className={`text-sm font-display uppercase tracking-wider transition-all duration-300 pb-1 border-b-2 ${
           isActive(tab.path)
-            ? 'text-calamity-primary border-calamity-primary'
-            : 'text-calamity-text-secondary border-transparent hover:border-calamity-accent-gold hover:text-calamity-text-primary'
+            ? 'text-calamity-accent-gold border-calamity-accent-gold'
+            : 'text-calamity-text-secondary border-transparent hover:text-calamity-text-primary hover:border-calamity-accent-gold'
         }`}
       >
         {tab.label}
@@ -57,10 +73,16 @@ export const Header = () => {
 
   return (
     <header className="bg-calamity-bg-secondary border-b border-calamity-border sticky top-0 z-50 transition-all duration-300">
-      <div className={`container mx-auto px-4 flex items-center justify-between gap-4 transition-all duration-300 ${compact ? 'py-2' : 'py-4'} md:py-4`}>
+      <div
+        className={`container mx-auto px-4 flex items-center justify-between gap-4 transition-all duration-300 ${
+          compact ? 'py-2' : 'py-4'
+        } md:py-4`}
+      >
         <Link
           to="/"
-          className={`font-bold font-display text-calamity-accent-gold text-glow-gold hover:opacity-90 transition-all duration-300 ${compact ? 'text-lg' : 'text-xl'} md:text-2xl`}
+          className={`font-bold font-display text-calamity-accent-gold hover:opacity-90 transition-all duration-300 ${
+            compact ? 'text-lg' : 'text-xl'
+          } md:text-2xl`}
         >
           Terraria Calamity
         </Link>
@@ -72,10 +94,10 @@ export const Header = () => {
           <button
             type="button"
             aria-label="Abrir menu de navegação"
-            onClick={() => setMenuOpen(true)}
+            onClick={() => setMenuOpen((prev) => !prev)}
             className="md:hidden w-10 h-10 flex items-center justify-center text-calamity-text-primary border border-calamity-border hover:border-calamity-primary transition-colors duration-300"
           >
-            <HamburgerIcon />
+            <HamburgerIcon isOpen={menuOpen} />
           </button>
         </div>
       </div>
