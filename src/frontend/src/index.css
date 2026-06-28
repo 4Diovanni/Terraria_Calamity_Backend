@@ -2,56 +2,71 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Marcellus+SC&display=swap');
 
-/* Root Variables */
+/* ─── Design tokens ──────────────────────────────────────────
+   Dark mode (default): azul muito cinzado perto do preto
+   Light mode: offwhite quente
+   Accents: vermelho (primary/danger), dourado, roxo (claro/escuro),
+            azul, verde (affirmação)
+   ──────────────────────────────────────────────────────────── */
 :root {
-  /* Mystical Colors */
-  --color-primary: #8b0000;
-  --color-primary-light: #a00000;
-  --color-primary-dark: #6b0000;
+  /* Primary — Crimson (main CTA, danger, negação) */
+  --color-primary:       #9b1c1c;
+  --color-primary-light: #c81e1e;
+  --color-primary-dark:  #7b1818;
 
-  --color-bg-dark: #1a0f0f;
-  --color-bg-secondary: #2d1a1a;
-  --color-bg-tertiary: #3d2626;
+  /* Backgrounds — blue-tinted near-black */
+  --color-bg-dark:      #0d1117;
+  --color-bg-secondary: #161b22;
+  --color-bg-tertiary:  #21262d;
 
-  --color-accent-purple: #6a0dad;
-  --color-accent-gold: #b8860b;
-  --color-accent-green: #556b2f;
-  --color-accent-cyan: #4a7c7e;
+  /* Accents */
+  --color-accent-purple:       #7c3aed;
+  --color-accent-purple-light: #a78bfa;
+  --color-accent-purple-dark:  #4c1d95;
+  --color-accent-gold:         #d4a017;
+  --color-accent-green:        #22c55e;   /* affirmação */
+  --color-accent-blue:         #3b82f6;
+  --color-accent-cyan:         #06b6d4;
 
-  --color-text-primary: #e0d5d0;
-  --color-text-secondary: #a89080;
-  --color-text-tertiary: #6d5d50;
+  /* Text */
+  --color-text-primary:   #e2e8f0;
+  --color-text-secondary: #8b949e;
+  --color-text-tertiary:  #6e7681;
 
-  --color-border: #5a3a3a;
-  --color-border-light: #7a5a5a;
+  /* Borders */
+  --color-border:       #30363d;
+  --color-border-light: #484f58;
 }
 
 :root.light {
-  --color-primary: #a30000;
-  --color-primary-light: #c41e1e;
-  --color-primary-dark: #800000;
+  --color-primary:       #9b1c1c;
+  --color-primary-light: #c81e1e;
+  --color-primary-dark:  #7b1818;
 
-  --color-bg-dark: #f3ede4;
-  --color-bg-secondary: #ffffff;
-  --color-bg-tertiary: #e8ded2;
+  /* Backgrounds — offwhite quente */
+  --color-bg-dark:      #f0ede7;
+  --color-bg-secondary: #fafaf8;
+  --color-bg-tertiary:  #e8e4dc;
 
-  --color-accent-purple: #5a189a;
-  --color-accent-gold: #8a6508;
-  --color-accent-green: #45591f;
-  --color-accent-cyan: #2f5b5d;
+  --color-accent-purple:       #7c3aed;
+  --color-accent-purple-light: #8b5cf6;
+  --color-accent-purple-dark:  #4c1d95;
+  --color-accent-gold:         #a16207;
+  --color-accent-green:        #15803d;
+  --color-accent-blue:         #1d4ed8;
+  --color-accent-cyan:         #0891b2;
 
-  --color-text-primary: #2a1810;
-  --color-text-secondary: #5c4a3a;
-  --color-text-tertiary: #8a7a6a;
+  --color-text-primary:   #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary:  #94a3b8;
 
-  --color-border: #d8c8b8;
-  --color-border-light: #c0a890;
+  --color-border:       #d1cdc5;
+  --color-border-light: #b8b4ac;
 }
 
-/* Smooth Font Rendering */
+/* ─── Base ─────────────────────────────────────────────────── */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -71,7 +86,6 @@ body {
   box-sizing: border-box;
 }
 
-/* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Cinzel', serif;
   font-weight: 600;
@@ -79,66 +93,75 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-bg-dark);
-}
-
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-bg-dark); }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary);
+  background: var(--color-border-light);
   border-radius: 0;
 }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+* { scrollbar-color: var(--color-border-light) var(--color-bg-dark); scrollbar-width: thin; }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-light);
-}
+/* ─── Selection ─────────────────────────────────────────────── */
+::selection         { background-color: var(--color-primary); color: var(--color-text-primary); }
+::-moz-selection    { background-color: var(--color-primary); color: var(--color-text-primary); }
 
-/* Firefox Scrollbar */
-* {
-  scrollbar-color: var(--color-primary) var(--color-bg-dark);
-  scrollbar-width: thin;
-}
-
-/* Selection */
-::selection {
-  background-color: var(--color-primary);
-  color: var(--color-text-primary);
-}
-
-::-moz-selection {
-  background-color: var(--color-primary);
-  color: var(--color-text-primary);
-}
-
-/* Links */
+/* ─── Links ─────────────────────────────────────────────────── */
 a {
   color: var(--color-primary);
   text-decoration: none;
   transition: color 0.3s ease;
 }
+a:hover { color: var(--color-primary-light); }
 
-a:hover {
-  color: var(--color-primary-light);
-}
-
-/* Focus Outline */
+/* ─── Focus ─────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Container Query Support */
-@supports (container-type: inline-size) {
-  .container-wrapper {
-    container-type: inline-size;
+/* ─── Keyframes ─────────────────────────────────────────────── */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Utilities ─────────────────────────────────────────────── */
+@layer utilities {
+  /* Logo / title glow — golden halo around letters */
+  .text-glow-gold {
+    text-shadow:
+      0 0 8px  rgba(212, 160, 23, 0.95),
+      0 0 20px rgba(212, 160, 23, 0.55),
+      0 0 45px rgba(212, 160, 23, 0.25);
+  }
+
+  /* Carousel slide-in animations */
+  .animate-slide-in-right {
+    animation: slideInRight 0.45s ease-out forwards;
+  }
+  .animate-slide-in-left {
+    animation: slideInLeft 0.45s ease-out forwards;
+  }
+
+  /* Border radius system */
+  /* none  → rounded-none   (Tailwind built-in, 0px)       */
+  /* sm    → rounded-sm     (Tailwind built-in, 2px)       */
+  /* md    → rounded-md     (Tailwind built-in, 6px)       */
+  /* lg    → rounded-lg     (Tailwind built-in, 8px)       */
+  /* xl    → rounded-xl     (Tailwind built-in, 12px)      */
+  /* dynamic: diagonal asymmetric — one pair of corners    */
+  .rounded-dynamic {
+    border-radius: 0 14px 0 14px;
   }
 }
 
-/* Accessibility */
+/* ─── Accessibility ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -147,10 +170,6 @@ a:hover {
   }
 }
 
-/* Print Styles */
 @media print {
-  body {
-    background: white;
-    color: black;
-  }
+  body { background: white; color: black; }
 }

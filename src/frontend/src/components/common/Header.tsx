@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Drawer } from '../ui/Drawer';
 import { ThemeToggle } from '../ui/ThemeToggle';
 
 const tabs = [
-  { label: 'Início', path: '/' },
+  { label: 'Inicio', path: '/' },
   { label: 'Armas', path: '/weapons' },
   { label: 'Inimigos', path: '/enemies' },
   { label: 'NPCs', path: '/npcs' },
@@ -12,9 +12,30 @@ const tabs = [
   { label: 'Itens', path: '/items' },
 ];
 
+const HamburgerIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <rect y="3" width="20" height="2" />
+    <rect y="9" width="20" height="2" />
+    <rect y="15" width="20" height="2" />
+  </svg>
+);
+
 export const Header = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [compact, setCompact] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -24,10 +45,10 @@ export const Header = () => {
         key={tab.path}
         to={tab.path}
         onClick={onNavigate}
-        className={`text-lg font-display uppercase tracking-wider hover:text-calamity-primary transition-all duration-300 pb-2 border-b-2 ${
+        className={`text-sm font-display uppercase tracking-wider hover:text-calamity-primary transition-all duration-300 pb-1 border-b-2 ${
           isActive(tab.path)
             ? 'text-calamity-primary border-calamity-primary'
-            : 'text-calamity-text-primary border-transparent hover:border-calamity-accent-gold'
+            : 'text-calamity-text-secondary border-transparent hover:border-calamity-accent-gold hover:text-calamity-text-primary'
         }`}
       >
         {tab.label}
@@ -35,13 +56,13 @@ export const Header = () => {
     ));
 
   return (
-    <header className="bg-calamity-bg-secondary border-b-2 border-calamity-primary shadow-mystical sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 md:py-6 flex items-center justify-between gap-4">
+    <header className="bg-calamity-bg-secondary border-b border-calamity-border sticky top-0 z-50 transition-all duration-300">
+      <div className={`container mx-auto px-4 flex items-center justify-between gap-4 transition-all duration-300 ${compact ? 'py-2' : 'py-4'} md:py-4`}>
         <Link
           to="/"
-          className="text-2xl md:text-4xl font-bold font-display text-calamity-accent-gold hover:text-calamity-primary transition-colors duration-300"
+          className={`font-bold font-display text-calamity-accent-gold text-glow-gold hover:opacity-90 transition-all duration-300 ${compact ? 'text-lg' : 'text-xl'} md:text-2xl`}
         >
-          ⚡ Terraria Calamity RPG
+          Terraria Calamity
         </Link>
 
         <nav className="hidden md:flex gap-8 flex-wrap">{renderLinks()}</nav>
@@ -52,9 +73,9 @@ export const Header = () => {
             type="button"
             aria-label="Abrir menu de navegação"
             onClick={() => setMenuOpen(true)}
-            className="md:hidden w-11 h-11 flex items-center justify-center text-calamity-text-primary border border-calamity-border"
+            className="md:hidden w-10 h-10 flex items-center justify-center text-calamity-text-primary border border-calamity-border hover:border-calamity-primary transition-colors duration-300"
           >
-            ☰
+            <HamburgerIcon />
           </button>
         </div>
       </div>

@@ -22,3 +22,8 @@ export { ThemeToggle } from './ThemeToggle';
 export { Drawer } from './Drawer';
 
 export { Badge } from './Badge';
+
+export { Carousel } from './Carousel';
+export type { CarouselItem } from './Carousel';
+
+export { ScrollToTop } from './ScrollToTop';

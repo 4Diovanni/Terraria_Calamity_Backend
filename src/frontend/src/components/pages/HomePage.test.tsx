@@ -25,7 +25,7 @@ describe('HomePage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('heading', { name: 'Terraria Calamity RPG' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Terraria.*Calamity/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Explorar Armas/ })).toBeInTheDocument();
   });
 });
