@@ -64,7 +64,7 @@ export const Header = () => {
         className={`text-sm font-display uppercase tracking-wider transition-all duration-300 pb-1 border-b-2 ${
           isActive(tab.path)
             ? 'text-calamity-accent-gold border-calamity-accent-gold'
-            : 'text-calamity-text-secondary border-transparent hover:text-white hover:border-calamity-accent-gold'
+            : 'text-calamity-text-secondary border-transparent hover:text-calamity-text-primary hover:border-calamity-accent-gold'
         }`}
       >
         {tab.label}
