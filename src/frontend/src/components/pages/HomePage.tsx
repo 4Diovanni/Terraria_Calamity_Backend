@@ -3,6 +3,61 @@ import { useWeapons } from '../../hooks';
 import { Badge, Carousel } from '../ui';
 import type { CarouselItem } from '../ui';
 
+const LORE_COLORS = {
+  yharim:    '#d4a017',
+  calamitas: '#c0392b',
+  yharon:    '#e67e22',
+  draedon:   '#06b6d4',
+  devourer:  '#8e44ad',
+  polterghast: '#7f8c8d',
+  astral:    '#3b82f6',
+  abyss:     '#22c55e',
+} as const;
+
+const L = (text: string, color: string) => (
+  <span style={{ color }} className="font-semibold">{text}</span>
+);
+
+const LoreSection = () => (
+  <section className="py-20 border-b border-calamity-border">
+    <div className="container mx-auto px-4 md:px-8">
+      <div className="max-w-3xl mx-auto text-center">
+        <p className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary mb-8">
+          Prologo
+        </p>
+        <div className="space-y-6 text-base md:text-lg font-body leading-relaxed text-calamity-text-secondary">
+          <p>
+            Em uma era em que os deuses governavam com punhos de ferro, um mortal chamado{' '}
+            {L('Yharim', LORE_COLORS.yharim)} decidiu que isso era suficiente. Com a força
+            de um dragão e a determinação de quem não tem nada a perder, ele desmontou o
+            panteão divino peça por peça — mas o preço da vitória foi a sua própria alma.
+          </p>
+          <p>
+            Entre os que serviram sob seu estandarte estava{' '}
+            {L('Calamitas', LORE_COLORS.calamitas)} — uma jovem bruxa que herdou um poder
+            mágico quase ilimitado ainda na adolescência. Por quase uma década ela combateu
+            ao seu lado, revelando-se em cada batalha. Mas quando a brutalidade de{' '}
+            {L('Yharim', LORE_COLORS.yharim)} ultrapassou qualquer propósito nobre, ela
+            partiu — não como inimiga, mas como a personificação de seu maior arrependimento.
+          </p>
+          <p>
+            Agora, enquanto a{' '}
+            {L('Infestacao Astral', LORE_COLORS.astral)} corrói os biomas, o{' '}
+            {L('Abismo Sulfurico', LORE_COLORS.abyss)} engole os incautos e as almas
+            perdidas do {L('Polterghast', LORE_COLORS.polterghast)} uivam nas profundezas
+            da Masmorra, você desperta neste mundo sem entender o que está acontecendo.
+          </p>
+          <p className="text-calamity-text-primary font-display text-base md:text-lg tracking-wide">
+            Mas o mundo de Calamity não espera que você entenda.
+            <br />
+            Ele apenas exige que você sobreviva.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
 const RARITY_ACCENT: Record<string, string> = {
   COMMON:    '#94a3b8',
   UNCOMMON:  '#22c55e',
@@ -230,6 +285,8 @@ export const HomePage = () => {
           }}
         />
       </section>
+
+      <LoreSection />
 
       {/* ── Armas ────────────────────────────────────────── */}
       <section className="py-16 border-b border-calamity-border">
