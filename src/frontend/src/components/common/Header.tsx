@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Drawer } from '../ui/Drawer';
 import { ThemeToggle } from '../ui/ThemeToggle';
@@ -29,6 +29,13 @@ const HamburgerIcon = () => (
 export const Header = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [compact, setCompact] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -49,11 +56,11 @@ export const Header = () => {
     ));
 
   return (
-    <header className="bg-calamity-bg-secondary border-b border-calamity-border sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
+    <header className="bg-calamity-bg-secondary border-b border-calamity-border sticky top-0 z-50 transition-all duration-300">
+      <div className={`container mx-auto px-4 flex items-center justify-between gap-4 transition-all duration-300 ${compact ? 'py-2' : 'py-4'} md:py-4`}>
         <Link
           to="/"
-          className="text-xl md:text-2xl font-bold font-display text-calamity-accent-gold text-glow-gold hover:opacity-90 transition-opacity duration-300"
+          className={`font-bold font-display text-calamity-accent-gold text-glow-gold hover:opacity-90 transition-all duration-300 ${compact ? 'text-lg' : 'text-xl'} md:text-2xl`}
         >
           Terraria Calamity
         </Link>
