@@ -164,6 +164,39 @@ a:hover { color: var(--color-primary-light); }
   }
 }
 
+/* ─── Drawer Animations ─────────────────────────────────── */
+@keyframes drawerSlideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes drawerSlideOutRight {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(100%); opacity: 0; }
+}
+@keyframes drawerSlideInBottom {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes drawerSlideOutBottom {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(100%); opacity: 0; }
+}
+@keyframes drawerOverlayShow {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes drawerOverlayHide {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.drawer-panel-right[data-state="open"]    { animation: drawerSlideInRight   0.3s  cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+.drawer-panel-right[data-state="closed"]  { animation: drawerSlideOutRight  0.22s ease-in                         forwards; }
+.drawer-panel-bottom[data-state="open"]   { animation: drawerSlideInBottom  0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+.drawer-panel-bottom[data-state="closed"] { animation: drawerSlideOutBottom 0.22s ease-in                         forwards; }
+.drawer-overlay[data-state="open"]        { animation: drawerOverlayShow    0.2s  ease-out                        forwards; }
+.drawer-overlay[data-state="closed"]      { animation: drawerOverlayHide    0.15s ease-in                         forwards; }
+
 /* ─── Accessibility ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   * {

@@ -15,12 +15,14 @@ export const Drawer = ({ open, onOpenChange, title, side = 'right', children }: 
       ? 'inset-y-0 right-0 h-full w-full max-w-sm border-l-2'
       : 'inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-lg border-t-2';
 
+  const panelAnimation = side === 'right' ? 'drawer-panel-right' : 'drawer-panel-bottom';
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60" />
+        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60 drawer-overlay" />
         <Dialog.Content
-          className={`fixed z-50 bg-calamity-bg-secondary border-calamity-border p-6 shadow-mystical-lg focus:outline-none ${panelPosition}`}
+          className={`fixed z-50 bg-calamity-bg-secondary border-calamity-border p-6 shadow-mystical-lg focus:outline-none ${panelPosition} ${panelAnimation}`}
         >
           <div className="flex items-center justify-between mb-6">
             <Dialog.Title className="text-xl font-bold font-display text-calamity-accent-gold">
