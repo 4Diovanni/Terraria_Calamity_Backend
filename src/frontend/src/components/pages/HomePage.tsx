@@ -197,6 +197,7 @@ interface SectionHeadingProps {
   accentColor: string;
   linkTo: string;
   linkLabel?: string;
+  intro?: string;
 }
 
 const SectionHeading = ({
@@ -204,20 +205,28 @@ const SectionHeading = ({
   accentColor,
   linkTo,
   linkLabel = 'Ver todos',
+  intro,
 }: SectionHeadingProps) => (
-  <div className="flex items-end justify-between mb-8">
-    <div className="flex items-center gap-3">
-      <div className="w-0.5 h-7 flex-shrink-0" style={{ background: accentColor }} />
-      <h2 className="text-2xl md:text-3xl font-bold font-display text-calamity-text-primary">
-        {title}
-      </h2>
+  <div className="mb-8">
+    <div className="flex items-end justify-between mb-4">
+      <div className="flex items-center gap-3">
+        <div className="w-0.5 h-7 flex-shrink-0" style={{ background: accentColor }} />
+        <h2 className="text-2xl md:text-3xl font-bold font-display text-calamity-text-primary">
+          {title}
+        </h2>
+      </div>
+      <Link
+        to={linkTo}
+        className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary hover:text-calamity-text-primary border-b border-transparent hover:border-calamity-border pb-px transition-colors duration-300 whitespace-nowrap ml-4"
+      >
+        {linkLabel}
+      </Link>
     </div>
-    <Link
-      to={linkTo}
-      className="text-xs font-display uppercase tracking-widest text-calamity-text-tertiary hover:text-calamity-text-primary border-b border-transparent hover:border-calamity-border pb-px transition-colors duration-300"
-    >
-      {linkLabel}
-    </Link>
+    {intro && (
+      <p className="text-calamity-text-secondary font-body text-base leading-relaxed max-w-2xl">
+        {intro}
+      </p>
+    )}
   </div>
 );
 
@@ -225,7 +234,7 @@ export const HomePage = () => {
   const navigate = useNavigate();
   const { weapons, loading } = useWeapons();
 
-  const weaponItems: CarouselItem[] = weapons.map((w) => ({
+  const weaponItems: CarouselItem[] = weapons.slice(0, 5).map((w) => ({
     id: w.id,
     title: w.name,
     subtitle: w.weaponClass,
@@ -296,6 +305,7 @@ export const HomePage = () => {
             accentColor="var(--color-primary)"
             linkTo="/weapons"
             linkLabel="Ver todas as armas"
+            intro="As armas do Calamity abrangem cinco classes de combate — Corpo a Corpo, Distância, Magia, Invocação e Assassino. Cada arma carrega um elemento único: Brimstone, Astral, Sombra, Toxico e outros vinte tipos que determinam afinidades e fraquezas dos inimigos."
           />
           {loading ? (
             <div className="flex items-center gap-3 py-8">
@@ -328,6 +338,7 @@ export const HomePage = () => {
             accentColor="var(--color-accent-purple)"
             linkTo="/enemies"
             linkLabel="Ver todos os inimigos"
+            intro="O Calamity Mod adiciona dezenas de novos inimigos e mais de cinquenta chefes, cada um com padrões de ataque únicos e drops exclusivos. A progressão vai de criaturas comuns do bioma corrompido até entidades que transcendem o tempo e o espaço."
           />
           <Carousel items={ENEMY_ITEMS} />
         </div>
@@ -341,6 +352,7 @@ export const HomePage = () => {
             accentColor="var(--color-accent-green)"
             linkTo="/biomes"
             linkLabel="Ver todos os biomas"
+            intro="Biomas radicalmente distintos alteram a exploração: o Abismo Sulfúrico afoga em ácido, a Infestação Astral contamina com cristais alienígenas, a Cratera Brimstone queima em chamas infernais. Cada bioma exige equipamento específico para sobrevivência."
           />
           <Carousel items={BIOME_ITEMS} />
         </div>
@@ -354,6 +366,7 @@ export const HomePage = () => {
             accentColor="var(--color-accent-gold)"
             linkTo="/npcs"
             linkLabel="Ver todos os NPCs"
+            intro="Novos NPCs comerciantes desbloqueiam à medida que você progride. Alquimistas, engenheiros e sobreviventes do Abismo oferecem itens exclusivos e serviços impossíveis de encontrar nos vendedores vanilla."
           />
           <Carousel items={NPC_ITEMS} />
         </div>
