@@ -42,28 +42,31 @@
 
 :root.light {
   --color-primary:       #9b1c1c;
-  --color-primary-light: #c81e1e;
+  --color-primary-light: #b91c1c;
   --color-primary-dark:  #7b1818;
 
-  /* Backgrounds — offwhite quente */
-  --color-bg-dark:      #f0ede7;
-  --color-bg-secondary: #fafaf8;
-  --color-bg-tertiary:  #e8e4dc;
+  /* Parchment-warm backgrounds */
+  --color-bg-dark:      #eae5dc;
+  --color-bg-secondary: #f2ede4;
+  --color-bg-tertiary:  #dfd9ce;
 
-  --color-accent-purple:       #7c3aed;
-  --color-accent-purple-light: #8b5cf6;
+  /* Accents darkened for legibility on light bg */
+  --color-accent-purple:       #6d28d9;
+  --color-accent-purple-light: #7c3aed;
   --color-accent-purple-dark:  #4c1d95;
-  --color-accent-gold:         #a16207;
-  --color-accent-green:        #15803d;
-  --color-accent-blue:         #1d4ed8;
-  --color-accent-cyan:         #0891b2;
+  --color-accent-gold:         #92600a;
+  --color-accent-green:        #166534;
+  --color-accent-blue:         #1e40af;
+  --color-accent-cyan:         #0e7490;
 
-  --color-text-primary:   #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-tertiary:  #94a3b8;
+  /* Text — warm dark, high contrast */
+  --color-text-primary:   #1a1510;
+  --color-text-secondary: #3d3020;
+  --color-text-tertiary:  #6e5c40;
 
-  --color-border:       #d1cdc5;
-  --color-border-light: #b8b4ac;
+  /* Borders */
+  --color-border:       #c5bdb0;
+  --color-border-light: #a8a29a;
 }
 
 /* ─── Base ─────────────────────────────────────────────────── */
