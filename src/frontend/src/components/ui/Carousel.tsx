@@ -87,10 +87,11 @@ const PortraitCard = ({ item, onClick }: PortraitCardProps) => {
 
 interface CarouselProps {
   items: CarouselItem[];
+  layout?: 'portrait-left' | 'portrait-right';
   onSelect?: (item: CarouselItem) => void;
 }
 
-export const Carousel = ({ items, onSelect }: CarouselProps) => {
+export const Carousel = ({ items, layout = 'portrait-left', onSelect }: CarouselProps) => {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
@@ -117,14 +118,14 @@ export const Carousel = ({ items, onSelect }: CarouselProps) => {
 
   const item = items[current];
   const accent = item.accentColor ?? 'var(--color-primary)';
-  const isReversed = current % 2 === 1;
+  const isReversed = layout === 'portrait-right';
 
   return (
     <div
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Slide — portrait left on even, right on odd (desktop only) */}
+      {/* Slide — layout fixed per section (portrait-left or portrait-right) */}
       <div
         key={current}
         className={[

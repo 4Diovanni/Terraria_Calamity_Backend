@@ -320,6 +320,7 @@ export const HomePage = () => {
           ) : weaponItems.length > 0 ? (
             <Carousel
               items={weaponItems}
+              layout="portrait-left"
               onSelect={(item) => navigate(`/weapons/${item.id}`)}
             />
           ) : (
@@ -340,7 +341,7 @@ export const HomePage = () => {
             linkLabel="Ver todos os inimigos"
             intro="O Calamity Mod adiciona dezenas de novos inimigos e mais de cinquenta chefes, cada um com padrões de ataque únicos e drops exclusivos. A progressão vai de criaturas comuns do bioma corrompido até entidades que transcendem o tempo e o espaço."
           />
-          <Carousel items={ENEMY_ITEMS} />
+          <Carousel items={ENEMY_ITEMS} layout="portrait-right" />
         </div>
       </section>
 
@@ -354,7 +355,7 @@ export const HomePage = () => {
             linkLabel="Ver todos os biomas"
             intro="Biomas radicalmente distintos alteram a exploração: o Abismo Sulfúrico afoga em ácido, a Infestação Astral contamina com cristais alienígenas, a Cratera Brimstone queima em chamas infernais. Cada bioma exige equipamento específico para sobrevivência."
           />
-          <Carousel items={BIOME_ITEMS} />
+          <Carousel items={BIOME_ITEMS} layout="portrait-left" />
         </div>
       </section>
 
@@ -368,7 +369,7 @@ export const HomePage = () => {
             linkLabel="Ver todos os NPCs"
             intro="Novos NPCs comerciantes desbloqueiam à medida que você progride. Alquimistas, engenheiros e sobreviventes do Abismo oferecem itens exclusivos e serviços impossíveis de encontrar nos vendedores vanilla."
           />
-          <Carousel items={NPC_ITEMS} />
+          <Carousel items={NPC_ITEMS} layout="portrait-right" />
         </div>
       </section>
 
