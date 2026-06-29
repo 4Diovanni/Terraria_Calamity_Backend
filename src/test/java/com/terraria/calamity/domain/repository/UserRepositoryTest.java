@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // Spring Boot 4.x removed @DataJpaTest from test-autoconfigure; @SpringBootTest
 // uses the H2 test profile (src/test/resources/application.yml) with Flyway
 // disabled and ddl-auto=create-drop, which builds the schema from JPA entities.
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Transactional
 class UserRepositoryTest {
 
@@ -31,7 +31,8 @@ class UserRepositoryTest {
 
         assertThat(userRepository.existsByEmail("calamitas@terraria.com")).isTrue();
         assertThat(userRepository.existsByUsername("calamitas")).isTrue();
-        assertThat(userRepository.findByEmail("calamitas@terraria.com")).isPresent();
+        assertThat(userRepository.findByEmail("calamitas@terraria.com"))
+                .hasValueSatisfying(u -> assertThat(u.getEmail()).isEqualTo("calamitas@terraria.com"));
         assertThat(userRepository.existsByEmail("ghost@terraria.com")).isFalse();
     }
 }
