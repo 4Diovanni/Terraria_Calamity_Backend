@@ -2,21 +2,28 @@ package com.terraria.calamity.application.service;
 
 import com.terraria.calamity.api.exception.DuplicateResourceException;
 import com.terraria.calamity.domain.dto.AuthResponse;
+import com.terraria.calamity.domain.dto.LoginRequest;
 import com.terraria.calamity.domain.dto.RegisterRequest;
+import com.terraria.calamity.domain.entity.Role;
 import com.terraria.calamity.domain.entity.User;
 import com.terraria.calamity.domain.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +47,11 @@ class AuthServiceTest {
 
         AuthResponse response = authService.register(request);
 
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+        assertThat(userCaptor.getValue().getPassword()).isEqualTo("hashed");
+        assertThat(userCaptor.getValue().getRole()).isEqualTo(Role.USER);
+
         assertThat(response.token()).isEqualTo("jwt-token");
         assertThat(response.type()).isEqualTo("Bearer");
         assertThat(response.username()).isEqualTo("calamitas");
@@ -54,5 +66,41 @@ class AuthServiceTest {
 
         assertThatThrownBy(() -> authService.register(request))
                 .isInstanceOf(DuplicateResourceException.class);
+    }
+
+    @Test
+    void register_throwsWhenUsernameAlreadyTaken() {
+        RegisterRequest request = new RegisterRequest("calamitas", "calamitas@terraria.com", "secret123");
+        when(userRepository.existsByEmail("calamitas@terraria.com")).thenReturn(false);
+        when(userRepository.existsByUsername("calamitas")).thenReturn(true);
+
+        assertThatThrownBy(() -> authService.register(request))
+                .isInstanceOf(DuplicateResourceException.class);
+    }
+
+    @Test
+    void login_returnsTokenOnValidCredentials() {
+        LoginRequest request = new LoginRequest("calamitas@terraria.com", "secret123");
+        User user = User.builder()
+                .username("calamitas").email("calamitas@terraria.com")
+                .password("hashed").role(Role.USER).enabled(true).build();
+        when(userRepository.findByEmail("calamitas@terraria.com")).thenReturn(Optional.of(user));
+        when(jwtService.generateToken("calamitas@terraria.com")).thenReturn("jwt-token");
+
+        AuthResponse response = authService.login(request);
+
+        assertThat(response.token()).isEqualTo("jwt-token");
+        assertThat(response.type()).isEqualTo("Bearer");
+    }
+
+    @Test
+    void login_throwsBadCredentialsOnAuthFailure() {
+        LoginRequest request = new LoginRequest("bad@terraria.com", "wrong");
+        doThrow(new org.springframework.security.authentication.InternalAuthenticationServiceException("fail"))
+                .when(authenticationManager).authenticate(any());
+
+        assertThatThrownBy(() -> authService.login(request))
+                .isInstanceOf(org.springframework.security.authentication.BadCredentialsException.class)
+                .hasMessage("Invalid email or password");
     }
 }
