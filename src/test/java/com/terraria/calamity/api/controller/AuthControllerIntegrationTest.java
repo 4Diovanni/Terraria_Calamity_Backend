@@ -13,7 +13,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -92,5 +94,28 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bad)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void protectedEndpoint_withoutToken_isRejected() throws Exception {
+        mockMvc.perform(get("/api/v1/internal/ping"))
+                .andExpect(result ->
+                        assertThat(result.getResponse().getStatus()).isIn(401, 403));
+    }
+
+    @Test
+    void protectedEndpoint_withValidToken_passesAuthentication() throws Exception {
+        RegisterRequest register = new RegisterRequest("guarded", "guarded@terraria.com", "secret123");
+        String body = mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(register)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        String token = objectMapper.readTree(body).get("token").asText();
+
+        // Authenticated, but no handler for this path -> 404 proves the JWT filter authenticated the request.
+        mockMvc.perform(get("/api/v1/internal/ping")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
     }
 }
