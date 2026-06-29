@@ -44,6 +44,14 @@ describe('authService', () => {
         authService.login({ email: 'bad', password: '' })
       ).rejects.toMatchObject({ status: 400 });
     });
+
+    it('propagates 401 errors without redirecting (interceptor skip)', async () => {
+      mock.onPost('/api/v1/auth/login').reply(401, { message: 'Bad credentials' });
+
+      await expect(
+        authService.login({ email: 'x@x.com', password: 'wrong' })
+      ).rejects.toMatchObject({ status: 401 });
+    });
   });
 
   describe('register', () => {

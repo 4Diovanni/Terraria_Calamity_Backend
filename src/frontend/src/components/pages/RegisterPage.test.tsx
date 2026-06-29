@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { act } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { RegisterPage } from './RegisterPage';
@@ -108,6 +109,9 @@ describe('RegisterPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /criar conta/i }));
 
     expect(screen.getByRole('button', { name: /criar conta/i })).toBeDisabled();
-    resolveRegister();
+
+    await act(async () => {
+      resolveRegister();
+    });
   });
 });

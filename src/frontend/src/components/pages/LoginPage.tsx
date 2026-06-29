@@ -81,7 +81,7 @@ export function LoginPage() {
           Entrar
         </Button>
         {error && (
-          <p className="mt-3 text-sm text-calamity-primary">{error}</p>
+          <p role="alert" className="mt-3 text-sm text-calamity-primary">{error}</p>
         )}
         <p className="mt-4 text-sm text-center text-calamity-text-secondary">
           Não tem conta?{' '}
