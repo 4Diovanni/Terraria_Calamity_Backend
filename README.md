@@ -58,6 +58,20 @@ Endpoints protegidos requerem autenticação Bearer (JWT).
 
 ---
 
+## Endpoints — Auth
+
+| Método | Rota                      | Acesso  | Descrição                                   |
+|--------|---------------------------|---------|---------------------------------------------|
+| POST   | `/api/v1/auth/register`   | Público | Cria usuário (username, email, senha) → JWT |
+| POST   | `/api/v1/auth/login`      | Público | Autentica por email + senha → JWT           |
+
+Respostas retornam `{ token, type: "Bearer", username, email, role }`.
+Use o token em chamadas protegidas via header `Authorization: Bearer <token>`.
+
+Variáveis de ambiente: `JWT_SECRET` (mín. 32 caracteres em produção) e `JWT_EXPIRATION` (ms, padrão 86400000 = 24h).
+
+---
+
 ## Como rodar localmente
 
 ### Pré-requisitos
@@ -146,7 +160,7 @@ java -jar target/Calamity-0.0.1-SNAPSHOT.jar
 
 ## Roadmap
 
-- [ ] Login/Register com JWT completo
+- [x] Login/Register básico com JWT (e-mail + senha)
 - [ ] Roles (ADMIN, USER)
 - [ ] Endpoints para Bosses, Items, Players, Inventory
 - [ ] Swagger / OpenAPI
