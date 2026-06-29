@@ -4,3 +4,4 @@
 
 export * from './useFetch';
 export * from './useWeapons';
+export * from './useAuth';

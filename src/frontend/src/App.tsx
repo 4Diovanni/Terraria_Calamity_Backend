@@ -8,40 +8,37 @@ import { BiomesPage } from './components/pages/BiomesPage';
 import { ItemsPage } from './components/pages/ItemsPage';
 import { NotFound } from './components/pages/NotFound';
 import { Layout } from './components/common/Layout';
+import { LoginPage } from './components/pages/LoginPage';
+import { RegisterPage } from './components/pages/RegisterPage';
+import { AuthProvider } from './context/AuthContext';
 
-/**
- * Componente raiz da aplicação
- * Gerencia todas as rotas do Terraria Calamity RPG
- */
 function App() {
   return (
-    <Router>
-      <Layout>
+    <AuthProvider>
+      <Router>
         <Routes>
-          {/* Home */}
-          <Route path="/" element={<HomePage />} />
-
-          {/* Weapons */}
-          <Route path="/weapons" element={<WeaponsPage />} />
-          <Route path="/weapons/:id" element={<WeaponDetailPage />} />
-
-          {/* Enemies */}
-          <Route path="/enemies" element={<EnemiesPage />} />
-
-          {/* NPCs */}
-          <Route path="/npcs" element={<NPCsPage />} />
-
-          {/* Biomes */}
-          <Route path="/biomes" element={<BiomesPage />} />
-
-          {/* Items */}
-          <Route path="/items" element={<ItemsPage />} />
-
-          {/* 404 */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/*"
+            element={
+              <Layout>
+                <Routes>
+                  <Route index element={<HomePage />} />
+                  <Route path="weapons" element={<WeaponsPage />} />
+                  <Route path="weapons/:id" element={<WeaponDetailPage />} />
+                  <Route path="enemies" element={<EnemiesPage />} />
+                  <Route path="npcs" element={<NPCsPage />} />
+                  <Route path="biomes" element={<BiomesPage />} />
+                  <Route path="items" element={<ItemsPage />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>
+            }
+          />
         </Routes>
-      </Layout>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 
