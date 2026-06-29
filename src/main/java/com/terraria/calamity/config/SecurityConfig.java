@@ -1,9 +1,12 @@
 package com.terraria.calamity.config;
 
+import com.terraria.calamity.application.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,8 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -20,125 +23,87 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 /**
- * Configuração de Segurança da Aplicação
- *
- * Define quais endpoints são públicos e quais requerem autenticação.
- * Endpoints GET para listar armas são públicos.
- * Endpoints POST/PUT/DELETE requerem autenticação (a ser implementada com JWT).
- *
- * IMPORTANTE: Os paths devem corresponder exatamente aos @RequestMapping dos controllers!
- * - Controller: @RequestMapping("/api/v1/weapons")
- * - Security: /api/v1/weapons
+ * Configuração de Segurança — autenticação stateless via JWT.
+ * Endpoints públicos: /api/v1/auth/**, GETs de weapons/elements, actuator.
+ * Demais endpoints exigem um JWT válido (Authorization: Bearer <token>).
  */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    /**
-     * Encoder de senha usando BCrypt
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Gerenciador de autenticação
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * Configuração de CORS
-     * Permite requisições do frontend
-     */
+    @Bean
+    public AuthenticationProvider authenticationProvider(
+            CustomUserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000",
-            "http://localhost:5173",
-            "http://localhost:8000"
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "http://localhost:8000"
         ));
-        // Domínio de produção e previews do frontend no Vercel
         configuration.setAllowedOriginPatterns(Arrays.asList(
-            "https://terraria-calamity-backend*.vercel.app"
+                "https://terraria-calamity-backend*.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
-    /**
-     * Configuração de segurança HTTP
-     * Define permissões de acesso para cada endpoint
-     *
-     * ✅ Paths estão corrigidos para corresponder aos @RequestMapping
-     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            AuthenticationProvider authenticationProvider) throws Exception {
         http
-            // Habilita CORS
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-            // Mantém CSRF habilitado (padrão do Spring Security)
-
-            // Define política de sessão (stateless para APIs REST)
+            // API REST stateless com JWT → CSRF desabilitado
+            .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-            // Autorização de requisições
             .authorizeHttpRequests(authz -> authz
-                // ========== ENDPOINTS PÚBLICOS (GET) ==========
-                // ✅ Listar todas as armas - GET /api/v1/weapons
-                .requestMatchers(HttpMethod.GET, "/api/v1/weapons").permitAll()
-                
-                // ✅ Obter arma por ID - GET /api/v1/weapons/{id}
-                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/**").permitAll()
-                
-                // ✅ Buscar armas por elemento - GET /api/v1/weapons/element/{element}
-                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/element/**").permitAll()
-                
-                // ✅ Buscar armas por classe - GET /api/v1/weapons/class/**
-                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/class/**").permitAll()
-                
-                // ✅ Buscar armas por raridade - GET /api/v1/weapons/rarity/**
-                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/rarity/**").permitAll()
-                
-                // ✅ Buscar armas por nome - GET /api/v1/weapons/search**
-                .requestMatchers(HttpMethod.GET,"/api/v1/weapons/search**").permitAll()
+                // ========== AUTENTICAÇÃO (público) ==========
+                .requestMatchers("/api/v1/auth/**").permitAll()
 
-                    // ✅ Buscar elementos por nome - GET /api/v1/elements**
-                    .requestMatchers(HttpMethod.GET,"/api/v1/elements**").permitAll()
-                
+                // ========== ENDPOINTS PÚBLICOS (GET) ==========
+                .requestMatchers(HttpMethod.GET, "/api/v1/weapons").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/weapons/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/elements**").permitAll()
+
                 // Health checks e actuator
                 .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                
+
                 // ========== ENDPOINTS PROTEGIDOS ==========
-                // ❌ Criar arma (requer autenticação - admin) - POST /api/v1/weapons
                 .requestMatchers(HttpMethod.POST, "/api/v1/weapons").authenticated()
-                
-                // ❌ Atualizar arma (requer autenticação - admin) - PUT /api/v1/weapons/{id}
                 .requestMatchers(HttpMethod.PUT, "/api/v1/weapons/**").authenticated()
-                
-                // ❌ Deletar arma (requer autenticação - admin) - DELETE /api/v1/weapons/{id}
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/weapons/**").authenticated()
-                
-                // ========== Qualquer outra requisição requer autenticação ==========
+
                 .anyRequest().authenticated()
             )
-            
-            // HTTP Basic Auth (temporário, será substituído por JWT)
-            .httpBasic(Customizer.withDefaults());
-        
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }
