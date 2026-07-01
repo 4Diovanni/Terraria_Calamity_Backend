@@ -140,6 +140,7 @@ describe('AuthProvider', () => {
 
     expect(screen.getByTestId('user').textContent).toBe('stored');
     expect(screen.getByTestId('token').textContent).toBe(fakeToken);
+    expect(apiClientModule.setAuthToken).toHaveBeenCalledWith(fakeToken);
   });
 
   it('clears an expired token from localStorage on mount', async () => {
