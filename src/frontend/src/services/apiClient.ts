@@ -114,7 +114,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !config?.url?.includes('/api/v1/auth/')) {
       // Não autorizado - limpar token (não redirecionar para endpoints de auth, pois
       // eles precisam propagar o erro para a UI exibir a mensagem inline)
-      localStorage.removeItem('jwt_token');
+      removeAuthToken();
       window.location.href = '/login';
     }
 

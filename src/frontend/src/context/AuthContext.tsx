@@ -20,7 +20,8 @@ function decodeJwtPayload(
   try {
     const segment = token.split('.')[1];
     const padded = segment.replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(atob(padded));
+    const withPadding = padded + '='.repeat((4 - (padded.length % 4)) % 4);
+    return JSON.parse(atob(withPadding));
   } catch {
     return null;
   }
