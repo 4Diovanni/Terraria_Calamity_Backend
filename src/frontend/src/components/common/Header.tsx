@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Drawer } from '../ui/Drawer';
 import { ThemeToggle } from '../ui/ThemeToggle';
+import { useAuth } from '../../hooks/useAuth';
 
 const tabs = [
   { label: 'Inicio', path: '/' },
@@ -44,6 +45,8 @@ const HamburgerIcon = ({ isOpen }: HamburgerIconProps) => (
 
 export const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [compact, setCompact] = useState(false);
 
@@ -91,6 +94,27 @@ export const Header = () => {
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
+          {user ? (
+            <div className="hidden md:flex items-center gap-3">
+              <span className="text-sm font-display text-calamity-text-secondary">
+                {user.username}
+              </span>
+              <button
+                type="button"
+                onClick={() => { logout(); navigate('/login'); }}
+                className="text-sm font-display uppercase tracking-wider text-calamity-text-secondary hover:text-calamity-primary border border-calamity-border hover:border-calamity-primary px-3 py-1 transition-colors duration-300"
+              >
+                Sair
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden md:block text-sm font-display uppercase tracking-wider text-calamity-text-secondary hover:text-calamity-primary border border-calamity-border hover:border-calamity-primary px-3 py-1 transition-colors duration-300"
+            >
+              Entrar
+            </Link>
+          )}
           <button
             type="button"
             aria-label="Abrir menu de navegação"
