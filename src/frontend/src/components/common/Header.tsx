@@ -127,7 +127,33 @@ export const Header = () => {
       </div>
 
       <Drawer open={menuOpen} onOpenChange={setMenuOpen} title="Menu" side="right">
-        <nav className="flex flex-col gap-6">{renderLinks(() => setMenuOpen(false))}</nav>
+        <nav className="flex flex-col gap-6">
+          {renderLinks(() => setMenuOpen(false))}
+          <div className="pt-2 border-t border-calamity-border">
+            {user ? (
+              <>
+                <span className="block text-sm font-display text-calamity-text-secondary mb-3">
+                  {user.username}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => { setMenuOpen(false); logout(); navigate('/login'); }}
+                  className="text-sm font-display uppercase tracking-wider text-calamity-text-secondary hover:text-calamity-primary transition-colors duration-300"
+                >
+                  Sair
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="text-sm font-display uppercase tracking-wider text-calamity-text-secondary hover:text-calamity-primary transition-colors duration-300"
+              >
+                Entrar
+              </Link>
+            )}
+          </div>
+        </nav>
       </Drawer>
     </header>
   );
