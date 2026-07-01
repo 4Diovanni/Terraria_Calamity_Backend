@@ -10,6 +10,8 @@ import { NotFound } from './components/pages/NotFound';
 import { Layout } from './components/common/Layout';
 import { LoginPage } from './components/pages/LoginPage';
 import { RegisterPage } from './components/pages/RegisterPage';
+import { ProfilePage } from './components/pages/ProfilePage';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -31,6 +33,14 @@ function App() {
                   <Route path="npcs" element={<NPCsPage />} />
                   <Route path="biomes" element={<BiomesPage />} />
                   <Route path="items" element={<ItemsPage />} />
+                  <Route
+                    path="perfil"
+                    element={
+                      <ProtectedRoute>
+                        <ProfilePage />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Layout>
