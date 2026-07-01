@@ -4,3 +4,4 @@
 
 export * from './weapon';
 export * from './api';
+export * from './auth';
