@@ -31,3 +31,11 @@ export { ScrollToTop } from './ScrollToTop';
 export { PageSidebar } from './PageSidebar';
 
 export { MarkdownContent } from './MarkdownContent';
+
+export { StatBar } from './StatBar';
+
+export { EntityHero } from './EntityHero';
+
+export { DetailFooter } from './DetailFooter';
+
+export { DetailLayout } from './DetailLayout';
