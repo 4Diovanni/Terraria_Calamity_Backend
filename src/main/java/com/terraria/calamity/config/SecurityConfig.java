@@ -99,6 +99,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/weapons").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/weapons/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/elements**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/armor").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/armor/**").permitAll()
 
                 // Health checks e actuator
                 .requestMatchers("/actuator/**").permitAll()
@@ -107,6 +109,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/weapons").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/weapons/**").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/weapons/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/armor").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/armor/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/armor/**").authenticated()
 
                 .anyRequest().authenticated()
             )
