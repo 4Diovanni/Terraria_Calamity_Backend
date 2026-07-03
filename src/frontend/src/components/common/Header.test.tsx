@@ -53,6 +53,16 @@ describe('Header', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
+  it('shows the "Armaduras" tab linking to /armor', () => {
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    );
+    const link = screen.getByRole('link', { name: 'Armaduras' });
+    expect(link).toHaveAttribute('href', '/armor');
+  });
+
   it('shows "Entrar" link when user is not logged in', () => {
     render(
       <MemoryRouter>

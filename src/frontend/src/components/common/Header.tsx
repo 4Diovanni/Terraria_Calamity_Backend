@@ -7,6 +7,7 @@ import { useAuth } from '../../hooks/useAuth';
 const tabs = [
   { label: 'Inicio', path: '/' },
   { label: 'Armas', path: '/weapons' },
+  { label: 'Armaduras', path: '/armor' },
   { label: 'Inimigos', path: '/enemies' },
   { label: 'NPCs', path: '/npcs' },
   { label: 'Biomas', path: '/biomes' },

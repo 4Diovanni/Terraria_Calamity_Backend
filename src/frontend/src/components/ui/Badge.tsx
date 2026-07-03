@@ -10,6 +10,7 @@ const VARIANT_COLORS: Record<BadgeVariant, Record<string, string>> = {
     MAGE: 'bg-blue-600/20 text-blue-400',
     SUMMON: 'bg-yellow-600/20 text-yellow-400',
     ROGUE: 'bg-green-600/20 text-green-400',
+    UNIVERSAL: 'bg-amber-500/20 text-amber-400',
   },
   rarity: {
     COMMON: 'bg-gray-400/20 text-gray-400',

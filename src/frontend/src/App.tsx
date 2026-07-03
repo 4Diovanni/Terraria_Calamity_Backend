@@ -6,6 +6,8 @@ import { EnemiesPage } from './components/pages/EnemiesPage';
 import { NPCsPage } from './components/pages/NPCsPage';
 import { BiomesPage } from './components/pages/BiomesPage';
 import { ItemsPage } from './components/pages/ItemsPage';
+import { ArmorPage } from './components/pages/ArmorPage';
+import { ArmorDetailPage } from './components/pages/ArmorDetailPage';
 import { NotFound } from './components/pages/NotFound';
 import { Layout } from './components/common/Layout';
 import { LoginPage } from './components/pages/LoginPage';
@@ -29,6 +31,8 @@ function App() {
                   <Route index element={<HomePage />} />
                   <Route path="weapons" element={<WeaponsPage />} />
                   <Route path="weapons/:id" element={<WeaponDetailPage />} />
+                  <Route path="armor" element={<ArmorPage />} />
+                  <Route path="armor/:id" element={<ArmorDetailPage />} />
                   <Route path="enemies" element={<EnemiesPage />} />
                   <Route path="npcs" element={<NPCsPage />} />
                   <Route path="biomes" element={<BiomesPage />} />
