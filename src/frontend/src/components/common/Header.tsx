@@ -9,6 +9,7 @@ const tabs = [
   { label: 'Armas', path: '/weapons' },
   { label: 'Armaduras', path: '/armor' },
   { label: 'Inimigos', path: '/enemies' },
+  { label: 'Bosses', path: '/bosses' },
   { label: 'NPCs', path: '/npcs' },
   { label: 'Biomas', path: '/biomes' },
   { label: 'Itens', path: '/items' },

@@ -21,8 +21,6 @@ const MOCK_BOSSES: Boss[] = [
     damage: 60,
     defense: 8,
     markdownContent: [
-      '## Estratégia',
-      '',
       'Uma serpente colossal que emerge das areias. **Mantenha-se em movimento** para',
       'desviar das investidas e cuidado com as crias que ela invoca.',
       '',
@@ -45,8 +43,6 @@ const MOCK_BOSSES: Boss[] = [
     damage: 55,
     defense: 14,
     markdownContent: [
-      '## Estratégia',
-      '',
       'Um caranguejo fúngico que salta e lança **esporos**. Desvie dos saltos e destrua',
       'os cogumelos que ele planta antes que se acumulem.',
     ].join('\n'),
@@ -66,8 +62,6 @@ const MOCK_BOSSES: Boss[] = [
     damage: 90,
     defense: 20,
     markdownContent: [
-      '## Estratégia',
-      '',
       'A guardiã do Penhasco alterna entre uma fase de **rajadas de fogo** e uma fase',
       'protegida por um anel de chamas.',
       '',
@@ -90,8 +84,6 @@ const MOCK_BOSSES: Boss[] = [
     damage: 130,
     defense: 45,
     markdownContent: [
-      '## Estratégia',
-      '',
       'A Deusa Profanada muda de poder conforme a luz do ambiente. **Enfrente de dia**',
       'para reduzir seu dano e cuidado com os cristais orbitais e o laser de guarda.',
     ].join('\n'),
@@ -111,8 +103,6 @@ const MOCK_BOSSES: Boss[] = [
     damage: 220,
     defense: 80,
     markdownContent: [
-      '## Estratégia',
-      '',
       'A serpente cósmica **teleporta** e cria portais nas bordas da tela na segunda fase.',
       'Exige leitura de padrões e mobilidade máxima.',
       '',
