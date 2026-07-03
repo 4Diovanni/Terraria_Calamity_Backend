@@ -118,4 +118,8 @@ export const enemyService = {
     }
     return clone(enemy);
   },
+
+  async getEnemiesByBiome(biome: string): Promise<Enemy[]> {
+    return clone(MOCK_ENEMIES.filter((e) => e.biome === biome));
+  },
 };

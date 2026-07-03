@@ -26,4 +26,16 @@ describe('enemyService', () => {
   it('rejects when the id does not exist', async () => {
     await expect(enemyService.getEnemyById('inexistente')).rejects.toThrow();
   });
+
+  it('returns only the enemies of a given biome', async () => {
+    const enemies = await enemyService.getEnemiesByBiome('Praia Sulfúrica');
+    expect(enemies.length).toBeGreaterThan(0);
+    enemies.forEach((e) => expect(e.biome).toBe('Praia Sulfúrica'));
+    expect(enemies.some((e) => e.id === 'anthozoan-crab')).toBe(true);
+  });
+
+  it('returns an empty array for a biome with no enemies', async () => {
+    const enemies = await enemyService.getEnemiesByBiome('Bioma Inexistente');
+    expect(enemies).toEqual([]);
+  });
 });
