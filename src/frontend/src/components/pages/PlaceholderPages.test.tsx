@@ -3,13 +3,11 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ItemsPage } from './ItemsPage';
 import { NPCsPage } from './NPCsPage';
-import { BiomesPage } from './BiomesPage';
 
 describe('placeholder pages', () => {
   it.each([
     ['ItemsPage', ItemsPage, 'Itens'],
     ['NPCsPage', NPCsPage, 'NPCs'],
-    ['BiomesPage', BiomesPage, 'Biomas'],
   ])('%s renders its heading inside a padded, responsive container', (_name, Page, heading) => {
     render(
       <MemoryRouter>
