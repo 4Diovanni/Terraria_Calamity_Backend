@@ -1,14 +1,29 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { weaponService } from '../../services/weaponService';
-import { Weapon } from '../../types/weapon';
+import { Weapon, RarityLevel } from '../../types/weapon';
 import { Loading } from '../ui/Loading';
 import { Error as ErrorView } from '../ui/Error';
-import { Badge } from '../ui/Badge';
+import {
+  Badge,
+  DetailLayout,
+  EntityHero,
+  StatBar,
+  MarkdownContent,
+  DetailFooter,
+} from '../ui';
+
+// Borda de acento por raridade — sinal de gameplay (cor semântica), não chrome de tema.
+const RARITY_BORDER: Record<RarityLevel, string> = {
+  [RarityLevel.COMMON]: 'border-gray-500',
+  [RarityLevel.UNCOMMON]: 'border-green-500',
+  [RarityLevel.RARE]: 'border-blue-500',
+  [RarityLevel.EPIC]: 'border-purple-500',
+  [RarityLevel.LEGENDARY]: 'border-yellow-500',
+};
 
 export const WeaponDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [weapon, setWeapon] = useState<Weapon | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,125 +55,60 @@ export const WeaponDetailPage = () => {
     return <ErrorView message={error || 'Arma não encontrada'} onRetry={() => window.location.reload()} />;
   }
 
-  return (
-    <div className="min-h-screen bg-calamity-bg-dark text-calamity-text-primary pb-16">
-      <div className="container mx-auto px-4 py-8">
-        <button
-          onClick={() => navigate('/weapons')}
-          className="flex items-center gap-2 text-calamity-primary hover:text-calamity-accent-gold transition-colors duration-300 font-display uppercase"
-        >
-          ← Voltar para Armas
-        </button>
-      </div>
+  const aside = (
+    <div className="space-y-8">
+      <EntityHero
+        imageUrl={weapon.imageUrl}
+        name={weapon.name}
+        accentClass={RARITY_BORDER[weapon.rarity] ?? 'border-calamity-border'}
+        badges={
+          <>
+            <Badge variant="element" value={weapon.element} />
+            <Badge variant="rarity" value={weapon.rarity} />
+            <Badge variant="class" value={weapon.weaponClass} />
+          </>
+        }
+      />
 
-      <section className="bg-calamity-bg-secondary py-12 border-b-2 border-calamity-primary">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-            {weapon.imageUrl && (
-              <img
-                src={weapon.imageUrl}
-                alt={weapon.name}
-                className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 object-contain"
-              />
-            )}
-
-            <div className="flex-1">
-              <h1 className="text-3xl sm:text-5xl font-bold font-display text-calamity-accent-gold mb-4">
-                {weapon.name}
-              </h1>
-              <div className="flex gap-3 flex-wrap">
-                <Badge variant="rarity" value={weapon.rarity} />
-                <Badge variant="element" value={weapon.element} />
-                <Badge variant="class" value={weapon.weaponClass} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
-            <div className="bg-calamity-bg-secondary border-2 border-calamity-border p-8 shadow-mystical space-y-6">
-              <h2 className="text-2xl font-bold font-display text-calamity-accent-gold border-b-2 border-calamity-border pb-4">
-                Estatísticas
-              </h2>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-display text-calamity-text-secondary">Dano</span>
-                  <span className="text-2xl font-bold text-calamity-accent-gold">{weapon.baseDamage}</span>
-                </div>
-                <div className="w-full bg-calamity-bg-tertiary rounded-full h-2 overflow-hidden">
-                  <div className="bg-calamity-primary h-full" style={{ width: `${Math.min((weapon.baseDamage / 200) * 100, 100)}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-display text-calamity-text-secondary">Chance de Crítico</span>
-                  <span className="text-2xl font-bold text-calamity-accent-purple">{weapon.criticalChance}%</span>
-                </div>
-                <div className="w-full bg-calamity-bg-tertiary rounded-full h-2 overflow-hidden">
-                  <div className="bg-calamity-accent-purple h-full" style={{ width: `${weapon.criticalChance}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-display text-calamity-text-secondary">Velocidade</span>
-                  <span className="text-2xl font-bold text-calamity-accent-green">{weapon.attacksPerTurn}</span>
-                </div>
-                <div className="w-full bg-calamity-bg-tertiary rounded-full h-2 overflow-hidden">
-                  <div className="bg-calamity-accent-green h-full" style={{ width: `${Math.min((weapon.attacksPerTurn / 5) * 100, 100)}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-display text-calamity-text-secondary">Knockback</span>
-                  <span className="text-2xl font-bold text-calamity-primary">{weapon.range}</span>
-                </div>
-                <div className="w-full bg-calamity-bg-tertiary rounded-full h-2 overflow-hidden">
-                  <div className="bg-calamity-primary h-full" style={{ width: `${Math.min((weapon.range / 10) * 100, 100)}%` }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="md:col-span-2">
-            <div className="bg-calamity-bg-secondary border-2 border-calamity-border p-8 shadow-mystical mb-8">
-              <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-4 border-b-2 border-calamity-border pb-4">
-                Descrição
-              </h2>
-              <p className="text-calamity-text-secondary font-body leading-relaxed text-lg">{weapon.description}</p>
-            </div>
-
-            <div className="bg-calamity-bg-secondary border-2 border-calamity-border p-8 shadow-mystical space-y-6">
-              <h2 className="text-2xl font-bold font-display text-calamity-accent-gold border-b-2 border-calamity-border pb-4">
-                Informações
-              </h2>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <div className="bg-calamity-bg-tertiary p-4 rounded-lg">
-                  <p className="text-sm text-calamity-text-tertiary font-display mb-1">Tipo</p>
-                  <p className="text-lg font-bold text-calamity-primary">{weapon.weaponClass}</p>
-                </div>
-                <div className="bg-calamity-bg-tertiary p-4 rounded-lg">
-                  <p className="text-sm text-calamity-text-tertiary font-display mb-1">ID</p>
-                  <p className="text-lg font-bold text-calamity-accent-gold font-mono">{weapon.id}</p>
-                </div>
-                <div className="bg-calamity-bg-tertiary p-4 rounded-lg">
-                  <p className="text-sm text-calamity-text-tertiary font-display mb-1">Adicionado em</p>
-                  <p className="text-lg font-bold text-calamity-text-secondary">
-                    {new Date(weapon.createdAt).toLocaleDateString('pt-BR')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="bg-calamity-bg-secondary border-2 border-calamity-border p-6 space-y-6">
+        <h2 className="text-xl font-bold font-display text-calamity-accent-gold border-b-2 border-calamity-border pb-3">
+          Estatísticas
+        </h2>
+        <StatBar label="Dano" value={weapon.baseDamage} max={200} colorClass="text-calamity-primary" />
+        <StatBar
+          label="Chance de Crítico"
+          value={weapon.criticalChance}
+          displayValue={`${weapon.criticalChance}%`}
+          max={100}
+          colorClass="text-calamity-accent-purple"
+        />
+        <StatBar
+          label="Velocidade"
+          value={weapon.attacksPerTurn}
+          max={5}
+          colorClass="text-calamity-accent-green"
+        />
+        <StatBar label="Knockback" value={weapon.range} max={10} colorClass="text-calamity-primary" />
       </div>
     </div>
+  );
+
+  const footer = (
+    <DetailFooter
+      items={[
+        { label: 'Classe', value: weapon.weaponClass },
+        { label: 'Adicionado em', value: new Date(weapon.createdAt).toLocaleDateString('pt-BR') },
+      ]}
+      quote={weapon.flavorText}
+    />
+  );
+
+  return (
+    <DetailLayout backTo="/weapons" backLabel="Voltar para Armas" aside={aside} footer={footer}>
+      <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-6 border-b-2 border-calamity-border pb-4">
+        Descrição
+      </h2>
+      <MarkdownContent content={weapon.markdownContent ?? weapon.description} />
+    </DetailLayout>
   );
 };
