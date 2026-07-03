@@ -119,6 +119,9 @@ public class SecurityConfig {
                 // (regras finas de ADMIN dentro deste path via @PreAuthorize nos métodos)
                 .requestMatchers("/api/v1/weapon-submissions/**").authenticated()
 
+                // ========== DASHBOARD ADMINISTRATIVO — SOMENTE ADMIN ==========
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
