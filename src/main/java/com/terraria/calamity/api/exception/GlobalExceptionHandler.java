@@ -2,6 +2,7 @@ package com.terraria.calamity.api.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +28,30 @@ public class GlobalExceptionHandler {
         response.put("status", HttpStatus.UNAUTHORIZED.value());
         response.put("message", "Invalid email or password");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.FORBIDDEN.value());
+        response.put("message", "Access denied: insufficient permissions");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(ForbiddenActionException.class)
+    public ResponseEntity<Map<String, Object>> handleForbiddenAction(ForbiddenActionException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.FORBIDDEN.value());
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(InvalidSubmissionStateException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidSubmissionState(InvalidSubmissionStateException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.CONFLICT.value());
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
