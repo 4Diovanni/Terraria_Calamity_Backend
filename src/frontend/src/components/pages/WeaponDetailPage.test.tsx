@@ -30,7 +30,7 @@ describe('WeaponDetailPage', () => {
     vi.mocked(weaponService.getWeaponById).mockResolvedValue(weapon);
   });
 
-  it('renders the weapon name and rarity/element/class badges', async () => {
+  const renderPage = () =>
     render(
       <MemoryRouter initialEntries={['/weapons/42']}>
         <Routes>
@@ -39,10 +39,33 @@ describe('WeaponDetailPage', () => {
       </MemoryRouter>
     );
 
+  it('renders the weapon name and tipo/raridade/classe badges', async () => {
+    renderPage();
+
     await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
-    // Badges appear in header + info boxes: Rarity once, Element once, Class twice (badge + Tipo box)
-    expect(screen.getAllByText('LEGENDARY')).toHaveLength(1);
-    expect(screen.getAllByText('NEUTRAL')).toHaveLength(1);
+    // Badges: Tipo (element) e Raridade uma vez; Classe aparece na badge e no rodapé.
+    expect(screen.getByText('NEUTRAL')).toBeInTheDocument();
+    expect(screen.getByText('LEGENDARY')).toBeInTheDocument();
     expect(screen.getAllByText('MELEE')).toHaveLength(2);
+  });
+
+  it('renders the description as markdown and the codex footer', async () => {
+    renderPage();
+
+    await waitFor(() => expect(screen.getByText('desc')).toBeInTheDocument());
+    expect(screen.getByRole('heading', { name: 'Descrição' })).toBeInTheDocument();
+    expect(screen.getByText('Estatísticas')).toBeInTheDocument();
+    expect(screen.getByText('Classe')).toBeInTheDocument();
+    expect(screen.getByText('Adicionado em')).toBeInTheDocument();
+  });
+
+  it('links back to the weapons list', async () => {
+    renderPage();
+
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+    expect(screen.getByRole('link', { name: /Voltar para Armas/i })).toHaveAttribute(
+      'href',
+      '/weapons'
+    );
   });
 });

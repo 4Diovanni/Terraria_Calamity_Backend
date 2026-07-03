@@ -64,6 +64,10 @@ export interface Weapon {
   imageUrl: string;
   createdAt: string;
   updatedAt: string;
+  /** Documento .md completo (lore/história/notas). Backend preenche depois. */
+  markdownContent?: string;
+  /** Frase de sabor exibida no rodapé. Backend preenche depois. */
+  flavorText?: string;
 }
 
 export interface WeaponFilters {
