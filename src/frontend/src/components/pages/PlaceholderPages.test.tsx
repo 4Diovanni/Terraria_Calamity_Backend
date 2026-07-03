@@ -2,14 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ItemsPage } from './ItemsPage';
-import { EnemiesPage } from './EnemiesPage';
 import { NPCsPage } from './NPCsPage';
 import { BiomesPage } from './BiomesPage';
 
 describe('placeholder pages', () => {
   it.each([
     ['ItemsPage', ItemsPage, 'Itens'],
-    ['EnemiesPage', EnemiesPage, 'Inimigos'],
     ['NPCsPage', NPCsPage, 'NPCs'],
     ['BiomesPage', BiomesPage, 'Biomas'],
   ])('%s renders its heading inside a padded, responsive container', (_name, Page, heading) => {
