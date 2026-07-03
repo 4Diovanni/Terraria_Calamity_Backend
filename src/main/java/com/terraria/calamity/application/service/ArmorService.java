@@ -68,9 +68,15 @@ public class ArmorService {
         armor.setMarkdownContent(updated.getMarkdownContent());
         armor.setFlavorText(updated.getFlavorText());
 
+        // Flush the orphan-removal deletes for the old pieces before adding the new
+        // ones. Without this, Hibernate orders the re-inserts before the deletes within
+        // a single flush, which collides with uq_armor_pieces_armor_slot whenever the
+        // updated set reuses a slot the armor already had (e.g. resubmitting the same
+        // HELMET/CHEST/LEGS slots on every real edit).
         armor.getPieces().clear();
-        updated.getPieces().forEach(armor::addPiece);
+        armorRepository.saveAndFlush(armor);
 
+        updated.getPieces().forEach(armor::addPiece);
         Armor saved = armorRepository.save(armor);
         return armorMapper.toResponseDTO(saved);
     }

@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,6 +48,23 @@ class ArmorControllerIntegrationTest {
                 {"slot": "HELMET", "name": "%s Elmo", "imageUrl": "", "defense": 3},
                 {"slot": "CHEST", "name": "%s Peitoral", "imageUrl": "", "defense": 5},
                 {"slot": "LEGS", "name": "%s Calca", "imageUrl": "", "defense": 4}
+              ]
+            }
+            """.formatted(name, name, name, name);
+    }
+
+    private String armorPayloadUpdated(String name) {
+        return """
+            {
+              "name": "%s",
+              "armorClass": "UNIVERSAL",
+              "rarity": "COMMON",
+              "totalDefense": 20,
+              "imageUrl": "",
+              "pieces": [
+                {"slot": "HELMET", "name": "%s Elmo", "imageUrl": "", "defense": 6},
+                {"slot": "CHEST", "name": "%s Peitoral", "imageUrl": "", "defense": 8},
+                {"slot": "LEGS", "name": "%s Calca", "imageUrl": "", "defense": 6}
               ]
             }
             """.formatted(name, name, name, name);
@@ -100,5 +118,39 @@ class ArmorControllerIntegrationTest {
     void getArmorById_notFound_returns404() throws Exception {
         mockMvc.perform(get("/api/v1/armor/999999"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateArmor_withSameSlots_doesNotViolateUniqueConstraint() throws Exception {
+        String token = registerAndGetToken("armorupdater", "armorupdater@terraria.com");
+
+        String created = mockMvc.perform(post("/api/v1/armor")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(armorPayload("Conjunto Original")))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        long id = objectMapper.readTree(created).get("id").asLong();
+
+        // Resubmitting the same 3 slots (HELMET/CHEST/LEGS) is the primary real-world
+        // update scenario. Previously this threw DataIntegrityViolationException because
+        // Hibernate flushed the re-inserts before the orphan-removal deletes, colliding
+        // with uq_armor_pieces_armor_slot.
+        mockMvc.perform(put("/api/v1/armor/" + id)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(armorPayloadUpdated("Conjunto Atualizado")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Conjunto Atualizado"))
+                .andExpect(jsonPath("$.totalDefense").value(20))
+                .andExpect(jsonPath("$.pieces.length()").value(3))
+                .andExpect(jsonPath("$.pieces[?(@.slot=='HELMET')].defense").value(6))
+                .andExpect(jsonPath("$.pieces[?(@.slot=='CHEST')].defense").value(8))
+                .andExpect(jsonPath("$.pieces[?(@.slot=='LEGS')].defense").value(6));
+
+        mockMvc.perform(get("/api/v1/armor/" + id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pieces.length()").value(3));
     }
 }

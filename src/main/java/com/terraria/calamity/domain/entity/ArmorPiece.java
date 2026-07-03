@@ -11,7 +11,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "armor_pieces")
+@Table(name = "armor_pieces", uniqueConstraints = {
+        @UniqueConstraint(name = "uq_armor_pieces_armor_slot", columnNames = {"armor_id", "slot"})
+})
 public class ArmorPiece extends BaseEntity {
 
     @NotNull(message = "Armor cannot be null")
