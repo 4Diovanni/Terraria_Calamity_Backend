@@ -1,6 +1,8 @@
 package com.terraria.calamity.application.service;
 
 import com.terraria.calamity.api.exception.DuplicateResourceException;
+import com.terraria.calamity.api.exception.ForbiddenActionException;
+import com.terraria.calamity.api.exception.InvalidSubmissionStateException;
 import com.terraria.calamity.application.mapper.WeaponSubmissionMapper;
 import com.terraria.calamity.domain.dto.WeaponSubmissionRequestDTO;
 import com.terraria.calamity.domain.dto.WeaponSubmissionResponseDTO;
@@ -59,5 +61,66 @@ public class WeaponSubmissionService {
         return submissionRepository.findBySubmittedByOrderByCreatedAtDesc(submitter).stream()
                 .map(mapper::toResponseDTO)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<WeaponSubmissionResponseDTO> findByStatus(SubmissionStatus status) {
+        return submissionRepository.findByStatusOrderByCreatedAtAsc(status).stream()
+                .map(mapper::toResponseDTO)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public WeaponSubmissionResponseDTO findById(Long id) {
+        return mapper.toResponseDTO(getSubmissionOrThrow(id));
+    }
+
+    public void cancel(Long id, String requesterEmail) {
+        WeaponSubmission submission = getSubmissionOrThrow(id);
+
+        if (!submission.getSubmittedBy().getEmail().equals(requesterEmail)) {
+            throw new ForbiddenActionException("Only the author can cancel this submission");
+        }
+        if (submission.getStatus() != SubmissionStatus.PENDING) {
+            throw new InvalidSubmissionStateException("Only PENDING submissions can be canceled");
+        }
+        submissionRepository.delete(submission);
+    }
+
+    public WeaponSubmissionResponseDTO approve(Long id) {
+        WeaponSubmission submission = getSubmissionOrThrow(id);
+        if (submission.getStatus() != SubmissionStatus.PENDING) {
+            throw new InvalidSubmissionStateException("Only PENDING submissions can be approved");
+        }
+
+        if (submission.getType() == SubmissionType.CREATE) {
+            weaponRepository.save(mapper.toApprovedWeapon(submission));
+        } else {
+            Weapon target = weaponRepository.findById(submission.getTargetWeapon().getId())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Weapon not found with ID: " + submission.getTargetWeapon().getId()));
+            mapper.applyToExistingWeapon(submission, target);
+            weaponRepository.save(target);
+        }
+
+        submission.setStatus(SubmissionStatus.APPROVED);
+        WeaponSubmission saved = submissionRepository.save(submission);
+        return mapper.toResponseDTO(saved);
+    }
+
+    public WeaponSubmissionResponseDTO reject(Long id, String reason) {
+        WeaponSubmission submission = getSubmissionOrThrow(id);
+        if (submission.getStatus() != SubmissionStatus.PENDING) {
+            throw new InvalidSubmissionStateException("Only PENDING submissions can be rejected");
+        }
+        submission.setStatus(SubmissionStatus.REJECTED);
+        submission.setRejectionReason(reason);
+        WeaponSubmission saved = submissionRepository.save(submission);
+        return mapper.toResponseDTO(saved);
+    }
+
+    private WeaponSubmission getSubmissionOrThrow(Long id) {
+        return submissionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Submission not found with ID: " + id));
     }
 }
