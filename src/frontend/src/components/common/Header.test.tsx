@@ -63,6 +63,16 @@ describe('Header', () => {
     expect(link).toHaveAttribute('href', '/armor');
   });
 
+  it('shows the "Bosses" tab linking to /bosses', () => {
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    );
+    const link = screen.getByRole('link', { name: 'Bosses' });
+    expect(link).toHaveAttribute('href', '/bosses');
+  });
+
   it('shows "Entrar" link when user is not logged in', () => {
     render(
       <MemoryRouter>
