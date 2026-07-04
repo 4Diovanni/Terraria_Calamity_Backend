@@ -1,10 +1,12 @@
 package com.terraria.calamity.application.service;
 
 import com.terraria.calamity.api.controller.WeaponController;
+import com.terraria.calamity.api.exception.ResourceInUseException;
 import com.terraria.calamity.domain.dto.WeaponResponseDTO;
 import com.terraria.calamity.domain.entity.Element;
 import com.terraria.calamity.domain.entity.Weapon;
 import com.terraria.calamity.domain.repository.WeaponRepository;
+import com.terraria.calamity.domain.repository.WeaponSubmissionRepository;
 import com.terraria.calamity.application.mapper.WeaponMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class WeaponService {
     private final WeaponRepository weaponRepository;
     private final WeaponMapper weaponMapper;
+    private final WeaponSubmissionRepository weaponSubmissionRepository;
 
     /**
      * Cria uma nova arma a partir dos dados da requisição
@@ -109,6 +112,10 @@ public class WeaponService {
     public void delete(Long id) {
         if (!weaponRepository.existsById(id)) {
             throw new RuntimeException("Weapon not found with ID: " + id);
+        }
+        if (weaponSubmissionRepository.existsByTargetWeaponId(id)) {
+            throw new ResourceInUseException(
+                    "Não é possível deletar: esta arma possui submissões associadas");
         }
         weaponRepository.deleteById(id);
     }

@@ -1,0 +1,48 @@
+package com.terraria.calamity.application.service;
+
+import com.terraria.calamity.api.exception.ResourceInUseException;
+import com.terraria.calamity.application.mapper.WeaponMapper;
+import com.terraria.calamity.domain.repository.WeaponRepository;
+import com.terraria.calamity.domain.repository.WeaponSubmissionRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class WeaponServiceTest {
+
+    @Mock private WeaponRepository weaponRepository;
+    @Mock private WeaponMapper weaponMapper;
+    @Mock private WeaponSubmissionRepository weaponSubmissionRepository;
+
+    @InjectMocks private WeaponService service;
+
+    @Test
+    void delete_withAssociatedSubmission_throwsResourceInUseAndDoesNotDelete() {
+        when(weaponRepository.existsById(7L)).thenReturn(true);
+        when(weaponSubmissionRepository.existsByTargetWeaponId(7L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(7L))
+                .isInstanceOf(ResourceInUseException.class)
+                .hasMessageContaining("submiss");
+
+        verify(weaponRepository, never()).deleteById(7L);
+    }
+
+    @Test
+    void delete_withoutAssociatedSubmission_deletesNormally() {
+        when(weaponRepository.existsById(9L)).thenReturn(true);
+        when(weaponSubmissionRepository.existsByTargetWeaponId(9L)).thenReturn(false);
+
+        service.delete(9L);
+
+        verify(weaponRepository).deleteById(9L);
+    }
+}

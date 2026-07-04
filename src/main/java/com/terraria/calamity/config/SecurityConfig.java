@@ -82,9 +82,18 @@ public class SecurityConfig {
     }
 
     @Bean
+    public FilterRegistrationBean<RateLimitFilter> rateLimitFilterRegistration(
+            RateLimitFilter filter) {
+        FilterRegistrationBean<RateLimitFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             JwtAuthenticationFilter jwtAuthenticationFilter,
+            RateLimitFilter rateLimitFilter,
             AuthenticationProvider authenticationProvider) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -105,18 +114,30 @@ public class SecurityConfig {
                 // Health checks e actuator
                 .requestMatchers("/actuator/**").permitAll()
 
-                // ========== ENDPOINTS PROTEGIDOS ==========
-                .requestMatchers(HttpMethod.POST, "/api/v1/weapons").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/weapons/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/weapons/**").authenticated()
+                // ========== ARMAS — SOMENTE ADMIN (direto, sem fila) ==========
+                .requestMatchers(HttpMethod.POST, "/api/v1/weapons").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/weapons/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/weapons/**").hasRole("ADMIN")
+
+                // ========== ARMADURAS (fora do escopo desta spec — preservado como estava) ==========
                 .requestMatchers(HttpMethod.POST, "/api/v1/armor").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/armor/**").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/armor/**").authenticated()
 
+                // ========== FILA DE SUBMISSÕES — QUALQUER AUTENTICADO ==========
+                // (regras finas de ADMIN dentro deste path via @PreAuthorize nos métodos)
+                .requestMatchers("/api/v1/weapon-submissions/**").authenticated()
+
+                // ========== DASHBOARD ADMINISTRATIVO — SOMENTE ADMIN ==========
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            // jwtAuthenticationFilter precisa ser registrado antes (contra um filtro built-in)
+            // para que sua ordem exista quando rateLimitFilter o referencia como âncora abaixo.
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }
