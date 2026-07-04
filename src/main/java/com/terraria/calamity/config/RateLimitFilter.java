@@ -68,10 +68,11 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     private String resolveClientIp(HttpServletRequest request) {
-        String forwardedFor = request.getHeader("X-Forwarded-For");
-        if (forwardedFor != null && !forwardedFor.isBlank()) {
-            return forwardedFor.split(",")[0].trim();
-        }
+        // Não confiar em X-Forwarded-For: é fornecido pelo cliente e pode ser
+        // forjado para girar de IP a cada requisição e furar o rate limit.
+        // getRemoteAddr() reflete a conexão TCP real (ou o proxy confiável,
+        // se um dia for necessário resolver IP real atrás de LB, isso deve
+        // ser feito via configuração explícita de proxy confiável, não aqui).
         return request.getRemoteAddr();
     }
 }

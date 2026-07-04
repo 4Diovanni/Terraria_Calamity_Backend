@@ -68,4 +68,30 @@ class RateLimitFilterTest {
 
         assertThat(otherIpResponse.getStatus()).isEqualTo(200);
     }
+
+    @Test
+    void xForwardedForHeader_isIgnored_sameRemoteAddrSharesBucket() throws Exception {
+        RateLimitFilter filter = new RateLimitFilter();
+        FilterChain chain = mock(FilterChain.class);
+
+        // Mesmo getRemoteAddr() (conexão TCP real) mas X-Forwarded-For
+        // diferente a cada requisição, simulando um cliente tentando forjar
+        // o header para girar de IP e furar o rate limit.
+        for (int i = 0; i < 5; i++) {
+            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/v1/auth/login");
+            request.setRemoteAddr("10.0.0.5");
+            request.addHeader("X-Forwarded-For", "203.0.113." + i);
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            filter.doFilter(request, response, chain);
+            assertThat(response.getStatus()).isEqualTo(200);
+        }
+
+        MockHttpServletRequest sixthRequest = new MockHttpServletRequest("POST", "/api/v1/auth/login");
+        sixthRequest.setRemoteAddr("10.0.0.5");
+        sixthRequest.addHeader("X-Forwarded-For", "203.0.113.99");
+        MockHttpServletResponse sixthResponse = new MockHttpServletResponse();
+        filter.doFilter(sixthRequest, sixthResponse, chain);
+
+        assertThat(sixthResponse.getStatus()).isEqualTo(429);
+    }
 }
