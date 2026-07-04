@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { WeaponDetailPage } from './WeaponDetailPage';
 import { weaponService } from '../../services/weaponService';
@@ -89,5 +89,29 @@ describe('WeaponDetailPage', () => {
       'href',
       '/weapons'
     );
+  });
+
+  it('does not show admin action buttons for non-admin users', async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+    expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
+  });
+
+  it('opens the edit drawer pre-filled and saves via updateWeapon for admins', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    vi.mocked(weaponService.updateWeapon).mockResolvedValue({ ...weapon, name: 'Terra Blade+' });
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Editar' }));
+    const dialog = screen.getByRole('dialog', { name: 'Editar Arma' });
+    expect(within(dialog).getByLabelText('Nome')).toHaveValue('Terra Blade');
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Salvar Alterações' }));
+
+    await waitFor(() =>
+      expect(weaponService.updateWeapon).toHaveBeenCalledWith('42', expect.objectContaining({ name: 'Terra Blade' }))
+    );
+    await waitFor(() => expect(screen.getByText('Terra Blade+')).toBeInTheDocument());
   });
 });

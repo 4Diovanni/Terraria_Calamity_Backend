@@ -1,8 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { weaponService } from '../../services/weaponService';
-import { Weapon, RarityLevel } from '../../types/weapon';
+import { Weapon, RarityLevel, WeaponFormData } from '../../types/weapon';
 import { weaponRarityToTier } from '../../lib/weaponRarity';
+import { useAuth } from '../../hooks/useAuth';
+import { WeaponForm } from './WeaponForm';
 import { Loading } from '../ui/Loading';
 import { Error as ErrorView } from '../ui/Error';
 import {
@@ -12,6 +14,8 @@ import {
   StatBar,
   MarkdownContent,
   DetailFooter,
+  Drawer,
+  Button,
 } from '../ui';
 
 // Borda de acento por raridade — sinal de gameplay (cor semântica), não chrome de tema.
@@ -28,6 +32,15 @@ export const WeaponDetailPage = () => {
   const [weapon, setWeapon] = useState<Weapon | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const handleUpdate = async (data: WeaponFormData) => {
+    if (!weapon) return;
+    const updated = await weaponService.updateWeapon(weapon.id, data);
+    setWeapon(updated);
+    setIsEditOpen(false);
+  };
 
   useEffect(() => {
     const fetchWeapon = async () => {
@@ -71,6 +84,14 @@ export const WeaponDetailPage = () => {
         }
       />
 
+      {user?.role === 'ADMIN' && (
+        <div className="flex gap-3">
+          <Button variant="outline" size="sm" onClick={() => setIsEditOpen(true)}>
+            Editar
+          </Button>
+        </div>
+      )}
+
       <div className="bg-calamity-bg-secondary border-2 border-calamity-border p-6 space-y-6">
         <h2 className="text-xl font-bold font-display text-calamity-accent-gold border-b-2 border-calamity-border pb-3">
           Estatísticas
@@ -112,20 +133,33 @@ export const WeaponDetailPage = () => {
   );
 
   return (
-    <DetailLayout backTo="/weapons" backLabel="Voltar para Armas" aside={aside} footer={footer}>
-      <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-6 border-b-2 border-calamity-border pb-4">
-        Descrição
-      </h2>
-      <MarkdownContent content={weapon.markdownContent ?? weapon.description} />
+    <>
+      <DetailLayout backTo="/weapons" backLabel="Voltar para Armas" aside={aside} footer={footer}>
+        <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-6 border-b-2 border-calamity-border pb-4">
+          Descrição
+        </h2>
+        <MarkdownContent content={weapon.markdownContent ?? weapon.description} />
 
-      {weapon.abilities && (
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-4 border-b-2 border-calamity-border pb-4">
-            Habilidades
-          </h2>
-          <p className="text-calamity-text-secondary font-body">{weapon.abilities}</p>
-        </div>
+        {weapon.abilities && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-4 border-b-2 border-calamity-border pb-4">
+              Habilidades
+            </h2>
+            <p className="text-calamity-text-secondary font-body">{weapon.abilities}</p>
+          </div>
+        )}
+      </DetailLayout>
+
+      {user?.role === 'ADMIN' && (
+        <Drawer open={isEditOpen} onOpenChange={setIsEditOpen} title="Editar Arma" side="right">
+          <WeaponForm
+            initialValues={weapon}
+            onSubmit={handleUpdate}
+            onCancel={() => setIsEditOpen(false)}
+            submitLabel="Salvar Alterações"
+          />
+        </Drawer>
       )}
-    </DetailLayout>
+    </>
   );
 };
