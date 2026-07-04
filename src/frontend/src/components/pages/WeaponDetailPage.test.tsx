@@ -27,7 +27,7 @@ const weapon: Weapon = {
   range: 3,
   price: 100,
   quality: 8,
-  abilities: '',
+  abilities: 'Investida em linha reta ao acertar um crítico.',
   imageUrl: '',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
@@ -66,6 +66,19 @@ describe('WeaponDetailPage', () => {
     expect(screen.getByText('Estatísticas')).toBeInTheDocument();
     expect(screen.getByText('Classe')).toBeInTheDocument();
     expect(screen.getByText('Adicionado em')).toBeInTheDocument();
+  });
+
+  it('renders price, quality and abilities', async () => {
+    renderPage();
+
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+    expect(screen.getByText('Qualidade')).toBeInTheDocument();
+    expect(screen.getByText('Preço')).toBeInTheDocument();
+    expect(screen.getByText('100 moedas')).toBeInTheDocument();
+    expect(screen.getByText('Habilidades')).toBeInTheDocument();
+    expect(
+      screen.getByText('Investida em linha reta ao acertar um crítico.')
+    ).toBeInTheDocument();
   });
 
   it('links back to the weapons list', async () => {

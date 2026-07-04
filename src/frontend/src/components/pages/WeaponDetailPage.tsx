@@ -90,6 +90,12 @@ export const WeaponDetailPage = () => {
           colorClass="text-calamity-accent-green"
         />
         <StatBar label="Knockback" value={weapon.range} max={10} colorClass="text-calamity-primary" />
+        <StatBar
+          label="Qualidade"
+          value={weapon.quality}
+          max={10}
+          colorClass="text-calamity-accent-blue"
+        />
       </div>
     </div>
   );
@@ -98,6 +104,7 @@ export const WeaponDetailPage = () => {
     <DetailFooter
       items={[
         { label: 'Classe', value: weapon.weaponClass },
+        { label: 'Preço', value: `${weapon.price} moedas` },
         { label: 'Adicionado em', value: new Date(weapon.createdAt).toLocaleDateString('pt-BR') },
       ]}
       quote={weapon.flavorText}
@@ -110,6 +117,15 @@ export const WeaponDetailPage = () => {
         Descrição
       </h2>
       <MarkdownContent content={weapon.markdownContent ?? weapon.description} />
+
+      {weapon.abilities && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-4 border-b-2 border-calamity-border pb-4">
+            Habilidades
+          </h2>
+          <p className="text-calamity-text-secondary font-body">{weapon.abilities}</p>
+        </div>
+      )}
     </DetailLayout>
   );
 };
