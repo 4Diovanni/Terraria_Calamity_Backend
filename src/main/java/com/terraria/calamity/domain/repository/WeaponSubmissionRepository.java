@@ -16,5 +16,7 @@ public interface WeaponSubmissionRepository extends JpaRepository<WeaponSubmissi
 
     boolean existsByTargetWeaponIdAndStatus(Long targetWeaponId, SubmissionStatus status);
 
+    boolean existsByTargetWeaponId(Long targetWeaponId);
+
     long countByStatus(SubmissionStatus status);
 }
