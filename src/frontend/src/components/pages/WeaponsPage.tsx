@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWeapons } from "../../hooks/useWeapons";
+import { useAuth } from "../../hooks/useAuth";
 import { Loading } from "../ui/Loading";
 import { Error } from "../ui/Error";
 import { Drawer } from "../ui/Drawer";
+import { Button } from "../ui/Button";
 import { WeaponCard } from "./WeaponCard";
+import { WeaponForm } from "./WeaponForm";
+import { weaponService } from "../../services/weaponService";
+import { weaponRarityToTier } from "../../lib/weaponRarity";
+import { WeaponFormData } from "../../types/weapon";
 
 const WEAPON_CLASSES = ["MELEE", "RANGED", "MAGE", "SUMMON", "ROGUE"];
 const RARITIES = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
@@ -18,6 +24,14 @@ const ELEMENT = [
 export const WeaponsPage = () => {
   const navigate = useNavigate();
   const { weapons, loading, error, wakingUp, retryAttempt, refetch } = useWeapons();
+  const { user } = useAuth();
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  const handleCreate = async (data: WeaponFormData) => {
+    await weaponService.createWeapon(data);
+    setIsCreateOpen(false);
+    await refetch();
+  };
 
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [selectedRarity, setSelectedRarity] = useState<string>("");
@@ -33,7 +47,7 @@ export const WeaponsPage = () => {
   const filteredWeapons = weapons
     .filter((weapon) => {
       if (selectedClass && weapon.weaponClass !== selectedClass) return false;
-      if (selectedRarity && weapon.rarity !== selectedRarity) return false;
+      if (selectedRarity && weaponRarityToTier(weapon.rarity) !== selectedRarity) return false;
       if (selectedElement && weapon.element !== selectedElement) return false;
       if (searchTerm && !weapon.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
       return true;
@@ -86,8 +100,9 @@ export const WeaponsPage = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-display text-calamity-text-secondary mb-2">Raridade</label>
+        <label htmlFor="filter-rarity" className="block text-sm font-display text-calamity-text-secondary mb-2">Raridade</label>
         <select
+          id="filter-rarity"
           value={selectedRarity}
           onChange={(e) => setSelectedRarity(e.target.value)}
           className="w-full bg-calamity-bg-tertiary border-b-2 border-calamity-border text-calamity-text-primary focus:outline-none focus:border-calamity-primary transition-colors duration-300 px-3 py-2 appearance-none cursor-pointer"
@@ -137,6 +152,11 @@ export const WeaponsPage = () => {
           <p className="text-xl text-calamity-text-secondary">
             Total: <span className="text-calamity-primary font-bold">{filteredWeapons.length}</span> armas encontradas
           </p>
+          {user?.role === 'ADMIN' && (
+            <Button variant="primary" size="sm" className="mt-4" onClick={() => setIsCreateOpen(true)}>
+              + Nova Arma
+            </Button>
+          )}
         </div>
 
         <div className="md:hidden mb-8">
@@ -165,6 +185,14 @@ export const WeaponsPage = () => {
               Aplicar Filtros
             </button>
           </div>
+        </Drawer>
+
+        <Drawer open={isCreateOpen} onOpenChange={setIsCreateOpen} title="Nova Arma" side="right">
+          <WeaponForm
+            onSubmit={handleCreate}
+            onCancel={() => setIsCreateOpen(false)}
+            submitLabel="Criar Arma"
+          />
         </Drawer>
 
         {filteredWeapons.length === 0 ? (

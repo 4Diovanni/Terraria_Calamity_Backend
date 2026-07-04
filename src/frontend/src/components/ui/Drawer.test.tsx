@@ -43,4 +43,20 @@ describe('Drawer', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Fechar' }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
+
+  it('allows the panel to scroll when content overflows, for both side variants', () => {
+    const { rerender } = render(
+      <Drawer open onOpenChange={() => {}} title="Menu" side="right">
+        <p>Conteúdo</p>
+      </Drawer>
+    );
+    expect(screen.getByRole('dialog')).toHaveClass('overflow-y-auto');
+
+    rerender(
+      <Drawer open onOpenChange={() => {}} title="Menu" side="bottom">
+        <p>Conteúdo</p>
+      </Drawer>
+    );
+    expect(screen.getByRole('dialog')).toHaveClass('overflow-y-auto');
+  });
 });

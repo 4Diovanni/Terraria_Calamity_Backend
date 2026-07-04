@@ -1,12 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { WeaponDetailPage } from './WeaponDetailPage';
 import { weaponService } from '../../services/weaponService';
-import { Weapon, WeaponTypeClass, Element, RarityLevel } from '../../types/weapon';
+import { Weapon, WeaponTypeClass, Element } from '../../types/weapon';
 
 vi.mock('../../services/weaponService', () => ({
-  weaponService: { getWeaponById: vi.fn() },
+  weaponService: { getWeaponById: vi.fn(), updateWeapon: vi.fn(), deleteWeapon: vi.fn() },
+}));
+
+const mockUseAuth = vi.fn();
+vi.mock('../../hooks/useAuth', () => ({
+  useAuth: () => mockUseAuth(),
 }));
 
 const weapon: Weapon = {
@@ -15,11 +20,14 @@ const weapon: Weapon = {
   description: 'desc',
   weaponClass: WeaponTypeClass.MELEE,
   element: Element.NEUTRAL,
-  rarity: RarityLevel.LEGENDARY,
+  rarity: 16,
   baseDamage: 55,
   criticalChance: 10,
   attacksPerTurn: 2,
   range: 3,
+  price: 100,
+  quality: 8,
+  abilities: 'Investida em linha reta ao acertar um crítico.',
   imageUrl: '',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
@@ -28,6 +36,7 @@ const weapon: Weapon = {
 describe('WeaponDetailPage', () => {
   beforeEach(() => {
     vi.mocked(weaponService.getWeaponById).mockResolvedValue(weapon);
+    mockUseAuth.mockReturnValue({ user: null });
   });
 
   const renderPage = () =>
@@ -59,6 +68,19 @@ describe('WeaponDetailPage', () => {
     expect(screen.getByText('Adicionado em')).toBeInTheDocument();
   });
 
+  it('renders price, quality and abilities', async () => {
+    renderPage();
+
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+    expect(screen.getByText('Qualidade')).toBeInTheDocument();
+    expect(screen.getByText('Preço')).toBeInTheDocument();
+    expect(screen.getByText('100 moedas')).toBeInTheDocument();
+    expect(screen.getByText('Habilidades')).toBeInTheDocument();
+    expect(
+      screen.getByText('Investida em linha reta ao acertar um crítico.')
+    ).toBeInTheDocument();
+  });
+
   it('links back to the weapons list', async () => {
     renderPage();
 
@@ -67,5 +89,60 @@ describe('WeaponDetailPage', () => {
       'href',
       '/weapons'
     );
+  });
+
+  it('does not show admin action buttons for non-admin users', async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+    expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
+  });
+
+  it('opens the edit drawer pre-filled and saves via updateWeapon for admins', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    vi.mocked(weaponService.updateWeapon).mockResolvedValue({ ...weapon, name: 'Terra Blade+' });
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Editar' }));
+    const dialog = screen.getByRole('dialog', { name: 'Editar Arma' });
+    expect(within(dialog).getByLabelText('Nome')).toHaveValue('Terra Blade');
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Salvar Alterações' }));
+
+    await waitFor(() =>
+      expect(weaponService.updateWeapon).toHaveBeenCalledWith('42', expect.objectContaining({ name: 'Terra Blade' }))
+    );
+    await waitFor(() => expect(screen.getByText('Terra Blade+')).toBeInTheDocument());
+  });
+
+  it('deletes the weapon and navigates back to the list on confirm', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    vi.mocked(weaponService.deleteWeapon).mockResolvedValue(undefined);
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Deletar' }));
+    const dialog = screen.getByRole('dialog', { name: 'Deletar Arma' });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Confirmar Exclusão' }));
+
+    await waitFor(() => expect(weaponService.deleteWeapon).toHaveBeenCalledWith('42'));
+  });
+
+  it('shows the backend conflict message when delete fails with 409', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    vi.mocked(weaponService.deleteWeapon).mockRejectedValue({
+      status: 409,
+      message: 'Não é possível deletar: esta arma possui submissões associadas',
+    });
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Deletar' }));
+    const dialog = screen.getByRole('dialog', { name: 'Deletar Arma' });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Confirmar Exclusão' }));
+
+    expect(
+      await within(dialog).findByText('Não é possível deletar: esta arma possui submissões associadas')
+    ).toBeInTheDocument();
   });
 });

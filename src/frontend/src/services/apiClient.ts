@@ -128,6 +128,14 @@ apiClient.interceptors.response.use(
       apiError.message = 'Recurso não encontrado';
     }
 
+    if (error.response?.status === 409) {
+      // Conflito — o backend já manda uma mensagem específica no corpo
+      // (ex.: submissão pendente duplicada, ou recurso referenciado que
+      // não pode ser removido).
+      const backendMessage = (error.response.data as { message?: string } | undefined)?.message;
+      apiError.message = backendMessage || 'Conflito ao processar a solicitação.';
+    }
+
     if (error.response?.status === 500) {
       // Erro do servidor
       apiError.message = 'Erro do servidor. Tente novamente mais tarde';

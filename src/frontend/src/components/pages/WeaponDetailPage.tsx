@@ -1,7 +1,10 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { weaponService } from '../../services/weaponService';
-import { Weapon, RarityLevel } from '../../types/weapon';
+import { Weapon, RarityLevel, WeaponFormData } from '../../types/weapon';
+import { weaponRarityToTier } from '../../lib/weaponRarity';
+import { useAuth } from '../../hooks/useAuth';
+import { WeaponForm } from './WeaponForm';
 import { Loading } from '../ui/Loading';
 import { Error as ErrorView } from '../ui/Error';
 import {
@@ -11,6 +14,8 @@ import {
   StatBar,
   MarkdownContent,
   DetailFooter,
+  Drawer,
+  Button,
 } from '../ui';
 
 // Borda de acento por raridade — sinal de gameplay (cor semântica), não chrome de tema.
@@ -27,6 +32,33 @@ export const WeaponDetailPage = () => {
   const [weapon, setWeapon] = useState<Weapon | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleUpdate = async (data: WeaponFormData) => {
+    if (!weapon) return;
+    const updated = await weaponService.updateWeapon(weapon.id, data);
+    setWeapon(updated);
+    setIsEditOpen(false);
+  };
+
+  const handleDelete = async () => {
+    if (!weapon) return;
+    setDeleteError(null);
+    setIsDeleting(true);
+    try {
+      await weaponService.deleteWeapon(weapon.id);
+      navigate('/weapons');
+    } catch (err) {
+      const message = (err as { message?: string })?.message;
+      setDeleteError(message || 'Erro ao deletar arma.');
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchWeapon = async () => {
@@ -60,15 +92,26 @@ export const WeaponDetailPage = () => {
       <EntityHero
         imageUrl={weapon.imageUrl}
         name={weapon.name}
-        accentClass={RARITY_BORDER[weapon.rarity] ?? 'border-calamity-border'}
+        accentClass={RARITY_BORDER[weaponRarityToTier(weapon.rarity)] ?? 'border-calamity-border'}
         badges={
           <>
             <Badge variant="element" value={weapon.element} />
-            <Badge variant="rarity" value={weapon.rarity} />
+            <Badge variant="rarity" value={weaponRarityToTier(weapon.rarity)} />
             <Badge variant="class" value={weapon.weaponClass} />
           </>
         }
       />
+
+      {user?.role === 'ADMIN' && (
+        <div className="flex gap-3">
+          <Button variant="outline" size="sm" onClick={() => setIsEditOpen(true)}>
+            Editar
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setIsConfirmingDelete(true)}>
+            Deletar
+          </Button>
+        </div>
+      )}
 
       <div className="bg-calamity-bg-secondary border-2 border-calamity-border p-6 space-y-6">
         <h2 className="text-xl font-bold font-display text-calamity-accent-gold border-b-2 border-calamity-border pb-3">
@@ -89,6 +132,12 @@ export const WeaponDetailPage = () => {
           colorClass="text-calamity-accent-green"
         />
         <StatBar label="Knockback" value={weapon.range} max={10} colorClass="text-calamity-primary" />
+        <StatBar
+          label="Qualidade"
+          value={weapon.quality}
+          max={10}
+          colorClass="text-calamity-accent-blue"
+        />
       </div>
     </div>
   );
@@ -97,6 +146,7 @@ export const WeaponDetailPage = () => {
     <DetailFooter
       items={[
         { label: 'Classe', value: weapon.weaponClass },
+        { label: 'Preço', value: `${weapon.price} moedas` },
         { label: 'Adicionado em', value: new Date(weapon.createdAt).toLocaleDateString('pt-BR') },
       ]}
       quote={weapon.flavorText}
@@ -104,11 +154,53 @@ export const WeaponDetailPage = () => {
   );
 
   return (
-    <DetailLayout backTo="/weapons" backLabel="Voltar para Armas" aside={aside} footer={footer}>
-      <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-6 border-b-2 border-calamity-border pb-4">
-        Descrição
-      </h2>
-      <MarkdownContent content={weapon.markdownContent ?? weapon.description} />
-    </DetailLayout>
+    <>
+      <DetailLayout backTo="/weapons" backLabel="Voltar para Armas" aside={aside} footer={footer}>
+        <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-6 border-b-2 border-calamity-border pb-4">
+          Descrição
+        </h2>
+        <MarkdownContent content={weapon.markdownContent ?? weapon.description} />
+
+        {weapon.abilities && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold font-display text-calamity-accent-gold mb-4 border-b-2 border-calamity-border pb-4">
+              Habilidades
+            </h2>
+            <p className="text-calamity-text-secondary font-body">{weapon.abilities}</p>
+          </div>
+        )}
+      </DetailLayout>
+
+      {user?.role === 'ADMIN' && (
+        <Drawer open={isEditOpen} onOpenChange={setIsEditOpen} title="Editar Arma" side="right">
+          <WeaponForm
+            initialValues={weapon}
+            onSubmit={handleUpdate}
+            onCancel={() => setIsEditOpen(false)}
+            submitLabel="Salvar Alterações"
+          />
+        </Drawer>
+      )}
+
+      {user?.role === 'ADMIN' && (
+        <Drawer open={isConfirmingDelete} onOpenChange={setIsConfirmingDelete} title="Deletar Arma" side="right">
+          <div className="space-y-4">
+            <p className="text-calamity-text-primary">
+              Tem certeza que deseja deletar <strong>{weapon.name}</strong>? Esta ação não pode ser
+              desfeita.
+            </p>
+            {deleteError && <p role="alert" className="text-sm text-calamity-primary">{deleteError}</p>}
+            <div className="flex gap-3">
+              <Button variant="primary" isLoading={isDeleting} onClick={handleDelete}>
+                Confirmar Exclusão
+              </Button>
+              <Button variant="outline" disabled={isDeleting} onClick={() => setIsConfirmingDelete(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </Drawer>
+      )}
+    </>
   );
 };
