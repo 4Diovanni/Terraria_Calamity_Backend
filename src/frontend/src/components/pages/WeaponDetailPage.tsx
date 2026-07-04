@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { weaponService } from '../../services/weaponService';
 import { Weapon, RarityLevel } from '../../types/weapon';
+import { weaponRarityToTier } from '../../lib/weaponRarity';
 import { Loading } from '../ui/Loading';
 import { Error as ErrorView } from '../ui/Error';
 import {
@@ -60,11 +61,11 @@ export const WeaponDetailPage = () => {
       <EntityHero
         imageUrl={weapon.imageUrl}
         name={weapon.name}
-        accentClass={RARITY_BORDER[weapon.rarity] ?? 'border-calamity-border'}
+        accentClass={RARITY_BORDER[weaponRarityToTier(weapon.rarity)] ?? 'border-calamity-border'}
         badges={
           <>
             <Badge variant="element" value={weapon.element} />
-            <Badge variant="rarity" value={weapon.rarity} />
+            <Badge variant="rarity" value={weaponRarityToTier(weapon.rarity)} />
             <Badge variant="class" value={weapon.weaponClass} />
           </>
         }

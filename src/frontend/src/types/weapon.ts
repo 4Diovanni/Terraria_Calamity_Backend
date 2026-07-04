@@ -50,18 +50,29 @@ export enum RarityLevel {
   LEGENDARY = 'LEGENDARY',
 }
 
-export interface Weapon {
-  id: string;
+/**
+ * Campos editáveis de uma arma — mesmo shape usado pelo CRUD direto do
+ * ADMIN e, na próxima entrega, pela proposta do USER via fila de aprovação.
+ */
+export interface WeaponFormData {
   name: string;
-  description: string;
   weaponClass: WeaponTypeClass;
   element: Element;
-  rarity: RarityLevel;
   baseDamage: number;
   criticalChance: number;
   attacksPerTurn: number;
   range: number;
+  /** Escala numérica do backend, -1 a 17. Para exibição, ver weaponRarityToTier. */
+  rarity: number;
+  price: number;
+  quality: number;
+  abilities: string;
+  description: string;
   imageUrl: string;
+}
+
+export interface Weapon extends WeaponFormData {
+  id: string;
   createdAt: string;
   updatedAt: string;
   /** Documento .md completo (lore/história/notas). Backend preenche depois. */
@@ -72,6 +83,7 @@ export interface Weapon {
 
 export interface WeaponFilters {
   weaponClass?: WeaponTypeClass;
+  /** Tier de exibição (ver weaponRarityToTier) — não a raridade numérica crua. */
   rarity?: RarityLevel;
   minBaseDamage?: number;
   maxBaseDamage?: number;

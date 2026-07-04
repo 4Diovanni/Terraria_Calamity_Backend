@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-import { Weapon } from '../types/weapon';
+import { Weapon, WeaponFormData } from '../types/weapon';
 
 /**
  * Serviço para gerenciar armas
@@ -94,7 +94,7 @@ export const weaponService = {
   /**
    * Criar nova arma (Admin)
    */
-  async createWeapon(weapon: Omit<Weapon, 'id' | 'createdAt' | 'updatedAt'>): Promise<Weapon> {
+  async createWeapon(weapon: WeaponFormData): Promise<Weapon> {
     try {
       const response = await apiClient.post<Weapon>(BASE_URL, weapon);
       console.log('✅ [WeaponService] Arma criada:', response.data);
@@ -108,7 +108,7 @@ export const weaponService = {
   /**
    * Atualizar arma (Admin)
    */
-  async updateWeapon(id: string, weapon: Partial<Weapon>): Promise<Weapon> {
+  async updateWeapon(id: string, weapon: WeaponFormData): Promise<Weapon> {
     try {
       const response = await apiClient.put<Weapon>(`${BASE_URL}/${id}`, weapon);
       console.log('✅ [WeaponService] Arma atualizada:', response.data);

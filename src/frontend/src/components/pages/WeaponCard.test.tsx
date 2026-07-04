@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { WeaponCard } from './WeaponCard';
-import { Weapon, WeaponTypeClass, Element, RarityLevel } from '../../types/weapon';
+import { Weapon, WeaponTypeClass, Element } from '../../types/weapon';
 
 const weapon: Weapon = {
   id: '1',
@@ -9,11 +9,14 @@ const weapon: Weapon = {
   description: 'Uma lâmina lendária forjada na Floresta da Corrupção.',
   weaponClass: WeaponTypeClass.MELEE,
   element: Element.NEUTRAL,
-  rarity: RarityLevel.LEGENDARY,
+  rarity: 16,
   baseDamage: 55,
   criticalChance: 10,
   attacksPerTurn: 2,
   range: 3,
+  price: 100,
+  quality: 8,
+  abilities: '',
   imageUrl: '',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',

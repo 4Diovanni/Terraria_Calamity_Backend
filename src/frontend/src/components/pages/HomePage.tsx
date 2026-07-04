@@ -3,6 +3,7 @@ import { useWeapons } from '../../hooks';
 import { Badge, Carousel } from '../ui';
 import type { CarouselItem } from '../ui';
 import { PageSidebar } from '../ui/PageSidebar';
+import { weaponRarityToTier } from '../../lib/weaponRarity';
 
 const LORE_COLORS = {
   yharim:    '#d4a017',
@@ -251,10 +252,10 @@ export const HomePage = () => {
     title: w.name,
     subtitle: w.weaponClass,
     description: w.description,
-    accentColor: RARITY_ACCENT[w.rarity] ?? '#d4a017',
+    accentColor: RARITY_ACCENT[weaponRarityToTier(w.rarity)] ?? '#d4a017',
     meta: (
       <>
-        <Badge variant="rarity" value={w.rarity} />
+        <Badge variant="rarity" value={weaponRarityToTier(w.rarity)} />
         <Badge variant="class" value={w.weaponClass} />
         <Badge variant="element" value={w.element} />
       </>

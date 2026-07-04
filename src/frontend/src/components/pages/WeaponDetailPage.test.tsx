@@ -3,10 +3,15 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { WeaponDetailPage } from './WeaponDetailPage';
 import { weaponService } from '../../services/weaponService';
-import { Weapon, WeaponTypeClass, Element, RarityLevel } from '../../types/weapon';
+import { Weapon, WeaponTypeClass, Element } from '../../types/weapon';
 
 vi.mock('../../services/weaponService', () => ({
-  weaponService: { getWeaponById: vi.fn() },
+  weaponService: { getWeaponById: vi.fn(), updateWeapon: vi.fn(), deleteWeapon: vi.fn() },
+}));
+
+const mockUseAuth = vi.fn();
+vi.mock('../../hooks/useAuth', () => ({
+  useAuth: () => mockUseAuth(),
 }));
 
 const weapon: Weapon = {
@@ -15,11 +20,14 @@ const weapon: Weapon = {
   description: 'desc',
   weaponClass: WeaponTypeClass.MELEE,
   element: Element.NEUTRAL,
-  rarity: RarityLevel.LEGENDARY,
+  rarity: 16,
   baseDamage: 55,
   criticalChance: 10,
   attacksPerTurn: 2,
   range: 3,
+  price: 100,
+  quality: 8,
+  abilities: '',
   imageUrl: '',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
@@ -28,6 +36,7 @@ const weapon: Weapon = {
 describe('WeaponDetailPage', () => {
   beforeEach(() => {
     vi.mocked(weaponService.getWeaponById).mockResolvedValue(weapon);
+    mockUseAuth.mockReturnValue({ user: null });
   });
 
   const renderPage = () =>

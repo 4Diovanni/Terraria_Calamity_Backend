@@ -1,5 +1,6 @@
 import { Card, CardBody, Badge } from '../ui';
 import { Weapon } from '../../types/weapon';
+import { weaponRarityToTier } from '../../lib/weaponRarity';
 
 interface WeaponCardProps {
   weapon: Weapon;
@@ -25,7 +26,7 @@ export const WeaponCard = ({ weapon, onSelect }: WeaponCardProps) => (
         </div>
         <p className="text-calamity-text-secondary text-sm line-clamp-2">{weapon.description}</p>
         <div className="flex gap-2 flex-wrap mt-auto">
-          <Badge variant="rarity" value={weapon.rarity} />
+          <Badge variant="rarity" value={weaponRarityToTier(weapon.rarity)} />
           <Badge variant="element" value={weapon.element} />
           <Badge variant="class" value={weapon.weaponClass} />
         </div>
