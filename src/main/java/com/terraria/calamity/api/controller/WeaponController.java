@@ -4,8 +4,10 @@ import com.terraria.calamity.domain.entity.Element;
 import com.terraria.calamity.domain.entity.Weapon;
 import com.terraria.calamity.domain.dto.WeaponResponseDTO;
 import com.terraria.calamity.application.service.WeaponService;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -306,6 +308,8 @@ public class WeaponController {
      */
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class WeaponRequestDTO {
         private String name;                 // Nome da arma
         private String weaponClass;          // Classe: MELEE, RANGED, MAGE, SUMMON, ROGUE
