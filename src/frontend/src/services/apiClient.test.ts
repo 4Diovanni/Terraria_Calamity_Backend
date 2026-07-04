@@ -71,3 +71,35 @@ describe('apiClient cold-start retry', () => {
     expect(mock.history.get.length).toBe(1);
   });
 });
+
+describe('apiClient error handling', () => {
+  let mock: MockAdapter;
+
+  beforeEach(() => {
+    mock = new MockAdapter(apiClient);
+  });
+
+  afterEach(() => {
+    mock.restore();
+  });
+
+  it('surfaces the backend message on 409 responses', async () => {
+    mock
+      .onPost('/api/v1/weapons')
+      .reply(409, { status: 409, message: 'Ja existe uma submissao pendente para esta arma' });
+
+    const error = await apiClient.post('/api/v1/weapons', {}).catch((e) => e);
+
+    expect(error.status).toBe(409);
+    expect(error.message).toBe('Ja existe uma submissao pendente para esta arma');
+  });
+
+  it('falls back to a generic message when the 409 response has no body message', async () => {
+    mock.onDelete('/api/v1/weapons/1').reply(409, {});
+
+    const error = await apiClient.delete('/api/v1/weapons/1').catch((e) => e);
+
+    expect(error.status).toBe(409);
+    expect(error.message).toBe('Conflito ao processar a solicitação.');
+  });
+});
