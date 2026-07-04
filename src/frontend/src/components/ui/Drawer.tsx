@@ -12,7 +12,7 @@ interface DrawerProps {
 export const Drawer = ({ open, onOpenChange, title, side = 'right', children }: DrawerProps) => {
   const panelPosition =
     side === 'right'
-      ? 'inset-y-0 right-0 h-full w-full max-w-sm border-l-2'
+      ? 'inset-y-0 right-0 h-full w-full max-w-sm overflow-y-auto border-l-2'
       : 'inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-lg border-t-2';
 
   const panelAnimation = side === 'right' ? 'drawer-panel-right' : 'drawer-panel-bottom';
