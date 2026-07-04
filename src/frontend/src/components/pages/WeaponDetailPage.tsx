@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { weaponService } from '../../services/weaponService';
 import { Weapon, RarityLevel, WeaponFormData } from '../../types/weapon';
@@ -32,14 +32,32 @@ export const WeaponDetailPage = () => {
   const [weapon, setWeapon] = useState<Weapon | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleUpdate = async (data: WeaponFormData) => {
     if (!weapon) return;
     const updated = await weaponService.updateWeapon(weapon.id, data);
     setWeapon(updated);
     setIsEditOpen(false);
+  };
+
+  const handleDelete = async () => {
+    if (!weapon) return;
+    setDeleteError(null);
+    setIsDeleting(true);
+    try {
+      await weaponService.deleteWeapon(weapon.id);
+      navigate('/weapons');
+    } catch (err) {
+      const message = (err as { message?: string })?.message;
+      setDeleteError(message || 'Erro ao deletar arma.');
+      setIsDeleting(false);
+    }
   };
 
   useEffect(() => {
@@ -88,6 +106,9 @@ export const WeaponDetailPage = () => {
         <div className="flex gap-3">
           <Button variant="outline" size="sm" onClick={() => setIsEditOpen(true)}>
             Editar
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setIsConfirmingDelete(true)}>
+            Deletar
           </Button>
         </div>
       )}
@@ -158,6 +179,26 @@ export const WeaponDetailPage = () => {
             onCancel={() => setIsEditOpen(false)}
             submitLabel="Salvar Alterações"
           />
+        </Drawer>
+      )}
+
+      {user?.role === 'ADMIN' && (
+        <Drawer open={isConfirmingDelete} onOpenChange={setIsConfirmingDelete} title="Deletar Arma" side="right">
+          <div className="space-y-4">
+            <p className="text-calamity-text-primary">
+              Tem certeza que deseja deletar <strong>{weapon.name}</strong>? Esta ação não pode ser
+              desfeita.
+            </p>
+            {deleteError && <p role="alert" className="text-sm text-calamity-primary">{deleteError}</p>}
+            <div className="flex gap-3">
+              <Button variant="primary" isLoading={isDeleting} onClick={handleDelete}>
+                Confirmar Exclusão
+              </Button>
+              <Button variant="outline" disabled={isDeleting} onClick={() => setIsConfirmingDelete(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
         </Drawer>
       )}
     </>

@@ -114,4 +114,35 @@ describe('WeaponDetailPage', () => {
     );
     await waitFor(() => expect(screen.getByText('Terra Blade+')).toBeInTheDocument());
   });
+
+  it('deletes the weapon and navigates back to the list on confirm', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    vi.mocked(weaponService.deleteWeapon).mockResolvedValue(undefined);
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Deletar' }));
+    const dialog = screen.getByRole('dialog', { name: 'Deletar Arma' });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Confirmar Exclusão' }));
+
+    await waitFor(() => expect(weaponService.deleteWeapon).toHaveBeenCalledWith('42'));
+  });
+
+  it('shows the backend conflict message when delete fails with 409', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    vi.mocked(weaponService.deleteWeapon).mockRejectedValue({
+      status: 409,
+      message: 'Não é possível deletar: esta arma possui submissões associadas',
+    });
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Deletar' }));
+    const dialog = screen.getByRole('dialog', { name: 'Deletar Arma' });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Confirmar Exclusão' }));
+
+    expect(
+      await within(dialog).findByText('Não é possível deletar: esta arma possui submissões associadas')
+    ).toBeInTheDocument();
+  });
 });
