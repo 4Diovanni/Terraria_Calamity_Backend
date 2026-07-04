@@ -3,9 +3,14 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { WeaponsPage } from './WeaponsPage';
 import { useWeapons } from '../../hooks/useWeapons';
+import { weaponService } from '../../services/weaponService';
 import { Weapon, WeaponTypeClass, Element } from '../../types/weapon';
 
 vi.mock('../../hooks/useWeapons');
+
+vi.mock('../../services/weaponService', () => ({
+  weaponService: { createWeapon: vi.fn() },
+}));
 
 const mockUseAuth = vi.fn();
 vi.mock('../../hooks/useAuth', () => ({
@@ -75,5 +80,27 @@ describe('WeaponsPage', () => {
 
     fireEvent.change(screen.getByLabelText('Raridade'), { target: { value: 'COMMON' } });
     expect(screen.queryByText('Terra Blade')).not.toBeInTheDocument();
+  });
+
+  it('does not show the "Nova Arma" button for non-admin users', () => {
+    render(
+      <MemoryRouter>
+        <WeaponsPage />
+      </MemoryRouter>
+    );
+    expect(screen.queryByRole('button', { name: '+ Nova Arma' })).not.toBeInTheDocument();
+  });
+
+  it('shows the "Nova Arma" button and opens the create drawer for admins', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    render(
+      <MemoryRouter>
+        <WeaponsPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '+ Nova Arma' }));
+    const dialog = screen.getByRole('dialog', { name: 'Nova Arma' });
+    expect(within(dialog).getByLabelText('Nome')).toBeInTheDocument();
   });
 });
