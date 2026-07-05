@@ -15,6 +15,8 @@ const tabs = [
   { label: 'Itens', path: '/items' },
 ];
 
+const CONTRIBUTE_TAB = { label: 'Contribuir', path: '/contribuir' };
+
 interface HamburgerIconProps {
   isOpen: boolean;
 }
@@ -58,9 +60,10 @@ export const Header = () => {
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
+  const visibleTabs = user ? [...tabs, CONTRIBUTE_TAB] : tabs;
 
   const renderLinks = (onNavigate?: () => void) =>
-    tabs.map((tab) => (
+    visibleTabs.map((tab) => (
       <Link
         key={tab.path}
         to={tab.path}
