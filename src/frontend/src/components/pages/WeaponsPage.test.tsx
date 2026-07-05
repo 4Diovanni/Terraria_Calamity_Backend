@@ -3,7 +3,6 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { WeaponsPage } from './WeaponsPage';
 import { useWeapons } from '../../hooks/useWeapons';
-import { weaponService } from '../../services/weaponService';
 import { Weapon, WeaponTypeClass, Element } from '../../types/weapon';
 
 vi.mock('../../hooks/useWeapons');

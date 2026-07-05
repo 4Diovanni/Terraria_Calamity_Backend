@@ -96,12 +96,20 @@ export const Header = () => {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           {user ? (
-            <Link
-              to="/perfil"
-              className="hidden md:block text-sm font-display text-calamity-text-secondary hover:text-calamity-text-primary transition-colors duration-300"
-            >
-              {user.username}
-            </Link>
+            <div className="hidden md:flex items-center gap-4">
+              <Link
+                to="/contribuir"
+                className="text-sm font-display uppercase tracking-wider text-calamity-text-secondary hover:text-calamity-primary transition-colors duration-300"
+              >
+                Contribuir
+              </Link>
+              <Link
+                to="/perfil"
+                className="text-sm font-display text-calamity-text-secondary hover:text-calamity-text-primary transition-colors duration-300"
+              >
+                {user.username}
+              </Link>
+            </div>
           ) : (
             <Link
               to="/login"
@@ -124,15 +132,24 @@ export const Header = () => {
       <Drawer open={menuOpen} onOpenChange={setMenuOpen} title="Menu" side="right">
         <nav className="flex flex-col gap-6">
           {renderLinks(() => setMenuOpen(false))}
-          <div className="pt-2 border-t border-calamity-border">
+          <div className="pt-2 border-t border-calamity-border flex flex-col gap-3">
             {user ? (
-              <Link
-                to="/perfil"
-                onClick={() => setMenuOpen(false)}
-                className="block text-sm font-display text-calamity-text-secondary hover:text-calamity-text-primary transition-colors duration-300"
-              >
-                {user.username}
-              </Link>
+              <>
+                <Link
+                  to="/contribuir"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-sm font-display uppercase tracking-wider text-calamity-text-secondary hover:text-calamity-primary transition-colors duration-300"
+                >
+                  Contribuir
+                </Link>
+                <Link
+                  to="/perfil"
+                  onClick={() => setMenuOpen(false)}
+                  className="block text-sm font-display text-calamity-text-secondary hover:text-calamity-text-primary transition-colors duration-300"
+                >
+                  {user.username}
+                </Link>
+              </>
             ) : (
               <Link
                 to="/login"

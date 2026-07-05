@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { weaponService } from '../../services/weaponService';
+import { weaponSubmissionService } from '../../services/weaponSubmissionService';
 import { Weapon, RarityLevel, WeaponFormData } from '../../types/weapon';
 import { weaponRarityToTier } from '../../lib/weaponRarity';
 import { useAuth } from '../../hooks/useAuth';
@@ -38,6 +39,15 @@ export const WeaponDetailPage = () => {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isSuggestOpen, setIsSuggestOpen] = useState(false);
+  const [suggestSuccess, setSuggestSuccess] = useState(false);
+
+  const handleSuggestEdit = async (data: WeaponFormData) => {
+    if (!weapon) return;
+    await weaponSubmissionService.create({ ...data, targetWeaponId: weapon.id });
+    setIsSuggestOpen(false);
+    setSuggestSuccess(true);
+  };
 
   const handleUpdate = async (data: WeaponFormData) => {
     if (!weapon) return;
@@ -110,6 +120,26 @@ export const WeaponDetailPage = () => {
           <Button variant="outline" size="sm" onClick={() => setIsConfirmingDelete(true)}>
             Deletar
           </Button>
+        </div>
+      )}
+
+      {user && user.role !== 'ADMIN' && (
+        <div className="flex flex-col gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSuggestSuccess(false);
+              setIsSuggestOpen(true);
+            }}
+          >
+            Sugerir Edição
+          </Button>
+          {suggestSuccess && (
+            <p role="status" className="text-sm text-calamity-accent-green">
+              Proposta enviada! Acompanhe o status em "Minhas Propostas".
+            </p>
+          )}
         </div>
       )}
 
@@ -199,6 +229,17 @@ export const WeaponDetailPage = () => {
               </Button>
             </div>
           </div>
+        </Drawer>
+      )}
+
+      {user && user.role !== 'ADMIN' && (
+        <Drawer open={isSuggestOpen} onOpenChange={setIsSuggestOpen} title="Sugerir Edição" side="right">
+          <WeaponForm
+            initialValues={weapon}
+            onSubmit={handleSuggestEdit}
+            onCancel={() => setIsSuggestOpen(false)}
+            submitLabel="Enviar Proposta"
+          />
         </Drawer>
       )}
     </>
