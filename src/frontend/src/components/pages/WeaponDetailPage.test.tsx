@@ -3,10 +3,15 @@ import { render, screen, waitFor, fireEvent, within } from '@testing-library/rea
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { WeaponDetailPage } from './WeaponDetailPage';
 import { weaponService } from '../../services/weaponService';
+import { weaponSubmissionService } from '../../services/weaponSubmissionService';
 import { Weapon, WeaponTypeClass, Element } from '../../types/weapon';
 
 vi.mock('../../services/weaponService', () => ({
   weaponService: { getWeaponById: vi.fn(), updateWeapon: vi.fn(), deleteWeapon: vi.fn() },
+}));
+
+vi.mock('../../services/weaponSubmissionService', () => ({
+  weaponSubmissionService: { create: vi.fn() },
 }));
 
 const mockUseAuth = vi.fn();
@@ -144,5 +149,30 @@ describe('WeaponDetailPage', () => {
     expect(
       await within(dialog).findByText('Não é possível deletar: esta arma possui submissões associadas')
     ).toBeInTheDocument();
+  });
+
+  it('does not show "Sugerir Edição" for non-authenticated users', async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+    expect(screen.queryByRole('button', { name: 'Sugerir Edição' })).not.toBeInTheDocument();
+  });
+
+  it('shows "Sugerir Edição" for USER (not ADMIN) and submits a targeted proposal', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Arcanjo', email: 'a@b.com', role: 'USER' } });
+    vi.mocked(weaponSubmissionService.create).mockResolvedValue({} as never);
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Sugerir Edição' }));
+    const dialog = screen.getByRole('dialog', { name: 'Sugerir Edição' });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Enviar Proposta' }));
+
+    await waitFor(() =>
+      expect(weaponSubmissionService.create).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Terra Blade', targetWeaponId: '42' })
+      )
+    );
+    expect(await screen.findByText(/Proposta enviada/)).toBeInTheDocument();
   });
 });

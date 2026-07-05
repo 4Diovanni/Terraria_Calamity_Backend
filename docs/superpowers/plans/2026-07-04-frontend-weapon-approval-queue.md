@@ -960,9 +960,7 @@ import { WeaponForm } from './WeaponForm';
 import { SubmissionStatusBadge } from './SubmissionStatusBadge';
 import { weaponSubmissionService } from '../../services/weaponSubmissionService';
 import { Button } from '../ui/Button';
-import { Loading } from '../ui/Loading';
-import { Error as ErrorView } from '../ui/Error';
-import { EmptyState } from '../ui/EmptyState';
+import { Loading, Error as ErrorView, EmptyState } from '../ui';
 import { WeaponFormData } from '../../types/weapon';
 import { WeaponSubmission } from '../../types/weaponSubmission';
 
@@ -1219,7 +1217,8 @@ describe('AdminContributeView', () => {
     render(<AdminContributeView />);
     await waitFor(() => expect(screen.getByText('10')).toBeInTheDocument());
     expect(screen.getByText('Usuários')).toBeInTheDocument();
-    expect(screen.getByText('Pendentes')).toBeInTheDocument();
+    // "Pendentes" aparece duas vezes: o card do dashboard e o botão de filtro de status.
+    expect(screen.getAllByText('Pendentes')).toHaveLength(2);
   });
 
   it('lists pending submissions by default and expands to show details', async () => {
@@ -1283,9 +1282,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '../../services/adminService';
 import { weaponSubmissionService } from '../../services/weaponSubmissionService';
 import { Button } from '../ui/Button';
-import { Loading } from '../ui/Loading';
-import { Error as ErrorView } from '../ui/Error';
-import { EmptyState } from '../ui/EmptyState';
+import { Loading, Error as ErrorView, EmptyState } from '../ui';
 import { AdminDashboard, SubmissionStatus, WeaponSubmission } from '../../types/weaponSubmission';
 
 const STATUS_FILTERS: SubmissionStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
