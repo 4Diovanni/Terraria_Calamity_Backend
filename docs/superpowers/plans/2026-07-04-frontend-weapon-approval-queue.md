@@ -960,9 +960,7 @@ import { WeaponForm } from './WeaponForm';
 import { SubmissionStatusBadge } from './SubmissionStatusBadge';
 import { weaponSubmissionService } from '../../services/weaponSubmissionService';
 import { Button } from '../ui/Button';
-import { Loading } from '../ui/Loading';
-import { Error as ErrorView } from '../ui/Error';
-import { EmptyState } from '../ui/EmptyState';
+import { Loading, Error as ErrorView, EmptyState } from '../ui';
 import { WeaponFormData } from '../../types/weapon';
 import { WeaponSubmission } from '../../types/weaponSubmission';
 
@@ -1283,9 +1281,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '../../services/adminService';
 import { weaponSubmissionService } from '../../services/weaponSubmissionService';
 import { Button } from '../ui/Button';
-import { Loading } from '../ui/Loading';
-import { Error as ErrorView } from '../ui/Error';
-import { EmptyState } from '../ui/EmptyState';
+import { Loading, Error as ErrorView, EmptyState } from '../ui';
 import { AdminDashboard, SubmissionStatus, WeaponSubmission } from '../../types/weaponSubmission';
 
 const STATUS_FILTERS: SubmissionStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];

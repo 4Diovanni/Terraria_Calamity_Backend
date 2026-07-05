@@ -11,7 +11,7 @@ describe('ContributePage', () => {
   it('renders the USER view for non-admin users', () => {
     mockUseAuth.mockReturnValue({ user: { username: 'Arcanjo', email: 'a@b.com', role: 'USER' } });
     render(<ContributePage />);
-    expect(screen.getByText(/proponha uma arma/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Nova Proposta' })).toBeInTheDocument();
   });
 
   it('renders the ADMIN view for admin users', () => {
