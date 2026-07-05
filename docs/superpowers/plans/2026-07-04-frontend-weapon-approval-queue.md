@@ -1217,7 +1217,8 @@ describe('AdminContributeView', () => {
     render(<AdminContributeView />);
     await waitFor(() => expect(screen.getByText('10')).toBeInTheDocument());
     expect(screen.getByText('Usuários')).toBeInTheDocument();
-    expect(screen.getByText('Pendentes')).toBeInTheDocument();
+    // "Pendentes" aparece duas vezes: o card do dashboard e o botão de filtro de status.
+    expect(screen.getAllByText('Pendentes')).toHaveLength(2);
   });
 
   it('lists pending submissions by default and expands to show details', async () => {
