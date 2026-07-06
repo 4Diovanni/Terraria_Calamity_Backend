@@ -10,6 +10,7 @@ vi.mock('../services/authService', () => ({
   authService: {
     login: vi.fn(),
     register: vi.fn(),
+    getCurrentUser: vi.fn(),
   },
 }));
 
@@ -123,11 +124,13 @@ describe('AuthProvider', () => {
     expect(apiClientModule.removeAuthToken).toHaveBeenCalled();
   });
 
-  it('rehydrates user from a valid (non-expired) token in localStorage', async () => {
-    const exp = Math.floor(Date.now() / 1000) + 3600;
-    const payload = { username: 'stored', email: 'stored@example.com', role: 'USER', exp };
-    const fakeToken = 'header.' + btoa(JSON.stringify(payload)) + '.signature';
-    localStorage.setItem('jwt_token', fakeToken);
+  it('rehydrates user by validating the stored token against the backend', async () => {
+    localStorage.setItem('jwt_token', 'stored.jwt.token');
+    vi.mocked(authService.getCurrentUser).mockResolvedValue({
+      username: 'stored',
+      email: 'stored@example.com',
+      role: 'USER',
+    });
 
     render(
       <AuthProvider>
@@ -139,14 +142,13 @@ describe('AuthProvider', () => {
     );
 
     expect(screen.getByTestId('user').textContent).toBe('stored');
-    expect(screen.getByTestId('token').textContent).toBe(fakeToken);
-    expect(apiClientModule.setAuthToken).toHaveBeenCalledWith(fakeToken);
+    expect(screen.getByTestId('token').textContent).toBe('stored.jwt.token');
+    expect(apiClientModule.setAuthToken).toHaveBeenCalledWith('stored.jwt.token');
   });
 
-  it('clears an expired token from localStorage on mount', async () => {
-    const payload = { username: 'old', email: 'old@example.com', role: 'USER', exp: 1 };
-    const fakeToken = 'header.' + btoa(JSON.stringify(payload)) + '.signature';
-    localStorage.setItem('jwt_token', fakeToken);
+  it('clears an invalid/expired token when the backend rejects it on mount', async () => {
+    localStorage.setItem('jwt_token', 'stale.jwt.token');
+    vi.mocked(authService.getCurrentUser).mockRejectedValue(new Error('401'));
 
     render(
       <AuthProvider>
