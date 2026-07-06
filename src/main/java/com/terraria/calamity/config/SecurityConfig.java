@@ -102,7 +102,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
                 // ========== AUTENTICAÇÃO (público) ==========
-                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
 
                 // ========== ENDPOINTS PÚBLICOS (GET) ==========
                 .requestMatchers(HttpMethod.GET, "/api/v1/weapons").permitAll()

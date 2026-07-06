@@ -118,4 +118,39 @@ class AuthControllerIntegrationTest {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void me_withValidToken_returnsCurrentUser() throws Exception {
+        RegisterRequest register = new RegisterRequest("meuser", "meuser@terraria.com", "secret123");
+        String body = mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(register)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        String token = objectMapper.readTree(body).get("token").asText();
+
+        mockMvc.perform(get("/api/v1/auth/me")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("meuser"))
+                .andExpect(jsonPath("$.email").value("meuser@terraria.com"))
+                .andExpect(jsonPath("$.role").value("USER"));
+    }
+
+    @Test
+    void me_withoutToken_returnsUnauthorized() throws Exception {
+        // Sem AuthenticationEntryPoint customizado, o Spring Security cai no
+        // Http403ForbiddenEntryPoint default para requisições não autenticadas
+        // (mesmo comportamento já assumido em protectedEndpoint_withoutToken_isRejected
+        // acima e em ArmorControllerIntegrationTest / WeaponSubmissionControllerIntegrationTest).
+        mockMvc.perform(get("/api/v1/auth/me"))
+                .andExpect(result -> assertThat(result.getResponse().getStatus()).isIn(401, 403));
+    }
+
+    @Test
+    void me_withInvalidToken_returnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/v1/auth/me")
+                        .header("Authorization", "Bearer garbage.invalid.token"))
+                .andExpect(result -> assertThat(result.getResponse().getStatus()).isIn(401, 403));
+    }
 }
