@@ -25,8 +25,10 @@ import java.util.Arrays;
 
 /**
  * Configuração de Segurança — autenticação stateless via JWT.
- * Endpoints públicos: /api/v1/auth/**, GETs de weapons/elements, actuator.
- * Demais endpoints exigem um JWT válido (Authorization: Bearer <token>).
+ * Endpoints públicos: apenas POST /api/v1/auth/register e /login, além de
+ * GETs de weapons/elements/armor e actuator. O restante de /api/v1/auth/,
+ * incluindo GET /me, exige autenticação. Demais endpoints exigem um JWT
+ * válido (Authorization: Bearer <token>).
  */
 @Configuration
 @EnableWebSecurity

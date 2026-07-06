@@ -18,9 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Limita requisições por IP: 5/min em /api/v1/auth/**, 60/min nas demais rotas
- * /api/v1/**. Em memória (single-instance) via Bucket4j. Roda antes do
- * JwtAuthenticationFilter para rejeitar cedo, sem validar token ou tocar no banco.
+ * Limita requisições por IP: 5/min em POST /api/v1/auth/register e /login,
+ * 60/min nas demais rotas /api/v1/**, incluindo GET /api/v1/auth/me. Em
+ * memória (single-instance) via Bucket4j. Roda antes do JwtAuthenticationFilter
+ * para rejeitar cedo, sem validar token ou tocar no banco.
  */
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
@@ -38,7 +39,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String clientIp = resolveClientIp(request);
-        boolean isAuthRoute = request.getRequestURI().startsWith("/api/v1/auth/");
+        boolean isAuthRoute = isStrictAuthRoute(request.getMethod(), request.getRequestURI());
 
         Bucket bucket = isAuthRoute
                 ? authBuckets.computeIfAbsent(clientIp, ip -> newBucket(AUTH_CAPACITY_PER_MINUTE))
@@ -74,5 +75,10 @@ public class RateLimitFilter extends OncePerRequestFilter {
         // se um dia for necessário resolver IP real atrás de LB, isso deve
         // ser feito via configuração explícita de proxy confiável, não aqui).
         return request.getRemoteAddr();
+    }
+
+    private boolean isStrictAuthRoute(String method, String uri) {
+        return "POST".equalsIgnoreCase(method)
+                && ("/api/v1/auth/register".equals(uri) || "/api/v1/auth/login".equals(uri));
     }
 }
