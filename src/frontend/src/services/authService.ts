@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-import type { AuthResponse, LoginRequest, RegisterRequest } from '../types/auth';
+import type { AuthResponse, AuthUser, LoginRequest, RegisterRequest } from '../types/auth';
 
 const BASE_URL = '/api/v1/auth';
 
@@ -11,6 +11,11 @@ export const authService = {
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
     const response = await apiClient.post<AuthResponse>(`${BASE_URL}/register`, data);
+    return response.data;
+  },
+
+  async getCurrentUser(): Promise<AuthUser> {
+    const response = await apiClient.get<AuthUser>(`${BASE_URL}/me`);
     return response.data;
   },
 };
