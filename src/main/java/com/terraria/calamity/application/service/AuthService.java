@@ -4,6 +4,7 @@ import com.terraria.calamity.api.exception.DuplicateResourceException;
 import com.terraria.calamity.domain.dto.AuthResponse;
 import com.terraria.calamity.domain.dto.LoginRequest;
 import com.terraria.calamity.domain.dto.RegisterRequest;
+import com.terraria.calamity.domain.dto.UserResponse;
 import com.terraria.calamity.domain.entity.Role;
 import com.terraria.calamity.domain.entity.User;
 import com.terraria.calamity.domain.repository.UserRepository;
@@ -67,5 +68,12 @@ public class AuthService {
 
         String token = jwtService.generateToken(user.getEmail());
         return AuthResponse.bearer(token, user.getUsername(), user.getEmail(), user.getRole().name());
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getCurrentUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+        return new UserResponse(user.getUsername(), user.getEmail(), user.getRole().name());
     }
 }
