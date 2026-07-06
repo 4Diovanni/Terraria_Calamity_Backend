@@ -19,8 +19,9 @@ import java.io.IOException;
 
 /**
  * Lê o header Authorization: Bearer <token>, valida o JWT e popula o
- * SecurityContext. Requisições sem token (ex.: /api/v1/auth/**) seguem o fluxo
- * normalmente e são liberadas pela configuração de segurança.
+ * SecurityContext. Requisições sem token seguem o fluxo normalmente; cabe à
+ * configuração de segurança (SecurityConfig) decidir se a rota exige
+ * autenticação ou é pública (ex.: POST /api/v1/auth/register e /login).
  */
 @Component
 @RequiredArgsConstructor

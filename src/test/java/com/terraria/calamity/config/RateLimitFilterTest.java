@@ -94,4 +94,18 @@ class RateLimitFilterTest {
 
         assertThat(sixthResponse.getStatus()).isEqualTo(429);
     }
+
+    @Test
+    void meEndpoint_usesDefaultBucket_notStrictAuthBucket() throws Exception {
+        RateLimitFilter filter = new RateLimitFilter();
+        FilterChain chain = mock(FilterChain.class);
+
+        for (int i = 0; i < 6; i++) {
+            MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/v1/auth/me");
+            request.setRemoteAddr("10.0.0.6");
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            filter.doFilter(request, response, chain);
+            assertThat(response.getStatus()).isEqualTo(200);
+        }
+    }
 }

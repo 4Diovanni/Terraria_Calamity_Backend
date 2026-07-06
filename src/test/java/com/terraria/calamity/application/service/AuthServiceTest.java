@@ -4,6 +4,7 @@ import com.terraria.calamity.api.exception.DuplicateResourceException;
 import com.terraria.calamity.domain.dto.AuthResponse;
 import com.terraria.calamity.domain.dto.LoginRequest;
 import com.terraria.calamity.domain.dto.RegisterRequest;
+import com.terraria.calamity.domain.dto.UserResponse;
 import com.terraria.calamity.domain.entity.Role;
 import com.terraria.calamity.domain.entity.User;
 import com.terraria.calamity.domain.repository.UserRepository;
@@ -102,5 +103,27 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.login(request))
                 .isInstanceOf(org.springframework.security.authentication.BadCredentialsException.class)
                 .hasMessage("Invalid email or password");
+    }
+
+    @Test
+    void getCurrentUser_returnsUserDataForValidEmail() {
+        User user = User.builder()
+                .username("calamitas").email("calamitas@terraria.com")
+                .password("hashed").role(Role.USER).enabled(true).build();
+        when(userRepository.findByEmail("calamitas@terraria.com")).thenReturn(Optional.of(user));
+
+        UserResponse response = authService.getCurrentUser("calamitas@terraria.com");
+
+        assertThat(response.username()).isEqualTo("calamitas");
+        assertThat(response.email()).isEqualTo("calamitas@terraria.com");
+        assertThat(response.role()).isEqualTo("USER");
+    }
+
+    @Test
+    void getCurrentUser_throwsWhenUserNoLongerExists() {
+        when(userRepository.findByEmail("ghost@terraria.com")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.getCurrentUser("ghost@terraria.com"))
+                .isInstanceOf(org.springframework.security.authentication.BadCredentialsException.class);
     }
 }
