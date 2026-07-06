@@ -19,8 +19,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Keep isLoading=true until getCurrentUser() resolves; Header depends on this
-  // to avoid flashing "Sign In" before session validation completes.
+  // Mantém isLoading=true até getCurrentUser() resolver; o Header depende disso
+  // para não piscar "Entrar" antes da validação de sessão terminar.
   useEffect(() => {
     const storedToken = localStorage.getItem('jwt_token');
     if (!storedToken) {
