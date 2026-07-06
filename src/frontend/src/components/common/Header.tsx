@@ -47,7 +47,7 @@ const HamburgerIcon = ({ isOpen }: HamburgerIconProps) => (
 
 export const Header = () => {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [compact, setCompact] = useState(false);
 
@@ -95,7 +95,7 @@ export const Header = () => {
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          {user ? (
+          {!isLoading && (user ? (
             <div className="hidden md:flex items-center gap-4">
               <Link
                 to="/contribuir"
@@ -117,7 +117,7 @@ export const Header = () => {
             >
               Entrar
             </Link>
-          )}
+          ))}
           <button
             type="button"
             aria-label="Abrir menu de navegação"
@@ -133,7 +133,7 @@ export const Header = () => {
         <nav className="flex flex-col gap-6">
           {renderLinks(() => setMenuOpen(false))}
           <div className="pt-2 border-t border-calamity-border flex flex-col gap-3">
-            {user ? (
+            {!isLoading && (user ? (
               <>
                 <Link
                   to="/contribuir"
@@ -158,7 +158,7 @@ export const Header = () => {
               >
                 Entrar
               </Link>
-            )}
+            ))}
           </div>
         </nav>
       </Drawer>

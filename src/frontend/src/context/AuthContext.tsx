@@ -14,37 +14,31 @@ export interface AuthContextValue {
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
-function decodeJwtPayload(
-  token: string
-): { username: string; email: string; role: 'USER' | 'ADMIN'; exp: number } | null {
-  try {
-    const segment = token.split('.')[1];
-    const padded = segment.replace(/-/g, '+').replace(/_/g, '/');
-    const withPadding = padded + '='.repeat((4 - (padded.length % 4)) % 4);
-    return JSON.parse(atob(withPadding));
-  } catch {
-    return null;
-  }
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Mantém isLoading=true até getCurrentUser() resolver; o Header depende disso
+  // para não piscar "Entrar" antes da validação de sessão terminar.
   useEffect(() => {
     const storedToken = localStorage.getItem('jwt_token');
-    if (storedToken) {
-      const payload = decodeJwtPayload(storedToken);
-      if (payload && payload.exp * 1000 > Date.now()) {
-        setAuthToken(storedToken);
-        setToken(storedToken);
-        setUser({ username: payload.username, email: payload.email, role: payload.role });
-      } else {
-        removeAuthToken();
-      }
+    if (!storedToken) {
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    setAuthToken(storedToken);
+    authService
+      .getCurrentUser()
+      .then((currentUser) => {
+        setToken(storedToken);
+        setUser(currentUser);
+      })
+      .catch(() => {
+        removeAuthToken();
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const login = async (email: string, password: string) => {
