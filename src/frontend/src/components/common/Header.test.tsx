@@ -94,6 +94,26 @@ describe('Header', () => {
     links.forEach((link) => expect(link).toHaveAttribute('href', '/perfil'));
   });
 
+  it('does not show "Entrar" while auth state is loading', () => {
+    mockUseAuth.mockReturnValue({ ...noUser, isLoading: true });
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    );
+    expect(screen.queryByRole('link', { name: /entrar/i })).not.toBeInTheDocument();
+  });
+
+  it('does not show the username link while auth state is loading', () => {
+    mockUseAuth.mockReturnValue({ ...withUser, isLoading: true });
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    );
+    expect(screen.queryByRole('link', { name: 'Arcanjo' })).not.toBeInTheDocument();
+  });
+
   it('username link in mobile drawer closes drawer on click', () => {
     mockUseAuth.mockReturnValue(withUser);
     render(
