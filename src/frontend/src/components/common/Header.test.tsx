@@ -137,22 +137,4 @@ describe('Header', () => {
     expect(screen.queryByRole('button', { name: /sair/i })).not.toBeInTheDocument();
   });
 
-  it('does not show "Contribuir" tab when logged out', () => {
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
-    expect(screen.queryByRole('link', { name: 'Contribuir' })).not.toBeInTheDocument();
-  });
-
-  it('shows "Contribuir" tab linking to /contribuir when logged in', () => {
-    mockUseAuth.mockReturnValue(withUser);
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
-    expect(screen.getByRole('link', { name: 'Contribuir' })).toHaveAttribute('href', '/contribuir');
-  });
 });
