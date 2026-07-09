@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { weaponService } from '../../services/weaponService';
-import { weaponSubmissionService } from '../../services/weaponSubmissionService';
+import { submissionService } from '../../services/submissionService';
 import { Weapon, RarityLevel, WeaponFormData } from '../../types/weapon';
 import { weaponRarityToTier } from '../../lib/weaponRarity';
 import { useAuth } from '../../hooks/useAuth';
@@ -44,7 +44,7 @@ export const WeaponDetailPage = () => {
 
   const handleSuggestEdit = async (data: WeaponFormData) => {
     if (!weapon) return;
-    await weaponSubmissionService.create({ ...data, targetWeaponId: weapon.id });
+    await submissionService.create('WEAPON', { ...data, targetWeaponId: weapon.id });
     setIsSuggestOpen(false);
     setSuggestSuccess(true);
   };

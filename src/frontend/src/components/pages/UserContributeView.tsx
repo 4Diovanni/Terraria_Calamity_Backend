@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { WeaponForm } from './WeaponForm';
 import { SubmissionStatusBadge } from './SubmissionStatusBadge';
-import { weaponSubmissionService } from '../../services/weaponSubmissionService';
+import { submissionService } from '../../services/submissionService';
 import { Button } from '../ui/Button';
 import { Loading, Error as ErrorView, EmptyState } from '../ui';
 import { WeaponFormData } from '../../types/weapon';
@@ -21,7 +21,7 @@ export const UserContributeView = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await weaponSubmissionService.getMine();
+      const data = await submissionService.getMine('WEAPON');
       setSubmissions(data);
     } catch (err) {
       const message = (err as { message?: string })?.message;
@@ -36,14 +36,14 @@ export const UserContributeView = () => {
   }, [tab, fetchMine]);
 
   const handleCreate = async (data: WeaponFormData) => {
-    await weaponSubmissionService.create(data);
+    await submissionService.create('WEAPON', data);
     setCreateSuccess(true);
   };
 
   const handleCancel = async (id: string) => {
     setCancelingId(id);
     try {
-      await weaponSubmissionService.cancel(id);
+      await submissionService.cancel(id);
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
     } finally {
       setCancelingId(null);
