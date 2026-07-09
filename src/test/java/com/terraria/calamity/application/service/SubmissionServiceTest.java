@@ -22,6 +22,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,6 +66,27 @@ class SubmissionServiceTest {
 
         assertThat(result.type()).isEqualTo(SubmissionType.CREATE);
         assertThat(result.submittedByUsername()).isEqualTo("calamitas");
+        // Verify that SubmissionType.CREATE and null targetEntityId were actually passed to mapper
+        verify(mapper).toEntity(any(WeaponSubmissionRequestDTO.class), eq(submitter()), isNull(), eq(SubmissionType.CREATE));
+    }
+
+    @Test
+    void create_withValidTargetWeaponId_createsUpdateTypeSubmission() {
+        when(userRepository.findByEmail("calamitas@terraria.com")).thenReturn(Optional.of(submitter()));
+        when(weaponRepository.existsById(7L)).thenReturn(true);
+        when(submissionRepository.existsByTargetEntityIdAndEntityTypeAndStatus(7L, EntityType.WEAPON, SubmissionStatus.PENDING)).thenReturn(false);
+        Submission builtEntity = Submission.builder().entityType(EntityType.WEAPON).submissionType(SubmissionType.UPDATE).targetEntityId(7L).status(SubmissionStatus.PENDING).build();
+        when(mapper.toEntity(any(), any(), any(), any())).thenReturn(builtEntity);
+        when(submissionRepository.save(builtEntity)).thenReturn(builtEntity);
+        when(mapper.toResponseDTO(builtEntity)).thenReturn(responseFor(SubmissionType.UPDATE, 7L));
+
+        WeaponSubmissionResponseDTO result = service.create(createRequest(7L), "calamitas@terraria.com");
+
+        assertThat(result.type()).isEqualTo(SubmissionType.UPDATE);
+        assertThat(result.targetWeaponId()).isEqualTo(7L);
+        assertThat(result.submittedByUsername()).isEqualTo("calamitas");
+        // Verify that SubmissionType.UPDATE and targetEntityId=7L were actually passed to mapper
+        verify(mapper).toEntity(any(WeaponSubmissionRequestDTO.class), eq(submitter()), eq(7L), eq(SubmissionType.UPDATE));
     }
 
     @Test
