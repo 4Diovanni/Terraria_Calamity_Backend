@@ -125,4 +125,30 @@ class SubmissionAdminControllerIntegrationTest {
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isConflict());
     }
+
+    @Test
+    void findById_asUser_isForbidden() throws Exception {
+        String authorToken = tokenFor("author-findbyid@terraria.com", Role.USER);
+        String userToken = tokenFor("user-findbyid@terraria.com", Role.USER);
+
+        Long submissionId = createPendingSubmission(authorToken);
+
+        mockMvc.perform(get("/api/v1/submissions/" + submissionId)
+                        .header("Authorization", "Bearer " + userToken))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void findById_asAdmin_returnsSubmission() throws Exception {
+        String authorToken = tokenFor("author-getid@terraria.com", Role.USER);
+        String adminToken = tokenFor("admin-getid@terraria.com", Role.ADMIN);
+
+        Long submissionId = createPendingSubmission(authorToken);
+
+        mockMvc.perform(get("/api/v1/submissions/" + submissionId)
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(submissionId))
+                .andExpect(jsonPath("$.status").value("PENDING"));
+    }
 }
