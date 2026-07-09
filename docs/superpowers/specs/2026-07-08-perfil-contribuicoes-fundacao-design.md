@@ -71,7 +71,7 @@ public class Submission extends BaseEntity {
     private Long targetEntityId;        // null se CREATE; obrigatório se UPDATE
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(nullable = false, columnDefinition = "jsonb")
+    @Column(nullable = false)
     private Map<String, Object> payload;  // campos propostos da entidade (shape depende de entityType)
 
     @Column(columnDefinition = "TEXT")
@@ -83,25 +83,35 @@ Novo enum: `EntityType { WEAPON }`. `SubmissionType` e `SubmissionStatus` já ex
 reaproveitados sem alteração.
 
 `payload` usa o suporte nativo a JSON do Hibernate 7 (`@JdbcTypeCode(SqlTypes.JSON)`, disponível a
-partir do Hibernate 6 — já incluso no Spring Boot 4.1, sem dependência nova). Para `entityType=WEAPON`,
+partir do Hibernate 6 — já incluso no Spring Boot 4.1, sem dependência nova). Sem `columnDefinition`
+fixo: cada dialeto gera o tipo de coluna nativo certo (`jsonb` no Postgres de produção, o tipo JSON do
+H2 no perfil de teste, que usa `ddl-auto: create-drop` a partir das entidades). Para `entityType=WEAPON`,
 o shape do `payload` é o mesmo conjunto de campos que `WeaponSubmissionRequestDTO` já expõe hoje
 (name, weaponClass, element, baseDamage, criticalChance, attacksPerTurn, range, rarity, price,
 quality, abilities, description, imageUrl).
 
 ### 3.2 Migration
 
-Dropar `weapon_submissions` e criar `submissions` (com a coluna `payload jsonb`). Sem migração de
-dados — confirmado que a tabela atual só tem dados de teste.
+Duas migrations, para manter cada estado intermediário do branch deployável contra um Postgres real
+(nenhum teste automatizado do projeto valida o schema real — só H2 com `create-drop` — mas isso não é
+motivo para deixar o branch num estado inconsistente):
+- Uma migration cria `submissions` (tabela nova, convivendo com `weapon_submissions`).
+- Uma migration final, no mesmo commit que remove a entidade `WeaponSubmission` (seção 9), dropa
+  `weapon_submissions`. Sem migração de dados — confirmado que a tabela atual só tem dados de teste.
 
 ### 3.3 DTOs
 
-- `SubmissionRequestDTO` — `entityType` (vem como query param no endpoint, não no body),
-  `targetEntityId` (opcional; presente → `UPDATE`, ausente → `CREATE`), `payload` (`Map<String,
-  Object>` ou, preferencialmente, um DTO tipado por entidade — ver 3.4).
-- `SubmissionResponseDTO` — id, entityType, submissionType, status, `submittedByUsername`,
-  targetEntityId (nullable), payload, rejectionReason (nullable), createdAt, updatedAt.
+- Requisição: `WeaponSubmissionRequestDTO` — reaproveitado sem alteração de shape, é o body tipado de
+  `POST /api/v1/submissions?entityType=WEAPON` (ver 3.4).
+- Resposta: `WeaponSubmissionResponseDTO` — reaproveitado sem alteração de shape (nenhum campo
+  `entityType` — ver 5.5 sobre por que não é exposto nesta fase). Passa a ser construído por
+  `WeaponPayloadMapper` a partir de `Submission.payload`, não mais a partir de colunas próprias.
 - `RejectSubmissionRequestDTO` — reaproveitado sem mudança (`{ reason: String }`, `@NotBlank`).
 - `AdminDashboardResponseDTO` — reaproveitado sem mudança.
+
+Não existe um DTO genérico `SubmissionResponseDTO`: como só `WEAPON` está implementado, o shape que
+trafega na API continua sendo o mesmo de hoje, específico de arma. Generalização de DTO de resposta
+fica para quando uma segunda entidade existir de fato (YAGNI).
 
 ### 3.4 Validação de payload — por que não é "solta"
 
@@ -119,15 +129,15 @@ resolvidos por um mapeamento `entityType → DTO class` no controller (hoje só 
 
 ### 4.1 Serviço genérico + mapper por entidade
 
-- `SubmissionService` — genérico, cuida do ciclo de vida comum: criar, listar minhas, cancelar,
-  listar todas por status, aprovar, rejeitar. Reaproveita a lógica de `WeaponSubmissionService` de
-  hoje, sem acoplamento a `Weapon`.
+- `SubmissionService` — cuida do ciclo de vida comum: criar, listar minhas, cancelar, listar todas por
+  status, aprovar, rejeitar. Reaproveita a lógica de `WeaponSubmissionService` de hoje, operando sobre
+  `Submission` (genérica) em vez de `WeaponSubmission`. Como só `WEAPON` existe, o service usa
+  `WeaponPayloadMapper` diretamente (sem uma camada de despacho/`Map<EntityType, Mapper>` — isso é
+  overengineering para um único caso; se uma segunda entidade for adicionada, esse é o ponto onde a
+  dispatch por `entityType` entra).
 - `WeaponPayloadMapper` (renomeado de `WeaponSubmissionMapper`) — sabe converter
-  `WeaponSubmissionRequestDTO` ↔ `payload` (Map) ↔ campos de `Weapon`, e aplicar a submissão aprovada
-  na tabela `weapons`. Ao aprovar, `SubmissionService` despacha para o mapper certo com base em
-  `entityType` (hoje só há o branch `WEAPON`; um `entityType` sem mapper registrado é erro de
-  configuração, não caso de uso válido — não precisa de tratamento de erro em runtime além do 400
-  descrito em 4.3).
+  `WeaponSubmissionRequestDTO` ↔ `Submission.payload` (Map, via `ObjectMapper.convertValue`) ↔ campos
+  de `Weapon`, e aplicar a submissão aprovada na tabela `weapons`.
 
 ### 4.2 Endpoints
 
@@ -176,24 +186,24 @@ Remove a rota `/contribuir`.
 
 ### 5.4 `WeaponDetailPage.tsx` — botão "Sugerir Edição"
 
-Passa a navegar para `/perfil` passando o alvo da edição via `state` do React Router:
-
-```ts
-navigate('/perfil', { state: { openContributeTab: true, editWeaponId: weapon.id } });
-```
-
-`ProfilePage` lê esse `state` no mount: se presente, seleciona a aba "Contribuições" e repassa
-`editWeaponId` para `UserContributeView`, que abre o formulário de UPDATE pré-preenchido — mesmo
-mecanismo de pré-preenchimento que existe hoje (busca via `weaponService.getWeaponById`), só mudando
-de onde é disparado.
+**Correção em relação à exploração inicial:** esse botão já é 100% local hoje — abre um `Drawer` na
+própria `WeaponDetailPage` com `WeaponForm` pré-preenchido (`initialValues={weapon}`) e envia via
+`weaponSubmissionService.create({ ...data, targetWeaponId: weapon.id })`. Ele nunca navegou para
+`/contribuir`. Como a rota `/contribuir` não tem nenhuma relação com esse fluxo, remover a rota não
+exige nenhuma mudança de navegação aqui — só a troca do import do serviço (renomeado para
+`submissionService`, ver 5.5).
 
 ### 5.5 Camada de serviço e tipos
 
 - `weaponSubmissionService.ts` → renomeado/generalizado para `submissionService.ts`. Funções passam a
   aceitar `entityType` como parâmetro (hoje sempre `'WEAPON'`, passado pelos componentes que já sabem
   que só lidam com armas).
-- `weaponSubmission.ts` (tipos) — `WeaponSubmission` ganha o campo `entityType: 'WEAPON'` (union de um
-  único valor por enquanto). Resto dos campos mantido.
+- `weaponSubmission.ts` (tipos) e o contrato de resposta da API (`WeaponSubmissionResponseDTO`) **não**
+  ganham um campo `entityType` nesta fase — nada na UI da Fase 1 precisaria distingui-lo (só existe um
+  valor possível) e adicioná-lo agora exigiria tocar em arquivos legados que são deletados no mesmo
+  ciclo (seção 9), sem ganho funcional. A generalização de armazenamento já é garantida pela entidade/
+  tabela `Submission` (seção 3.1); expor `entityType` na API fica para quando a Fase 2 (ou uma futura
+  segunda entidade) realmente precisar dele.
 
 Nenhuma mudança visual em `UserContributeView`, `AdminContributeView`, `WeaponForm`,
 `SubmissionStatusBadge` — só passam a viver dentro de uma aba do Perfil.
@@ -203,32 +213,29 @@ Nenhuma mudança visual em `UserContributeView`, `AdminContributeView`, `WeaponF
 ## 6. Fluxo completo (exemplo: sugerir edição de arma)
 
 ```
-WeaponDetailPage                ProfilePage                    Backend
-  "Sugerir Edição"                 │                              │
-       │  navigate(/perfil,        │                              │
-       │  state: editWeaponId) ───►│                              │
-       │                           │ abre aba "Contribuições"     │
-       │                           │ pré-preenche form UPDATE     │
-       │                           │  (busca arma atual)          │
-       │                           │──── submit ─────────────────►│ POST /submissions?entityType=WEAPON
-       │                           │                              │ valida payload (WeaponPayloadMapper)
-       │                           │                              │ persiste status=PENDING
-       │                           │                              │
-   Admin abre /perfil ──► aba "Contribuições" (AdminContributeView)│
-       │                           │──── GET /submissions?entityType=WEAPON&status=PENDING ─►│
-       │                           │◄──────────────────────────────────────────────────────  │
-       │  aprova ─────────────────►│──── POST /{id}/approve ─────►│ aplica payload em Weapon
-       │                           │                              │ status=APPROVED
+WeaponDetailPage (Drawer local)                              Backend
+  "Sugerir Edição" → WeaponForm pré-preenchido
+       │
+       │──── submit ─────────────────────────────────────────►│ POST /submissions?entityType=WEAPON
+       │                                                       │ valida payload (WeaponSubmissionRequestDTO)
+       │                                                       │ persiste status=PENDING (via WeaponPayloadMapper)
+       │
+   Admin abre /perfil ──► aba "Contribuições" (AdminContributeView)
+       │──── GET /submissions?entityType=WEAPON&status=PENDING ─►│
+       │◄──────────────────────────────────────────────────────  │
+       │  aprova ─────────────────────────────────────────────►│ POST /{id}/approve
+       │                                                       │ aplica payload em Weapon (WeaponPayloadMapper)
+       │                                                       │ status=APPROVED
 ```
 
-1. Usuário comum clica "Sugerir Edição" → navega para `/perfil` com `state`.
-2. `ProfilePage` abre a aba Contribuições com o formulário de UPDATE pré-preenchido.
-3. Submissão vai para `POST /api/v1/submissions?entityType=WEAPON`, validada via
-   `WeaponSubmissionRequestDTO` (`@Valid`), persistida com `status=PENDING`.
-4. Admin acessa `/perfil` → aba Contribuições → `AdminContributeView` lista via
+1. Usuário comum clica "Sugerir Edição" na própria `WeaponDetailPage` — o `Drawer` já abre ali, sem
+   navegação (comportamento inalterado, ver 5.4).
+2. Submissão vai para `POST /api/v1/submissions?entityType=WEAPON`, validada via
+   `WeaponSubmissionRequestDTO` (`@Valid`), convertida em `payload` e persistida com `status=PENDING`.
+3. Admin acessa `/perfil` → aba Contribuições → `AdminContributeView` lista via
    `GET /api/v1/submissions?entityType=WEAPON&status=PENDING`.
-5. Ao aprovar, `SubmissionService` despacha para `WeaponPayloadMapper`, que aplica o payload na
-   tabela `weapons` e marca a submissão como `APPROVED` (mantida como histórico).
+4. Ao aprovar, `SubmissionService` usa `WeaponPayloadMapper` para aplicar o payload na tabela `weapons`
+   e marca a submissão como `APPROVED` (mantida como histórico).
 
 ---
 
@@ -253,7 +260,7 @@ WeaponDetailPage                ProfilePage                    Backend
 | Backend — `SubmissionService` (unit) | Mesmos cenários de `WeaponSubmissionService` hoje (criar CREATE/UPDATE, bloquear PENDING duplicado, aprovar cria/atualiza Weapon via mapper, transições de estado inválidas, cancelar por não-autor), adaptados para a entidade genérica |
 | Backend — `SubmissionController` (integração) | Branch `entityType=WEAPON` funcionando ponta a ponta; `entityType` inválido → 400; regras de role mantidas (403 para USER em endpoints admin) |
 | Backend — `WeaponPayloadMapper` (unit) | Conversão DTO ↔ payload (Map) ↔ campos de `Weapon` nos dois sentidos |
-| Frontend — `ProfilePage.test.tsx` | Renderiza as duas abas; troca de aba; lê `state` de navegação (`openContributeTab` + `editWeaponId`) e abre a aba/form corretos |
+| Frontend — `ProfilePage.test.tsx` | Renderiza as duas abas; troca de aba; aba "Contribuições" renderiza `UserContributeView`/`AdminContributeView` conforme role |
 | Frontend — `Header.test.tsx` | Não espera mais o link "Contribuir" |
 | Frontend — `UserContributeView`/`AdminContributeView`/`submissionService` | Testes existentes migram de nome/local; lógica coberta é a mesma |
 
@@ -274,24 +281,27 @@ controller/segurança.
 - `domain/entity/Submission.java`
 - `domain/entity/EntityType.java`
 - `domain/repository/SubmissionRepository.java`
-- `domain/dto/SubmissionResponseDTO.java`
 - `application/service/SubmissionService.java`
 - `api/controller/SubmissionController.java`
+- `application/mapper/WeaponPayloadMapper.java` (substitui `WeaponSubmissionMapper.java`)
 
-**Backend — renomeados/adaptados**
-- `domain/entity/WeaponSubmission.java` → removido (substituído por `Submission` + `payload`)
-- `application/mapper/WeaponSubmissionMapper.java` → `WeaponPayloadMapper.java`
-- `domain/dto/WeaponSubmissionRequestDTO.java` → mantido como shape de entrada tipado para
-  `entityType=WEAPON` (ver 3.4)
-- `api/controller/WeaponSubmissionController.java` → removido (substituído por
-  `SubmissionController`)
-- `domain/repository/WeaponSubmissionRepository.java` → removido (substituído por
-  `SubmissionRepository`)
-- `domain/dto/WeaponSubmissionResponseDTO.java` → removido (substituído por
-  `SubmissionResponseDTO`)
+**Backend — removidos** (ao final da fundação, quando a nova pilha já está no lugar)
+- `domain/entity/WeaponSubmission.java`
+- `application/mapper/WeaponSubmissionMapper.java`
+- `api/controller/WeaponSubmissionController.java`
+- `application/service/WeaponSubmissionService.java`
+- `domain/repository/WeaponSubmissionRepository.java`
+
+**Backend — mantidos sem alteração de shape**
+- `domain/dto/WeaponSubmissionRequestDTO.java`
+- `domain/dto/WeaponSubmissionResponseDTO.java`
 
 **Backend — modificados**
-- Migration nova: dropar `weapon_submissions`, criar `submissions` (com coluna `payload jsonb`)
+- `application/service/AdminDashboardService.java` — passa a usar `SubmissionRepository`
+- `application/service/WeaponService.java` — `delete()` passa a checar
+  `submissionRepository.existsByTargetEntityIdAndEntityType(id, EntityType.WEAPON)`
+- `config/SecurityConfig.java` — matcher `/api/v1/weapon-submissions/**` → `/api/v1/submissions/**`
+- Duas migrations novas (ver 3.2): criar `submissions`; dropar `weapon_submissions`
 
 **Frontend — novos/renomeados**
 - `services/submissionService.ts` (renomeado de `weaponSubmissionService.ts`)
@@ -300,8 +310,9 @@ controller/segurança.
 - `components/pages/ProfilePage.tsx` — ganha abas ("Perfil" / "Contribuições")
 - `components/common/Header.tsx` — remove link "Contribuir"
 - `App.tsx` — remove rota `/contribuir`
-- `components/pages/WeaponDetailPage.tsx` — botão "Sugerir Edição" navega para `/perfil` com `state`
-- `types/weaponSubmission.ts` — adiciona campo `entityType`
+- `components/pages/WeaponDetailPage.tsx` — só troca o import do serviço (ver 5.4)
+- `components/pages/UserContributeView.tsx`, `AdminContributeView.tsx` — só trocam o import/chamadas
+  do serviço renomeado
 
 **Frontend — removidos**
 - `components/pages/ContributePage.tsx` (+ `ContributePage.test.tsx`) — lógica migra para
