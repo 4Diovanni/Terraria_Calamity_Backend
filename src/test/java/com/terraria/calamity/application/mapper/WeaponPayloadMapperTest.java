@@ -50,6 +50,8 @@ class WeaponPayloadMapperTest {
         assertThat(responseDTO.name()).isEqualTo("Terra Blade");
         assertThat(responseDTO.baseDamage()).isEqualTo(50);
         assertThat(responseDTO.imageUrl()).isEqualTo("https://example.com/terrablade.png");
+        assertThat(responseDTO.element()).isEqualTo(Element.HOLY);
+        assertThat(responseDTO.attacksPerTurn()).isEqualTo(1.3);
     }
 
     @Test
@@ -62,6 +64,8 @@ class WeaponPayloadMapperTest {
         assertThat(weapon.getWeaponClass()).isEqualTo(Weapon.WeaponClass.MELEE);
         assertThat(weapon.getBaseDamage()).isEqualTo(50);
         assertThat(weapon.getRarity()).isEqualTo(5);
+        assertThat(weapon.getElement()).isEqualTo(Element.HOLY);
+        assertThat(weapon.getAttacksPerTurn()).isEqualTo(1.3);
     }
 
     @Test
@@ -77,5 +81,7 @@ class WeaponPayloadMapperTest {
         assertThat(existing.getName()).isEqualTo("Terra Blade");
         assertThat(existing.getWeaponClass()).isEqualTo(Weapon.WeaponClass.MELEE);
         assertThat(existing.getBaseDamage()).isEqualTo(50);
+        assertThat(existing.getElement()).isEqualTo(Element.HOLY);
+        assertThat(existing.getAttacksPerTurn()).isEqualTo(1.3);
     }
 }
