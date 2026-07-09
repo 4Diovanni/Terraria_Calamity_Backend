@@ -4,9 +4,10 @@ import com.terraria.calamity.api.controller.WeaponController;
 import com.terraria.calamity.api.exception.ResourceInUseException;
 import com.terraria.calamity.domain.dto.WeaponResponseDTO;
 import com.terraria.calamity.domain.entity.Element;
+import com.terraria.calamity.domain.entity.EntityType;
 import com.terraria.calamity.domain.entity.Weapon;
+import com.terraria.calamity.domain.repository.SubmissionRepository;
 import com.terraria.calamity.domain.repository.WeaponRepository;
-import com.terraria.calamity.domain.repository.WeaponSubmissionRepository;
 import com.terraria.calamity.application.mapper.WeaponMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,14 +22,9 @@ import java.util.stream.Collectors;
 public class WeaponService {
     private final WeaponRepository weaponRepository;
     private final WeaponMapper weaponMapper;
-    private final WeaponSubmissionRepository weaponSubmissionRepository;
+    private final SubmissionRepository submissionRepository;
 
-    /**
-     * Cria uma nova arma a partir dos dados da requisição
-     * Usa o mapper para converter WeaponRequestDTO → Weapon entity
-     */
     public WeaponResponseDTO create(WeaponController.WeaponRequestDTO requestDTO) {
-        // ✅ Usar o mapper que realiza conversão segura de String → Enum
         Weapon weapon = weaponMapper.toEntity(requestDTO);
         Weapon saved = weaponRepository.save(weapon);
         return weaponMapper.toResponseDTO(saved);
@@ -76,18 +72,12 @@ public class WeaponService {
             .collect(Collectors.toList());
     }
 
-    /**
-     * Atualiza uma arma existente
-     * Usa o mapper para converter WeaponRequestDTO → atributos da entity
-     */
     public WeaponResponseDTO update(Long id, WeaponController.WeaponRequestDTO requestDTO) {
         Weapon weapon = weaponRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Weapon not found with ID: " + id));
 
-        // ✅ Usar a nova entidade convertida do mapper
         Weapon updatedWeapon = weaponMapper.toEntity(requestDTO);
-        
-        // ✅ Copiar valores para manter o ID e auditoria
+
         weapon.setName(updatedWeapon.getName());
         weapon.setWeaponClass(updatedWeapon.getWeaponClass());
         weapon.setElement(updatedWeapon.getElement());
@@ -106,14 +96,11 @@ public class WeaponService {
         return weaponMapper.toResponseDTO(saved);
     }
 
-    /**
-     * Deleta uma arma
-     */
     public void delete(Long id) {
         if (!weaponRepository.existsById(id)) {
             throw new RuntimeException("Weapon not found with ID: " + id);
         }
-        if (weaponSubmissionRepository.existsByTargetWeaponId(id)) {
+        if (submissionRepository.existsByTargetEntityIdAndEntityType(id, EntityType.WEAPON)) {
             throw new ResourceInUseException(
                     "Não é possível deletar: esta arma possui submissões associadas");
         }

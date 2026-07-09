@@ -3,9 +3,9 @@ package com.terraria.calamity.application.service;
 import com.terraria.calamity.domain.dto.AdminDashboardResponseDTO;
 import com.terraria.calamity.domain.entity.Role;
 import com.terraria.calamity.domain.entity.SubmissionStatus;
+import com.terraria.calamity.domain.repository.SubmissionRepository;
 import com.terraria.calamity.domain.repository.UserRepository;
 import com.terraria.calamity.domain.repository.WeaponRepository;
-import com.terraria.calamity.domain.repository.WeaponSubmissionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ class AdminDashboardServiceTest {
 
     @Mock private UserRepository userRepository;
     @Mock private WeaponRepository weaponRepository;
-    @Mock private WeaponSubmissionRepository submissionRepository;
+    @Mock private SubmissionRepository submissionRepository;
 
     @InjectMocks private AdminDashboardService service;
 
