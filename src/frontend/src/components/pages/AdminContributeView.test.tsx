@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AdminContributeView } from './AdminContributeView';
 import { adminService } from '../../services/adminService';
-import { weaponSubmissionService } from '../../services/weaponSubmissionService';
+import { submissionService } from '../../services/submissionService';
 import { WeaponSubmission, AdminDashboard } from '../../types/weaponSubmission';
 import { WeaponTypeClass, Element } from '../../types/weapon';
 
@@ -10,8 +10,8 @@ vi.mock('../../services/adminService', () => ({
   adminService: { getDashboard: vi.fn() },
 }));
 
-vi.mock('../../services/weaponSubmissionService', () => ({
-  weaponSubmissionService: { getAll: vi.fn(), approve: vi.fn(), reject: vi.fn() },
+vi.mock('../../services/submissionService', () => ({
+  submissionService: { getAll: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
 
 const dashboard: AdminDashboard = {
@@ -51,7 +51,7 @@ describe('AdminContributeView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(adminService.getDashboard).mockResolvedValue(dashboard);
-    vi.mocked(weaponSubmissionService.getAll).mockResolvedValue([pendingSubmission]);
+    vi.mocked(submissionService.getAll).mockResolvedValue([pendingSubmission]);
   });
 
   it('renders the dashboard counts', async () => {
@@ -65,25 +65,25 @@ describe('AdminContributeView', () => {
   it('lists pending submissions by default and expands to show details', async () => {
     render(<AdminContributeView />);
     await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
-    expect(weaponSubmissionService.getAll).toHaveBeenCalledWith('PENDING');
+    expect(submissionService.getAll).toHaveBeenCalledWith('WEAPON', 'PENDING');
 
     fireEvent.click(screen.getByText('Terra Blade'));
     expect(screen.getByText(/Uma lâmina lendária/)).toBeInTheDocument();
   });
 
   it('approves a submission', async () => {
-    vi.mocked(weaponSubmissionService.approve).mockResolvedValue({ ...pendingSubmission, status: 'APPROVED' });
+    vi.mocked(submissionService.approve).mockResolvedValue({ ...pendingSubmission, status: 'APPROVED' });
     render(<AdminContributeView />);
     await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
 
     fireEvent.click(screen.getByText('Terra Blade'));
     fireEvent.click(screen.getByRole('button', { name: 'Aprovar' }));
 
-    await waitFor(() => expect(weaponSubmissionService.approve).toHaveBeenCalledWith('1'));
+    await waitFor(() => expect(submissionService.approve).toHaveBeenCalledWith('1'));
   });
 
   it('rejects a submission with a reason', async () => {
-    vi.mocked(weaponSubmissionService.reject).mockResolvedValue({ ...pendingSubmission, status: 'REJECTED' });
+    vi.mocked(submissionService.reject).mockResolvedValue({ ...pendingSubmission, status: 'REJECTED' });
     render(<AdminContributeView />);
     await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
 
@@ -95,7 +95,7 @@ describe('AdminContributeView', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar Rejeição' }));
 
     await waitFor(() =>
-      expect(weaponSubmissionService.reject).toHaveBeenCalledWith('1', 'Dano incompatível')
+      expect(submissionService.reject).toHaveBeenCalledWith('1', 'Dano incompatível')
     );
   });
 
@@ -105,6 +105,6 @@ describe('AdminContributeView', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Aprovadas' }));
 
-    await waitFor(() => expect(weaponSubmissionService.getAll).toHaveBeenCalledWith('APPROVED'));
+    await waitFor(() => expect(submissionService.getAll).toHaveBeenCalledWith('WEAPON', 'APPROVED'));
   });
 });

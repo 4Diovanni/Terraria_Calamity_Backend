@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { UserContributeView } from './UserContributeView';
-import { weaponSubmissionService } from '../../services/weaponSubmissionService';
+import { submissionService } from '../../services/submissionService';
 import { WeaponSubmission } from '../../types/weaponSubmission';
 import { WeaponTypeClass, Element } from '../../types/weapon';
 
-vi.mock('../../services/weaponSubmissionService', () => ({
-  weaponSubmissionService: { create: vi.fn(), getMine: vi.fn(), cancel: vi.fn() },
+vi.mock('../../services/submissionService', () => ({
+  submissionService: { create: vi.fn(), getMine: vi.fn(), cancel: vi.fn() },
 }));
 
 const pendingSubmission: WeaponSubmission = {
@@ -51,20 +51,20 @@ describe('UserContributeView', () => {
   });
 
   it('creates a proposal and shows a success message', async () => {
-    vi.mocked(weaponSubmissionService.create).mockResolvedValue(pendingSubmission);
+    vi.mocked(submissionService.create).mockResolvedValue(pendingSubmission);
     render(<UserContributeView />);
 
     fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Terra Blade' } });
     fireEvent.change(screen.getByLabelText('Descrição'), { target: { value: 'desc' } });
     fireEvent.click(screen.getByRole('button', { name: 'Enviar Proposta' }));
 
-    await waitFor(() => expect(weaponSubmissionService.create).toHaveBeenCalled());
+    await waitFor(() => expect(submissionService.create).toHaveBeenCalled());
     expect(await screen.findByText(/Proposta enviada/)).toBeInTheDocument();
   });
 
   it('lists my submissions with status and cancels a pending one', async () => {
-    vi.mocked(weaponSubmissionService.getMine).mockResolvedValue([pendingSubmission, rejectedSubmission]);
-    vi.mocked(weaponSubmissionService.cancel).mockResolvedValue(undefined);
+    vi.mocked(submissionService.getMine).mockResolvedValue([pendingSubmission, rejectedSubmission]);
+    vi.mocked(submissionService.cancel).mockResolvedValue(undefined);
     render(<UserContributeView />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Minhas Propostas' }));
@@ -75,11 +75,11 @@ describe('UserContributeView', () => {
     expect(screen.getByText('Motivo: Dano incompatível com a raridade')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
-    await waitFor(() => expect(weaponSubmissionService.cancel).toHaveBeenCalledWith('1'));
+    await waitFor(() => expect(submissionService.cancel).toHaveBeenCalledWith('1'));
   });
 
   it('shows an empty state when there are no submissions', async () => {
-    vi.mocked(weaponSubmissionService.getMine).mockResolvedValue([]);
+    vi.mocked(submissionService.getMine).mockResolvedValue([]);
     render(<UserContributeView />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Minhas Propostas' }));
