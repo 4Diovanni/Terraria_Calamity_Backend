@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '../../services/adminService';
 import { submissionService } from '../../services/submissionService';
+import { SubmissionDiff } from './SubmissionDiff';
 import { Button } from '../ui/Button';
 import { Loading, Error as ErrorView, EmptyState } from '../ui';
 import { AdminDashboard, SubmissionStatus, WeaponSubmission } from '../../types/weaponSubmission';
@@ -152,12 +153,7 @@ export const AdminContributeView = () => {
 
               {expandedId === submission.id && (
                 <div className="mt-4 pt-4 border-t border-calamity-border space-y-2 text-sm text-calamity-text-secondary">
-                  <p>Classe: {submission.weaponClass} · Elemento: {submission.element}</p>
-                  <p>Dano: {submission.baseDamage} · Crítico: {submission.criticalChance}%</p>
-                  <p>
-                    Raridade: {submission.rarity} · Preço: {submission.price} · Qualidade: {submission.quality}
-                  </p>
-                  <p>Descrição: {submission.description}</p>
+                  <SubmissionDiff submission={submission} />
 
                   {submission.status === 'PENDING' && (
                     <div className="flex flex-col gap-3 pt-2">
