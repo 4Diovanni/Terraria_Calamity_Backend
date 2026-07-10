@@ -92,4 +92,16 @@ describe('SubmissionDiff', () => {
     expect(await screen.findByText(/Arma original não encontrada/)).toBeInTheDocument();
     expect(screen.getByText('Iron Shortsword Reforjada')).toBeInTheDocument();
   });
+
+  it('renders UPDATE submission immediately when targetWeaponId is null (no loading state)', async () => {
+    const updateSubmissionNoTarget: WeaponSubmission = {
+      ...updateSubmission,
+      targetWeaponId: null,
+    };
+    render(<SubmissionDiff submission={updateSubmissionNoTarget} />);
+
+    expect(await screen.findByText('Iron Shortsword Reforjada')).toBeInTheDocument();
+    expect(screen.queryByText('Carregando comparação...')).not.toBeInTheDocument();
+    expect(weaponService.getWeaponById).not.toHaveBeenCalled();
+  });
 });

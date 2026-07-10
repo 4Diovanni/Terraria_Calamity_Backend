@@ -11,7 +11,7 @@ interface SubmissionDiffProps {
 
 export const SubmissionDiff = ({ submission }: SubmissionDiffProps) => {
   const [currentWeapon, setCurrentWeapon] = useState<Weapon | null>(null);
-  const [loading, setLoading] = useState(submission.type === 'UPDATE');
+  const [loading, setLoading] = useState(submission.type === 'UPDATE' && !!submission.targetWeaponId);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
