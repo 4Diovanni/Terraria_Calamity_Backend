@@ -1,9 +1,10 @@
 package com.terraria.calamity.api.controller;
 
-import com.terraria.calamity.application.service.WeaponSubmissionService;
+import com.terraria.calamity.application.service.SubmissionService;
 import com.terraria.calamity.domain.dto.RejectSubmissionRequestDTO;
 import com.terraria.calamity.domain.dto.WeaponSubmissionRequestDTO;
 import com.terraria.calamity.domain.dto.WeaponSubmissionResponseDTO;
+import com.terraria.calamity.domain.entity.EntityType;
 import com.terraria.calamity.domain.entity.SubmissionStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,22 +17,31 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/weapon-submissions")
+@RequestMapping("/api/v1/submissions")
 @RequiredArgsConstructor
-public class WeaponSubmissionController {
+public class SubmissionController {
 
-    private final WeaponSubmissionService submissionService;
+    private final SubmissionService submissionService;
 
     @PostMapping
     public ResponseEntity<WeaponSubmissionResponseDTO> create(
+            @RequestParam String entityType,
             @Valid @RequestBody WeaponSubmissionRequestDTO requestDTO,
             Authentication authentication) {
+        if (!isSupportedWeaponType(entityType)) {
+            return ResponseEntity.badRequest().build();
+        }
         WeaponSubmissionResponseDTO created = submissionService.create(requestDTO, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/mine")
-    public ResponseEntity<List<WeaponSubmissionResponseDTO>> findMine(Authentication authentication) {
+    public ResponseEntity<List<WeaponSubmissionResponseDTO>> findMine(
+            @RequestParam String entityType,
+            Authentication authentication) {
+        if (!isSupportedWeaponType(entityType)) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(submissionService.findMine(authentication.getName()));
     }
 
@@ -44,7 +54,11 @@ public class WeaponSubmissionController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<WeaponSubmissionResponseDTO>> findByStatus(
+            @RequestParam String entityType,
             @RequestParam(defaultValue = "PENDING") String status) {
+        if (!isSupportedWeaponType(entityType)) {
+            return ResponseEntity.badRequest().build();
+        }
         SubmissionStatus statusEnum;
         try {
             statusEnum = SubmissionStatus.valueOf(status.toUpperCase());
@@ -72,5 +86,13 @@ public class WeaponSubmissionController {
             @PathVariable Long id,
             @Valid @RequestBody RejectSubmissionRequestDTO requestDTO) {
         return ResponseEntity.ok(submissionService.reject(id, requestDTO.reason()));
+    }
+
+    private boolean isSupportedWeaponType(String entityType) {
+        try {
+            return EntityType.valueOf(entityType.toUpperCase()) == EntityType.WEAPON;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

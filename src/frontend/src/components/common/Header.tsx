@@ -98,12 +98,6 @@ export const Header = () => {
           {!isLoading && (user ? (
             <div className="hidden md:flex items-center gap-4">
               <Link
-                to="/contribuir"
-                className="text-sm font-display uppercase tracking-wider text-calamity-text-secondary hover:text-calamity-primary transition-colors duration-300"
-              >
-                Contribuir
-              </Link>
-              <Link
                 to="/perfil"
                 className="text-sm font-display text-calamity-text-secondary hover:text-calamity-text-primary transition-colors duration-300"
               >
@@ -134,22 +128,13 @@ export const Header = () => {
           {renderLinks(() => setMenuOpen(false))}
           <div className="pt-2 border-t border-calamity-border flex flex-col gap-3">
             {!isLoading && (user ? (
-              <>
-                <Link
-                  to="/contribuir"
-                  onClick={() => setMenuOpen(false)}
-                  className="text-sm font-display uppercase tracking-wider text-calamity-text-secondary hover:text-calamity-primary transition-colors duration-300"
-                >
-                  Contribuir
-                </Link>
-                <Link
-                  to="/perfil"
-                  onClick={() => setMenuOpen(false)}
-                  className="block text-sm font-display text-calamity-text-secondary hover:text-calamity-text-primary transition-colors duration-300"
-                >
-                  {user.username}
-                </Link>
-              </>
+              <Link
+                to="/perfil"
+                onClick={() => setMenuOpen(false)}
+                className="block text-sm font-display text-calamity-text-secondary hover:text-calamity-text-primary transition-colors duration-300"
+              >
+                {user.username}
+              </Link>
             ) : (
               <Link
                 to="/login"

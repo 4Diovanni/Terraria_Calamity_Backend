@@ -3,17 +3,18 @@ package com.terraria.calamity.application.service;
 import com.terraria.calamity.api.exception.DuplicateResourceException;
 import com.terraria.calamity.api.exception.ForbiddenActionException;
 import com.terraria.calamity.api.exception.InvalidSubmissionStateException;
-import com.terraria.calamity.application.mapper.WeaponSubmissionMapper;
+import com.terraria.calamity.application.mapper.WeaponPayloadMapper;
 import com.terraria.calamity.domain.dto.WeaponSubmissionRequestDTO;
 import com.terraria.calamity.domain.dto.WeaponSubmissionResponseDTO;
+import com.terraria.calamity.domain.entity.EntityType;
+import com.terraria.calamity.domain.entity.Submission;
 import com.terraria.calamity.domain.entity.SubmissionStatus;
 import com.terraria.calamity.domain.entity.SubmissionType;
 import com.terraria.calamity.domain.entity.User;
 import com.terraria.calamity.domain.entity.Weapon;
-import com.terraria.calamity.domain.entity.WeaponSubmission;
+import com.terraria.calamity.domain.repository.SubmissionRepository;
 import com.terraria.calamity.domain.repository.UserRepository;
 import com.terraria.calamity.domain.repository.WeaponRepository;
-import com.terraria.calamity.domain.repository.WeaponSubmissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,34 +24,36 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class WeaponSubmissionService {
+public class SubmissionService {
 
-    private final WeaponSubmissionRepository submissionRepository;
+    private final SubmissionRepository submissionRepository;
     private final WeaponRepository weaponRepository;
     private final UserRepository userRepository;
-    private final WeaponSubmissionMapper mapper;
+    private final WeaponPayloadMapper weaponPayloadMapper;
 
     public WeaponSubmissionResponseDTO create(WeaponSubmissionRequestDTO dto, String submitterEmail) {
         User submitter = userRepository.findByEmail(submitterEmail)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + submitterEmail));
 
-        Weapon targetWeapon = null;
+        Long targetEntityId = dto.targetWeaponId();
         SubmissionType type = SubmissionType.CREATE;
 
-        if (dto.targetWeaponId() != null) {
-            targetWeapon = weaponRepository.findById(dto.targetWeaponId())
-                    .orElseThrow(() -> new RuntimeException("Weapon not found with ID: " + dto.targetWeaponId()));
+        if (targetEntityId != null) {
+            if (!weaponRepository.existsById(targetEntityId)) {
+                throw new RuntimeException("Weapon not found with ID: " + targetEntityId);
+            }
             type = SubmissionType.UPDATE;
 
-            if (submissionRepository.existsByTargetWeaponIdAndStatus(dto.targetWeaponId(), SubmissionStatus.PENDING)) {
+            if (submissionRepository.existsByTargetEntityIdAndEntityTypeAndStatus(
+                    targetEntityId, EntityType.WEAPON, SubmissionStatus.PENDING)) {
                 throw new DuplicateResourceException(
-                        "There is already a pending submission for weapon ID: " + dto.targetWeaponId());
+                        "There is already a pending submission for weapon ID: " + targetEntityId);
             }
         }
 
-        WeaponSubmission submission = mapper.toEntity(dto, submitter, targetWeapon, type);
-        WeaponSubmission saved = submissionRepository.save(submission);
-        return mapper.toResponseDTO(saved);
+        Submission submission = weaponPayloadMapper.toEntity(dto, submitter, targetEntityId, type);
+        Submission saved = submissionRepository.save(submission);
+        return weaponPayloadMapper.toResponseDTO(saved);
     }
 
     @Transactional(readOnly = true)
@@ -58,25 +61,25 @@ public class WeaponSubmissionService {
         User submitter = userRepository.findByEmail(submitterEmail)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + submitterEmail));
 
-        return submissionRepository.findBySubmittedByOrderByCreatedAtDesc(submitter).stream()
-                .map(mapper::toResponseDTO)
+        return submissionRepository.findBySubmittedByAndEntityTypeOrderByCreatedAtDesc(submitter, EntityType.WEAPON).stream()
+                .map(weaponPayloadMapper::toResponseDTO)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<WeaponSubmissionResponseDTO> findByStatus(SubmissionStatus status) {
-        return submissionRepository.findByStatusOrderByCreatedAtAsc(status).stream()
-                .map(mapper::toResponseDTO)
+        return submissionRepository.findByEntityTypeAndStatusOrderByCreatedAtAsc(EntityType.WEAPON, status).stream()
+                .map(weaponPayloadMapper::toResponseDTO)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public WeaponSubmissionResponseDTO findById(Long id) {
-        return mapper.toResponseDTO(getSubmissionOrThrow(id));
+        return weaponPayloadMapper.toResponseDTO(getSubmissionOrThrow(id));
     }
 
     public void cancel(Long id, String requesterEmail) {
-        WeaponSubmission submission = getSubmissionOrThrow(id);
+        Submission submission = getSubmissionOrThrow(id);
 
         if (!submission.getSubmittedBy().getEmail().equals(requesterEmail)) {
             throw new ForbiddenActionException("Only the author can cancel this submission");
@@ -88,38 +91,38 @@ public class WeaponSubmissionService {
     }
 
     public WeaponSubmissionResponseDTO approve(Long id) {
-        WeaponSubmission submission = getSubmissionOrThrow(id);
+        Submission submission = getSubmissionOrThrow(id);
         if (submission.getStatus() != SubmissionStatus.PENDING) {
             throw new InvalidSubmissionStateException("Only PENDING submissions can be approved");
         }
 
-        if (submission.getType() == SubmissionType.CREATE) {
-            weaponRepository.save(mapper.toApprovedWeapon(submission));
+        if (submission.getSubmissionType() == SubmissionType.CREATE) {
+            weaponRepository.save(weaponPayloadMapper.toApprovedWeapon(submission));
         } else {
-            Weapon target = weaponRepository.findById(submission.getTargetWeapon().getId())
+            Weapon target = weaponRepository.findById(submission.getTargetEntityId())
                     .orElseThrow(() -> new RuntimeException(
-                            "Weapon not found with ID: " + submission.getTargetWeapon().getId()));
-            mapper.applyToExistingWeapon(submission, target);
+                            "Weapon not found with ID: " + submission.getTargetEntityId()));
+            weaponPayloadMapper.applyToExistingWeapon(submission, target);
             weaponRepository.save(target);
         }
 
         submission.setStatus(SubmissionStatus.APPROVED);
-        WeaponSubmission saved = submissionRepository.save(submission);
-        return mapper.toResponseDTO(saved);
+        Submission saved = submissionRepository.save(submission);
+        return weaponPayloadMapper.toResponseDTO(saved);
     }
 
     public WeaponSubmissionResponseDTO reject(Long id, String reason) {
-        WeaponSubmission submission = getSubmissionOrThrow(id);
+        Submission submission = getSubmissionOrThrow(id);
         if (submission.getStatus() != SubmissionStatus.PENDING) {
             throw new InvalidSubmissionStateException("Only PENDING submissions can be rejected");
         }
         submission.setStatus(SubmissionStatus.REJECTED);
         submission.setRejectionReason(reason);
-        WeaponSubmission saved = submissionRepository.save(submission);
-        return mapper.toResponseDTO(saved);
+        Submission saved = submissionRepository.save(submission);
+        return weaponPayloadMapper.toResponseDTO(saved);
     }
 
-    private WeaponSubmission getSubmissionOrThrow(Long id) {
+    private Submission getSubmissionOrThrow(Long id) {
         return submissionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Submission not found with ID: " + id));
     }

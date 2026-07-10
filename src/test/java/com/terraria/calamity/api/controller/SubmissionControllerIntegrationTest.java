@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class WeaponSubmissionControllerIntegrationTest {
+class SubmissionControllerIntegrationTest {
 
     @Autowired private WebApplicationContext wac;
     @Autowired private UserRepository userRepository;
@@ -63,7 +63,7 @@ class WeaponSubmissionControllerIntegrationTest {
     void create_asAuthenticatedUser_returnsCreatedWithPendingStatus() throws Exception {
         String token = tokenFor("submitter1@terraria.com", Role.USER);
 
-        mockMvc.perform(post("/api/v1/weapon-submissions")
+        mockMvc.perform(post("/api/v1/submissions").param("entityType", "WEAPON")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createSubmissionJson(null)))
@@ -75,7 +75,7 @@ class WeaponSubmissionControllerIntegrationTest {
 
     @Test
     void create_withoutToken_isUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/v1/weapon-submissions")
+        mockMvc.perform(post("/api/v1/submissions").param("entityType", "WEAPON")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createSubmissionJson(null)))
                 .andExpect(result -> {
@@ -87,22 +87,33 @@ class WeaponSubmissionControllerIntegrationTest {
     }
 
     @Test
+    void create_withUnsupportedEntityType_isBadRequest() throws Exception {
+        String token = tokenFor("submitter-bad@terraria.com", Role.USER);
+
+        mockMvc.perform(post("/api/v1/submissions").param("entityType", "ARMOR")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createSubmissionJson(null)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void findMine_returnsOnlyOwnSubmissions() throws Exception {
         String tokenA = tokenFor("mineA@terraria.com", Role.USER);
         String tokenB = tokenFor("mineB@terraria.com", Role.USER);
 
-        mockMvc.perform(post("/api/v1/weapon-submissions")
+        mockMvc.perform(post("/api/v1/submissions").param("entityType", "WEAPON")
                         .header("Authorization", "Bearer " + tokenA)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createSubmissionJson(null)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/api/v1/weapon-submissions/mine")
+        mockMvc.perform(get("/api/v1/submissions/mine").param("entityType", "WEAPON")
                         .header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
 
-        mockMvc.perform(get("/api/v1/weapon-submissions/mine")
+        mockMvc.perform(get("/api/v1/submissions/mine").param("entityType", "WEAPON")
                         .header("Authorization", "Bearer " + tokenA))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
@@ -113,7 +124,7 @@ class WeaponSubmissionControllerIntegrationTest {
         String authorToken = tokenFor("author2@terraria.com", Role.USER);
         String otherToken = tokenFor("stranger2@terraria.com", Role.USER);
 
-        String responseBody = mockMvc.perform(post("/api/v1/weapon-submissions")
+        String responseBody = mockMvc.perform(post("/api/v1/submissions").param("entityType", "WEAPON")
                         .header("Authorization", "Bearer " + authorToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createSubmissionJson(null)))
@@ -121,7 +132,7 @@ class WeaponSubmissionControllerIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         Long submissionId = objectMapper.readTree(responseBody).get("id").asLong();
 
-        mockMvc.perform(delete("/api/v1/weapon-submissions/" + submissionId)
+        mockMvc.perform(delete("/api/v1/submissions/" + submissionId)
                         .header("Authorization", "Bearer " + otherToken))
                 .andExpect(status().isForbidden());
     }
@@ -130,7 +141,7 @@ class WeaponSubmissionControllerIntegrationTest {
     void cancel_byAuthor_returnsNoContent() throws Exception {
         String authorToken = tokenFor("author3@terraria.com", Role.USER);
 
-        String responseBody = mockMvc.perform(post("/api/v1/weapon-submissions")
+        String responseBody = mockMvc.perform(post("/api/v1/submissions").param("entityType", "WEAPON")
                         .header("Authorization", "Bearer " + authorToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createSubmissionJson(null)))
@@ -138,7 +149,7 @@ class WeaponSubmissionControllerIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         Long submissionId = objectMapper.readTree(responseBody).get("id").asLong();
 
-        mockMvc.perform(delete("/api/v1/weapon-submissions/" + submissionId)
+        mockMvc.perform(delete("/api/v1/submissions/" + submissionId)
                         .header("Authorization", "Bearer " + authorToken))
                 .andExpect(status().isNoContent());
     }

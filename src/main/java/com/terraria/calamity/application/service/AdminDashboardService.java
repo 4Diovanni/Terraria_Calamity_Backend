@@ -3,9 +3,9 @@ package com.terraria.calamity.application.service;
 import com.terraria.calamity.domain.dto.AdminDashboardResponseDTO;
 import com.terraria.calamity.domain.entity.Role;
 import com.terraria.calamity.domain.entity.SubmissionStatus;
+import com.terraria.calamity.domain.repository.SubmissionRepository;
 import com.terraria.calamity.domain.repository.UserRepository;
 import com.terraria.calamity.domain.repository.WeaponRepository;
-import com.terraria.calamity.domain.repository.WeaponSubmissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ public class AdminDashboardService {
 
     private final UserRepository userRepository;
     private final WeaponRepository weaponRepository;
-    private final WeaponSubmissionRepository submissionRepository;
+    private final SubmissionRepository submissionRepository;
 
     @Transactional(readOnly = true)
     public AdminDashboardResponseDTO getDashboard() {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '../../services/adminService';
-import { weaponSubmissionService } from '../../services/weaponSubmissionService';
+import { submissionService } from '../../services/submissionService';
 import { Button } from '../ui/Button';
 import { Loading, Error as ErrorView, EmptyState } from '../ui';
 import { AdminDashboard, SubmissionStatus, WeaponSubmission } from '../../types/weaponSubmission';
@@ -39,7 +39,7 @@ export const AdminContributeView = () => {
       setError(null);
       const [dashboardData, submissionsData] = await Promise.all([
         adminService.getDashboard(),
-        weaponSubmissionService.getAll(statusFilter),
+        submissionService.getAll('WEAPON', statusFilter),
       ]);
       setDashboard(dashboardData);
       setSubmissions(submissionsData);
@@ -58,7 +58,7 @@ export const AdminContributeView = () => {
   const handleApprove = async (id: string) => {
     setActionError(null);
     try {
-      await weaponSubmissionService.approve(id);
+      await submissionService.approve(id);
       await fetchAll();
     } catch (err) {
       const message = (err as { message?: string })?.message;
@@ -70,7 +70,7 @@ export const AdminContributeView = () => {
     if (!rejectionReason.trim()) return;
     setActionError(null);
     try {
-      await weaponSubmissionService.reject(id, rejectionReason);
+      await submissionService.reject(id, rejectionReason);
       setRejectingId(null);
       setRejectionReason('');
       await fetchAll();

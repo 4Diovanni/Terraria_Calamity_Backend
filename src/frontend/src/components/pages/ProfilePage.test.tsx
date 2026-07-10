@@ -16,6 +16,16 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
+vi.mock('../../services/adminService', () => ({
+  adminService: { getDashboard: vi.fn() },
+}));
+
+vi.mock('../../services/submissionService', () => ({
+  submissionService: { getAll: vi.fn(), getMine: vi.fn() },
+}));
+
+import { adminService } from '../../services/adminService';
+
 const userBase = {
   username: 'Arcanjo',
   email: 'arcanjo@calamity.com',
@@ -35,6 +45,14 @@ describe('ProfilePage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseAuth.mockReturnValue(authBase);
+    vi.mocked(adminService.getDashboard).mockResolvedValue({
+      totalUsers: 0,
+      totalAdmins: 0,
+      totalWeapons: 0,
+      pendingSubmissions: 0,
+      approvedSubmissions: 0,
+      rejectedSubmissions: 0,
+    });
   });
 
   it('exibe o username do usuário autenticado', () => {
@@ -71,5 +89,27 @@ describe('ProfilePage', () => {
     render(<MemoryRouter><ProfilePage /></MemoryRouter>);
     fireEvent.click(screen.getByRole('button', { name: /encerrar sessão/i }));
     expect(mockNavigate).toHaveBeenCalledWith('/login');
+  });
+
+  it('renderiza a aba Contribuições com UserContributeView para usuário comum', () => {
+    render(<MemoryRouter><ProfilePage /></MemoryRouter>);
+    fireEvent.click(screen.getByRole('button', { name: 'Contribuições' }));
+    expect(screen.getByRole('button', { name: 'Nova Proposta' })).toBeInTheDocument();
+  });
+
+  it('renderiza a aba Contribuições com AdminContributeView para admin', () => {
+    mockUseAuth.mockReturnValue({
+      ...authBase,
+      user: { ...userBase, role: 'ADMIN' as const },
+    });
+    render(<MemoryRouter><ProfilePage /></MemoryRouter>);
+    fireEvent.click(screen.getByRole('button', { name: 'Contribuições' }));
+    expect(screen.getByRole('button', { name: 'Pendentes' })).toBeInTheDocument();
+  });
+
+  it('mantém a aba Perfil como conteúdo inicial', () => {
+    render(<MemoryRouter><ProfilePage /></MemoryRouter>);
+    expect(screen.getByText('Arcanjo')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Nova Proposta' })).not.toBeInTheDocument();
   });
 });

@@ -17,7 +17,6 @@ import { Layout } from './components/common/Layout';
 import { LoginPage } from './components/pages/LoginPage';
 import { RegisterPage } from './components/pages/RegisterPage';
 import { ProfilePage } from './components/pages/ProfilePage';
-import { ContributePage } from './components/pages/ContributePage';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -51,14 +50,6 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <ProfilePage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="contribuir"
-                    element={
-                      <ProtectedRoute>
-                        <ContributePage />
                       </ProtectedRoute>
                     }
                   />

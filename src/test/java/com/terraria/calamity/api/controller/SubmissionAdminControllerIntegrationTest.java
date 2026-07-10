@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class WeaponSubmissionAdminControllerIntegrationTest {
+class SubmissionAdminControllerIntegrationTest {
 
     @Autowired private WebApplicationContext wac;
     @Autowired private UserRepository userRepository;
@@ -58,7 +58,7 @@ class WeaponSubmissionAdminControllerIntegrationTest {
         WeaponSubmissionRequestDTO dto = new WeaponSubmissionRequestDTO(
                 null, "Terra Blade", Weapon.WeaponClass.MELEE, Element.HOLY,
                 50, 8, 1.3, 65, 5, 8000, 6, "Slash", "desc", "img");
-        String body = mockMvc.perform(post("/api/v1/weapon-submissions")
+        String body = mockMvc.perform(post("/api/v1/submissions").param("entityType", "WEAPON")
                         .header("Authorization", "Bearer " + authorToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -71,7 +71,7 @@ class WeaponSubmissionAdminControllerIntegrationTest {
     void listPending_asUser_isForbidden() throws Exception {
         String userToken = tokenFor("listuser@terraria.com", Role.USER);
 
-        mockMvc.perform(get("/api/v1/weapon-submissions")
+        mockMvc.perform(get("/api/v1/submissions").param("entityType", "WEAPON")
                         .header("Authorization", "Bearer " + userToken))
                 .andExpect(status().isForbidden());
     }
@@ -84,7 +84,7 @@ class WeaponSubmissionAdminControllerIntegrationTest {
 
         Long submissionId = createPendingSubmission(authorToken);
 
-        mockMvc.perform(post("/api/v1/weapon-submissions/" + submissionId + "/approve")
+        mockMvc.perform(post("/api/v1/submissions/" + submissionId + "/approve")
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("APPROVED"));
@@ -101,7 +101,7 @@ class WeaponSubmissionAdminControllerIntegrationTest {
 
         RejectSubmissionRequestDTO rejectDTO = new RejectSubmissionRequestDTO("Dano muito alto para a raridade");
 
-        mockMvc.perform(post("/api/v1/weapon-submissions/" + submissionId + "/reject")
+        mockMvc.perform(post("/api/v1/submissions/" + submissionId + "/reject")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(rejectDTO)))
@@ -117,12 +117,38 @@ class WeaponSubmissionAdminControllerIntegrationTest {
 
         Long submissionId = createPendingSubmission(authorToken);
 
-        mockMvc.perform(post("/api/v1/weapon-submissions/" + submissionId + "/approve")
+        mockMvc.perform(post("/api/v1/submissions/" + submissionId + "/approve")
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(post("/api/v1/weapon-submissions/" + submissionId + "/approve")
+        mockMvc.perform(post("/api/v1/submissions/" + submissionId + "/approve")
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    void findById_asUser_isForbidden() throws Exception {
+        String authorToken = tokenFor("author-findbyid@terraria.com", Role.USER);
+        String userToken = tokenFor("user-findbyid@terraria.com", Role.USER);
+
+        Long submissionId = createPendingSubmission(authorToken);
+
+        mockMvc.perform(get("/api/v1/submissions/" + submissionId)
+                        .header("Authorization", "Bearer " + userToken))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void findById_asAdmin_returnsSubmission() throws Exception {
+        String authorToken = tokenFor("author-getid@terraria.com", Role.USER);
+        String adminToken = tokenFor("admin-getid@terraria.com", Role.ADMIN);
+
+        Long submissionId = createPendingSubmission(authorToken);
+
+        mockMvc.perform(get("/api/v1/submissions/" + submissionId)
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(submissionId))
+                .andExpect(jsonPath("$.status").value("PENDING"));
     }
 }
