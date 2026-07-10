@@ -86,4 +86,20 @@ describe('UserContributeView', () => {
 
     expect(await screen.findByText('Nenhuma proposta ainda')).toBeInTheDocument();
   });
+
+  it('expands a submission card to show the diff and keeps Cancelar available', async () => {
+    vi.mocked(submissionService.getMine).mockResolvedValue([pendingSubmission]);
+    render(<UserContributeView />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Minhas Propostas' }));
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    expect(screen.getByRole('button', { name: 'Cancelar' })).toBeInTheDocument();
+    expect(screen.queryByText('desc')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Terra Blade'));
+
+    expect(await screen.findByText('desc')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancelar' })).toBeInTheDocument();
+  });
 });
