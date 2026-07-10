@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { WeaponForm } from './WeaponForm';
 import { SubmissionStatusBadge } from './SubmissionStatusBadge';
+import { SubmissionDiff } from './SubmissionDiff';
 import { submissionService } from '../../services/submissionService';
 import { Button } from '../ui/Button';
 import { Loading, Error as ErrorView, EmptyState } from '../ui';
@@ -16,6 +17,7 @@ export const UserContributeView = () => {
   const [error, setError] = useState<string | null>(null);
   const [createSuccess, setCreateSuccess] = useState(false);
   const [cancelingId, setCancelingId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const fetchMine = useCallback(async () => {
     try {
@@ -110,7 +112,11 @@ export const UserContributeView = () => {
                   key={submission.id}
                   className="bg-calamity-bg-secondary border-2 border-calamity-border p-6"
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedId(expandedId === submission.id ? null : submission.id)}
+                    className="w-full flex items-start justify-between gap-4 text-left"
+                  >
                     <div>
                       <h3 className="text-lg font-bold font-display text-calamity-accent-gold">
                         {submission.name}
@@ -119,8 +125,20 @@ export const UserContributeView = () => {
                         {submission.type === 'UPDATE' ? 'Edição de arma existente' : 'Nova arma'}
                       </p>
                     </div>
-                    <SubmissionStatusBadge status={submission.status} />
-                  </div>
+                    <div className="flex items-center gap-3">
+                      <SubmissionStatusBadge status={submission.status} />
+                      <span className="text-calamity-text-secondary">
+                        {expandedId === submission.id ? '−' : '+'}
+                      </span>
+                    </div>
+                  </button>
+
+                  {expandedId === submission.id && (
+                    <div className="mt-4 pt-4 border-t border-calamity-border">
+                      <SubmissionDiff submission={submission} />
+                    </div>
+                  )}
+
                   {submission.status === 'REJECTED' && submission.rejectionReason && (
                     <p className="mt-3 text-sm text-calamity-primary">
                       Motivo: {submission.rejectionReason}
