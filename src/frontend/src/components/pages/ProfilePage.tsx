@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { UserContributeView } from './UserContributeView';
 import { AdminContributeView } from './AdminContributeView';
+import { AdminDashboardView } from './AdminDashboardView';
 
 const ROLE_LABEL: Record<string, string> = {
   USER: 'USUÁRIO',
   ADMIN: 'ADMINISTRADOR',
 };
 
-type Tab = 'profile' | 'contributions';
+type Tab = 'profile' | 'contributions' | 'dashboard';
 
 export const ProfilePage = () => {
   const { user, logout } = useAuth();
@@ -51,6 +52,19 @@ export const ProfilePage = () => {
         >
           Contribuições
         </button>
+        {user?.role === 'ADMIN' && (
+          <button
+            type="button"
+            onClick={() => setTab('dashboard')}
+            className={`pb-3 px-2 font-display uppercase text-sm tracking-wider border-b-2 -mb-0.5 ${
+              tab === 'dashboard'
+                ? 'text-calamity-accent-gold border-calamity-accent-gold'
+                : 'text-calamity-text-secondary border-transparent'
+            }`}
+          >
+            Dashboard
+          </button>
+        )}
       </div>
 
       {tab === 'profile' && (
@@ -93,6 +107,12 @@ export const ProfilePage = () => {
 
       {tab === 'contributions' && (
         <div>{user?.role === 'ADMIN' ? <AdminContributeView /> : <UserContributeView />}</div>
+      )}
+
+      {tab === 'dashboard' && (
+        <div>
+          <AdminDashboardView />
+        </div>
       )}
     </main>
   );
