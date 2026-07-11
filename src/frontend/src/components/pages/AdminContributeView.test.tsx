@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { AdminContributeView } from './AdminContributeView';
 import { submissionService } from '../../services/submissionService';
 import { WeaponSubmission } from '../../types/weaponSubmission';
@@ -83,5 +83,21 @@ describe('AdminContributeView', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Aprovadas' }));
 
     await waitFor(() => expect(submissionService.getAll).toHaveBeenCalledWith('WEAPON', 'APPROVED'));
+  });
+
+  it('opens and closes the full preview drawer for a submission', async () => {
+    render(<AdminContributeView />);
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByText('Terra Blade'));
+    fireEvent.click(screen.getByRole('button', { name: 'Ver preview completo' }));
+
+    const dialog = await screen.findByRole('dialog', { name: 'Preview: Terra Blade' });
+    expect(within(dialog).getByRole('heading', { name: 'Terra Blade', level: 1 })).toBeInTheDocument();
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Fechar' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog', { name: 'Preview: Terra Blade' })).not.toBeInTheDocument()
+    );
   });
 });

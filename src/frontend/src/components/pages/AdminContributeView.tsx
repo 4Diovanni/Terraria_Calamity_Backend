@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { submissionService } from '../../services/submissionService';
 import { SubmissionDiff } from './SubmissionDiff';
+import { SubmissionPreview } from './SubmissionPreview';
 import { Button } from '../ui/Button';
-import { Loading, Error as ErrorView, EmptyState } from '../ui';
+import { Loading, Error as ErrorView, EmptyState, Drawer } from '../ui';
 import { SubmissionStatus, WeaponSubmission } from '../../types/weaponSubmission';
 
 const STATUS_FILTERS: SubmissionStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
@@ -19,6 +20,7 @@ export const AdminContributeView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [previewOpenId, setPreviewOpenId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
@@ -65,6 +67,8 @@ export const AdminContributeView = () => {
       setActionError(message || 'Erro ao rejeitar submissão.');
     }
   };
+
+  const previewSubmission = submissions.find((s) => s.id === previewOpenId) ?? null;
 
   return (
     <div>
@@ -126,6 +130,14 @@ export const AdminContributeView = () => {
                 <div className="mt-4 pt-4 border-t border-calamity-border space-y-2 text-sm text-calamity-text-secondary">
                   <SubmissionDiff submission={submission} />
 
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPreviewOpenId(submission.id)}
+                  >
+                    Ver preview completo
+                  </Button>
+
                   {submission.status === 'PENDING' && (
                     <div className="flex flex-col gap-3 pt-2">
                       <div className="flex gap-3">
@@ -166,6 +178,18 @@ export const AdminContributeView = () => {
             </li>
           ))}
         </ul>
+      )}
+
+      {previewSubmission && (
+        <Drawer
+          open
+          onOpenChange={(open) => !open && setPreviewOpenId(null)}
+          title={`Preview: ${previewSubmission.name}`}
+          side="right"
+          size="wide"
+        >
+          <SubmissionPreview submission={previewSubmission} />
+        </Drawer>
       )}
     </div>
   );
