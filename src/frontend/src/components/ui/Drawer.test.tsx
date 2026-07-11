@@ -59,4 +59,22 @@ describe('Drawer', () => {
     );
     expect(screen.getByRole('dialog')).toHaveClass('overflow-y-auto');
   });
+
+  it('uses a wider panel on the right side when size="wide"', () => {
+    render(
+      <Drawer open onOpenChange={() => {}} title="Menu" side="right" size="wide">
+        <p>Conteúdo</p>
+      </Drawer>
+    );
+    expect(screen.getByRole('dialog')).toHaveClass('max-w-3xl');
+  });
+
+  it('keeps the default narrow panel on the right side when size is omitted', () => {
+    render(
+      <Drawer open onOpenChange={() => {}} title="Menu" side="right">
+        <p>Conteúdo</p>
+      </Drawer>
+    );
+    expect(screen.getByRole('dialog')).toHaveClass('max-w-sm');
+  });
 });
