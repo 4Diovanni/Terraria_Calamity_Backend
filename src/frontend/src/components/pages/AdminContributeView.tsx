@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { adminService } from '../../services/adminService';
 import { submissionService } from '../../services/submissionService';
 import { SubmissionDiff } from './SubmissionDiff';
 import { Button } from '../ui/Button';
 import { Loading, Error as ErrorView, EmptyState } from '../ui';
-import { AdminDashboard, SubmissionStatus, WeaponSubmission } from '../../types/weaponSubmission';
+import { SubmissionStatus, WeaponSubmission } from '../../types/weaponSubmission';
 
 const STATUS_FILTERS: SubmissionStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
 
@@ -14,17 +13,7 @@ const STATUS_FILTER_LABEL: Record<SubmissionStatus, string> = {
   REJECTED: 'Rejeitadas',
 };
 
-const DASHBOARD_CARDS: { key: keyof AdminDashboard; label: string }[] = [
-  { key: 'totalUsers', label: 'Usuários' },
-  { key: 'totalAdmins', label: 'Admins' },
-  { key: 'totalWeapons', label: 'Armas' },
-  { key: 'pendingSubmissions', label: 'Pendentes' },
-  { key: 'approvedSubmissions', label: 'Aprovadas' },
-  { key: 'rejectedSubmissions', label: 'Rejeitadas' },
-];
-
 export const AdminContributeView = () => {
-  const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [statusFilter, setStatusFilter] = useState<SubmissionStatus>('PENDING');
   const [submissions, setSubmissions] = useState<WeaponSubmission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,15 +27,11 @@ export const AdminContributeView = () => {
     try {
       setLoading(true);
       setError(null);
-      const [dashboardData, submissionsData] = await Promise.all([
-        adminService.getDashboard(),
-        submissionService.getAll('WEAPON', statusFilter),
-      ]);
-      setDashboard(dashboardData);
+      const submissionsData = await submissionService.getAll('WEAPON', statusFilter);
       setSubmissions(submissionsData);
     } catch (err) {
       const message = (err as { message?: string })?.message;
-      setError(message || 'Erro ao carregar o painel administrativo.');
+      setError(message || 'Erro ao carregar a fila de submissões.');
     } finally {
       setLoading(false);
     }
@@ -83,20 +68,6 @@ export const AdminContributeView = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
-        {DASHBOARD_CARDS.map(({ key, label }) => (
-          <div
-            key={key}
-            className="bg-calamity-bg-secondary border-2 border-calamity-border p-4 text-center"
-          >
-            <p className="text-3xl font-bold font-display text-calamity-accent-gold">
-              {dashboard ? dashboard[key] : '—'}
-            </p>
-            <p className="text-xs font-display uppercase text-calamity-text-secondary mt-1">{label}</p>
-          </div>
-        ))}
-      </div>
-
       <div className="flex gap-3 mb-6">
         {STATUS_FILTERS.map((status) => (
           <button
