@@ -69,4 +69,21 @@ describe('WeaponForm', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
     expect(onCancel).toHaveBeenCalled();
   });
+
+  it('calls onDataChange with the updated data whenever a field changes', () => {
+    const onDataChange = vi.fn();
+    render(
+      <WeaponForm
+        initialValues={validData}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+        submitLabel="Salvar"
+        onDataChange={onDataChange}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Terra Blade+' } });
+
+    expect(onDataChange).toHaveBeenCalledWith({ ...validData, name: 'Terra Blade+' });
+  });
 });
