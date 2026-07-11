@@ -102,4 +102,13 @@ describe('UserContributeView', () => {
     expect(await screen.findByText('desc')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Cancelar' })).toBeInTheDocument();
   });
+
+  it('shows a live preview of the new weapon while filling the "Nova Proposta" form', () => {
+    render(<UserContributeView />);
+
+    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Terra Blade' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Pré-visualização' }));
+
+    expect(screen.getByRole('heading', { name: 'Terra Blade', level: 1 })).toBeInTheDocument();
+  });
 });

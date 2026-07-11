@@ -176,4 +176,17 @@ describe('WeaponDetailPage', () => {
     );
     expect(await screen.findByText(/Proposta enviada/)).toBeInTheDocument();
   });
+
+  it('shows a wide preview-capable drawer when editing, with the current weapon prefilled in the preview tab', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    renderPage();
+    await waitFor(() => expect(screen.getByText('Terra Blade')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Editar' }));
+    const dialog = screen.getByRole('dialog', { name: 'Editar Arma' });
+    expect(dialog).toHaveClass('max-w-3xl');
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Pré-visualização' }));
+    expect(within(dialog).getByRole('heading', { name: 'Terra Blade', level: 1 })).toBeInTheDocument();
+  });
 });

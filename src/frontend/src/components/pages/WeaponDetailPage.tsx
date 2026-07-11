@@ -4,7 +4,7 @@ import { weaponService } from '../../services/weaponService';
 import { submissionService } from '../../services/submissionService';
 import { Weapon, WeaponFormData } from '../../types/weapon';
 import { useAuth } from '../../hooks/useAuth';
-import { WeaponForm } from './WeaponForm';
+import { WeaponFormWithPreview } from './WeaponFormWithPreview';
 import { WeaponAside, WeaponMainContent, WeaponFooterContent } from './WeaponDetailContent';
 import { Loading } from '../ui/Loading';
 import { Error as ErrorView } from '../ui/Error';
@@ -126,12 +126,13 @@ export const WeaponDetailPage = () => {
       </DetailLayout>
 
       {user?.role === 'ADMIN' && (
-        <Drawer open={isEditOpen} onOpenChange={setIsEditOpen} title="Editar Arma" side="right">
-          <WeaponForm
+        <Drawer open={isEditOpen} onOpenChange={setIsEditOpen} title="Editar Arma" side="right" size="wide">
+          <WeaponFormWithPreview
             initialValues={weapon}
             onSubmit={handleUpdate}
             onCancel={() => setIsEditOpen(false)}
             submitLabel="Salvar Alterações"
+            previewBase={weapon}
           />
         </Drawer>
       )}
@@ -157,12 +158,13 @@ export const WeaponDetailPage = () => {
       )}
 
       {user && user.role !== 'ADMIN' && (
-        <Drawer open={isSuggestOpen} onOpenChange={setIsSuggestOpen} title="Sugerir Edição" side="right">
-          <WeaponForm
+        <Drawer open={isSuggestOpen} onOpenChange={setIsSuggestOpen} title="Sugerir Edição" side="right" size="wide">
+          <WeaponFormWithPreview
             initialValues={weapon}
             onSubmit={handleSuggestEdit}
             onCancel={() => setIsSuggestOpen(false)}
             submitLabel="Enviar Proposta"
+            previewBase={weapon}
           />
         </Drawer>
       )}
