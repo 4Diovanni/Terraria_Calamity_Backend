@@ -1599,3 +1599,87 @@ Expected: PASS em todos os arquivos.
 git add src/frontend/src/components/pages/AdminContributeView.tsx src/frontend/src/components/pages/AdminContributeView.test.tsx
 git commit -m "feat(frontend): adiciona botao Ver preview completo na fila de revisao do admin"
 ```
+
+---
+
+### Task 10: Usar `WeaponFormWithPreview` no drawer "Nova Arma" de `WeaponsPage`
+
+**Contexto:** adicionada após a revisão final de branch inteira das Tasks 1-9. O pedido original do usuário incluía o admin ver preview "criando" — mas o drawer "Nova Arma" (criação direta de arma pelo admin, fora do fluxo de submissões) vive em `WeaponsPage.tsx`, uma página que não foi mapeada durante o brainstorming original (só `WeaponDetailPage`, `UserContributeView` e `AdminContributeView` foram cobertas). Esta task fecha esse gap de escopo, reaproveitando 100% do que já foi construído nas Tasks 1-6 — nenhum componente novo.
+
+**Files:**
+- Modify: `src/frontend/src/components/pages/WeaponsPage.tsx`
+- Modify: `src/frontend/src/components/pages/WeaponsPage.test.tsx`
+
+**Interfaces:**
+- Consumes: `WeaponFormWithPreview` (`./WeaponFormWithPreview`, Task 5); `Drawer` com prop `size` (Task 4).
+- Produces: nada novo — última task do plano.
+
+- [ ] **Step 1: Escrever o teste novo (vai falhar — comportamento ainda não existe)**
+
+Em `src/frontend/src/components/pages/WeaponsPage.test.tsx`, adicionar ao final do `describe('WeaponsPage', ...)`, depois do teste `'shows the "Nova Arma" button and opens the create drawer for admins'`:
+
+```tsx
+  it('shows a wide preview-capable drawer when creating a new weapon', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    render(
+      <MemoryRouter>
+        <WeaponsPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '+ Nova Arma' }));
+    const dialog = screen.getByRole('dialog', { name: 'Nova Arma' });
+    expect(dialog).toHaveClass('max-w-3xl');
+
+    fireEvent.change(within(dialog).getByLabelText('Nome'), { target: { value: 'Nova Espada' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Pré-visualização' }));
+
+    expect(within(dialog).getByRole('heading', { name: 'Nova Espada', level: 1 })).toBeInTheDocument();
+  });
+```
+
+- [ ] **Step 2: Rodar o teste para confirmar que falha**
+
+Run: `cd src/frontend && npx vitest run src/components/pages/WeaponsPage.test.tsx`
+Expected: FAIL — drawer não é `wide`, botão "Pré-visualização" não existe ainda.
+
+- [ ] **Step 3: Trocar `WeaponForm` por `WeaponFormWithPreview` em `WeaponsPage.tsx`**
+
+Trocar o import (linha 10, `import { WeaponForm } from "./WeaponForm";`) por:
+
+```typescript
+import { WeaponFormWithPreview } from "./WeaponFormWithPreview";
+```
+
+Trocar o drawer "Nova Arma" (linhas 190-196) por:
+
+```tsx
+        <Drawer open={isCreateOpen} onOpenChange={setIsCreateOpen} title="Nova Arma" side="right" size="wide">
+          <WeaponFormWithPreview
+            onSubmit={handleCreate}
+            onCancel={() => setIsCreateOpen(false)}
+            submitLabel="Criar Arma"
+          />
+        </Drawer>
+```
+
+(Sem `previewBase` — é criação nova, `buildPreviewWeapon` usa os placeholders, igual à Task 6 em `UserContributeView`.)
+
+O drawer "Filtros" (linhas 177-188) não muda.
+
+- [ ] **Step 4: Rodar o teste para confirmar que passa**
+
+Run: `cd src/frontend && npx vitest run src/components/pages/WeaponsPage.test.tsx`
+Expected: PASS (todos os testes existentes + o novo, sem alteração de asserts nos antigos).
+
+- [ ] **Step 5: Rodar a suíte inteira do frontend**
+
+Run: `cd src/frontend && npx vitest run`
+Expected: PASS em todos os arquivos.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/frontend/src/components/pages/WeaponsPage.tsx src/frontend/src/components/pages/WeaponsPage.test.tsx
+git commit -m "feat(frontend): liga WeaponFormWithPreview no drawer Nova Arma de WeaponsPage"
+```
