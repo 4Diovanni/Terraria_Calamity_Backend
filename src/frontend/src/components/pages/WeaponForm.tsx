@@ -56,12 +56,11 @@ export const WeaponForm = ({ initialValues, onSubmit, onCancel, submitLabel, onD
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const setField = <K extends keyof WeaponFormData>(field: K, value: WeaponFormData[K]) =>
-    setData((prev) => {
-      const next = { ...prev, [field]: value };
-      onDataChange?.(next);
-      return next;
-    });
+  const setField = <K extends keyof WeaponFormData>(field: K, value: WeaponFormData[K]) => {
+    const next = { ...data, [field]: value };
+    setData(next);
+    onDataChange?.(next);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
