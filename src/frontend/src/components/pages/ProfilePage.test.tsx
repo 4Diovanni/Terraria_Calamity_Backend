@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ProfilePage } from './ProfilePage';
 
@@ -111,5 +111,22 @@ describe('ProfilePage', () => {
     render(<MemoryRouter><ProfilePage /></MemoryRouter>);
     expect(screen.getByText('Arcanjo')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Nova Proposta' })).not.toBeInTheDocument();
+  });
+
+  it('não mostra a aba Dashboard para usuário comum', () => {
+    render(<MemoryRouter><ProfilePage /></MemoryRouter>);
+    expect(screen.queryByRole('button', { name: 'Dashboard' })).not.toBeInTheDocument();
+  });
+
+  it('mostra a aba Dashboard para admin e renderiza AdminDashboardView ao clicar', async () => {
+    mockUseAuth.mockReturnValue({
+      ...authBase,
+      user: { ...userBase, role: 'ADMIN' as const },
+    });
+    render(<MemoryRouter><ProfilePage /></MemoryRouter>);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Dashboard' }));
+
+    await waitFor(() => expect(screen.getByText('Usuários')).toBeInTheDocument());
   });
 });
