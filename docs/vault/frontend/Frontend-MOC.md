@@ -19,13 +19,14 @@ React + Vite + TypeScript + Tailwind. Identidade visual descrita em [[visual-ide
 
 - [[Carousel]] — componente de carrossel reutilizável (`layout` fixo por seção)
 - [[WeaponsPage]] — listagem, formulário e preview de armas
+- [[AdminPage]] — painel administrativo (dashboard + fila de revisão)
+- [[Contributions]] — área de contribuições do usuário (nova proposta, minhas propostas, diff)
 
 ## Módulos ainda não indexados (retrofit futuro)
 
 - Páginas de conteúdo: Armor, Boss, Biome, Enemy (`components/pages/*Page.tsx`)
 - Autenticação de UI: `LoginPage`, `RegisterPage`, `ProtectedRoute`
-- Perfil e contribuições: `ProfilePage`, `UserContributeView`, `AdminContributeView`
-- Admin: `AdminDashboardView`, `SubmissionDiff`, `SubmissionPreview`
+- Perfil: `ProfilePage`
 - `components/ui/*` — Badge, Button, Card, DetailFooter
 
 ## Estrutura
