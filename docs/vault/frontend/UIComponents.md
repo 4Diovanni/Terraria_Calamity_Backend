@@ -39,6 +39,7 @@ nota própria por ser peça central do layout das páginas de conteúdo.
   boss, bioma, inimigo)
 - `PageSidebar.tsx` — barra lateral de navegação/filtro
 - `ScrollToTop.tsx`, `ThemeToggle.tsx` — utilitários de UX e alternância dark/light
+  (o `ThemeToggle` usa a lib [[theme]])
 
 ## Notas
 
