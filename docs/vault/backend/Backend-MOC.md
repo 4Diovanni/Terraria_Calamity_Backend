@@ -19,12 +19,12 @@ descrita em [[ARCHITECTURE]].
 
 - [[Auth]] — login/registro, JWT, segurança
 - [[Weapons]] — CRUD de armas e submissões de contribuição
+- [[Admin]] — dashboard administrativo (contagens agregadas)
+- [[Submission]] — ciclo de vida das propostas de contribuição
 
 ## Módulos ainda não indexados (retrofit futuro)
 
-- Admin (`AdminController`, `AdminDashboardService`)
 - Armor (`ArmorController`, `ArmorService`, `ArmorMapper`)
-- Submission / fluxo de contribuição (`SubmissionController`, `SubmissionService`)
 - Element (`WeaponElementController`, `WeaponElementService`)
 
 ## Camadas

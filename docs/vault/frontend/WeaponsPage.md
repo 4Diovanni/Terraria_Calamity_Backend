@@ -5,6 +5,7 @@ up: "[[Frontend-MOC]]"
 related:
   - "[[Weapons]]"
   - "[[Carousel]]"
+  - "[[Contributions]]"
 status: ativo
 source:
   - src/frontend/src/components/pages/WeaponsPage.tsx
@@ -34,3 +35,5 @@ abre um drawer para criar uma nova arma via [[WeaponFormWithPreview]].
 - Consome a API descrita em [[Weapons]] (`weaponService`).
 - Reaproveita o padrão visual de card também usado em [[Carousel]].
 - Escrita exige usuário autenticado — ver [[Auth]].
+- `WeaponFormWithPreview`/`SubmissionPreview` também são reaproveitados em
+  [[Contributions]].

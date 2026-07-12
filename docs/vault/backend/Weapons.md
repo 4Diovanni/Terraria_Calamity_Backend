@@ -1,10 +1,16 @@
 ---
-tags: [backend, weapons, submissions]
-aliases: [Armas, Weapons]
+tags:
+  - backend
+  - weapons
+  - submissions
+aliases:
+  - Armas
+  - Weapons
 up: "[[Backend-MOC]]"
 related:
   - "[[Auth]]"
   - "[[WeaponsPage]]"
+  - "[[Submission]]"
 status: ativo
 source:
   - src/main/java/com/terraria/calamity/api/controller/WeaponController.java
@@ -38,3 +44,5 @@ JWT (ver [[Auth]]), mais o fluxo de submissão de contribuições da comunidade.
 
 - Escrita protegida por [[Auth]].
 - Consumido pelo frontend em [[WeaponsPage]] (listagem, formulário, preview).
+- Propostas de criação/edição passam pelo fluxo de [[Submission]] antes de alterar
+  uma `Weapon` diretamente.
