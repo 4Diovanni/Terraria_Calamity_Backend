@@ -44,8 +44,8 @@ Não existe fluxo de submissão/aprovação para armadura (só para arma).
 
 - [[ArmorController]] — rotas CRUD de armadura (todas públicas)
 - [[ArmorService]] — regra de negócio (nota o workaround de `saveAndFlush` das peças)
-
-`ArmorMapper` e `ArmorRepository` têm nota própria na rodada 2.
+- [[ArmorMapper]] — Entity↔DTO de armadura (com peças aninhadas)
+- [[ArmorRepository]] — acesso a dados de armadura
 
 ## Conexões
 

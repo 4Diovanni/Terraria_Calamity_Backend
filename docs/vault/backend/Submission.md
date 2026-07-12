@@ -45,8 +45,9 @@ autenticado e revisada por um admin: `PENDING` → `APPROVED` | `REJECTED`.
 
 - [[SubmissionController]] — rotas de usuário + rotas só-admin
 - [[SubmissionService]] — criar/aprovar/rejeitar/cancelar
-
-`WeaponPayloadMapper` e `SubmissionRepository` têm nota própria na rodada 2.
+- [[WeaponPayloadMapper]] — payload JSON ↔ DTO tipado de arma
+- [[SubmissionRepository]] — acesso a dados das propostas
+- [[JacksonConfig]] — bean `ObjectMapper` que o mapper usa
 
 ## Conexões
 
