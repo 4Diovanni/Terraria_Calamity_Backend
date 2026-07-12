@@ -4,12 +4,14 @@ aliases: [Homepage Lore e Carrosséis]
 up: "[[INDEX]]"
 related:
   - "[[Carousel]]"
+  - "[[2026-06-28-homepage-ui-polish]]"
+  - "[[2026-06-28-homepage-adjustments]]"
 status: ativo
 ---
 
 # Homepage — Lore, Carrosséis e UX Plan
 
-> Ver também: [[Carousel]]
+> Ver também: [[Carousel]] · [[2026-06-28-homepage-ui-polish]] · [[2026-06-28-homepage-adjustments]]
 
 > **Para execução:** implementar task a task, deixar o usuário validar o front antes de avançar.
 
