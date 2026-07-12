@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { WeaponForm } from './WeaponForm';
+import { WeaponFormWithPreview } from './WeaponFormWithPreview';
 import { SubmissionStatusBadge } from './SubmissionStatusBadge';
 import { SubmissionDiff } from './SubmissionDiff';
 import { submissionService } from '../../services/submissionService';
@@ -86,7 +86,7 @@ export const UserContributeView = () => {
               Proposta enviada! Acompanhe o status em "Minhas Propostas".
             </p>
           )}
-          <WeaponForm
+          <WeaponFormWithPreview
             onSubmit={handleCreate}
             onCancel={() => setCreateSuccess(false)}
             submitLabel="Enviar Proposta"

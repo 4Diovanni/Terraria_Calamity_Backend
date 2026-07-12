@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
-import { weaponService } from '../../services/weaponService';
+import { useSubmissionTargetWeapon } from '../../hooks/useSubmissionTargetWeapon';
 import { Loading } from '../ui';
-import { Weapon } from '../../types/weapon';
 import { WeaponSubmission } from '../../types/weaponSubmission';
 import { computeWeaponDiff } from '../../lib/weaponDiff';
 
@@ -10,33 +8,7 @@ interface SubmissionDiffProps {
 }
 
 export const SubmissionDiff = ({ submission }: SubmissionDiffProps) => {
-  const [currentWeapon, setCurrentWeapon] = useState<Weapon | null>(null);
-  const [loading, setLoading] = useState(submission.type === 'UPDATE' && !!submission.targetWeaponId);
-  const [notFound, setNotFound] = useState(false);
-
-  useEffect(() => {
-    if (submission.type !== 'UPDATE' || !submission.targetWeaponId) return;
-
-    let cancelled = false;
-    setLoading(true);
-    setNotFound(false);
-
-    weaponService
-      .getWeaponById(submission.targetWeaponId)
-      .then((weapon) => {
-        if (!cancelled) setCurrentWeapon(weapon);
-      })
-      .catch(() => {
-        if (!cancelled) setNotFound(true);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [submission.type, submission.targetWeaponId]);
+  const { weapon: currentWeapon, loading, notFound } = useSubmissionTargetWeapon(submission);
 
   if (loading) {
     return <Loading message="Carregando comparação..." fullHeight={false} />;

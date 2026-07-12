@@ -7,7 +7,7 @@ import { Error } from "../ui/Error";
 import { Drawer } from "../ui/Drawer";
 import { Button } from "../ui/Button";
 import { WeaponCard } from "./WeaponCard";
-import { WeaponForm } from "./WeaponForm";
+import { WeaponFormWithPreview } from "./WeaponFormWithPreview";
 import { weaponService } from "../../services/weaponService";
 import { weaponRarityToTier } from "../../lib/weaponRarity";
 import { WeaponFormData } from "../../types/weapon";
@@ -187,8 +187,8 @@ export const WeaponsPage = () => {
           </div>
         </Drawer>
 
-        <Drawer open={isCreateOpen} onOpenChange={setIsCreateOpen} title="Nova Arma" side="right">
-          <WeaponForm
+        <Drawer open={isCreateOpen} onOpenChange={setIsCreateOpen} title="Nova Arma" side="right" size="wide">
+          <WeaponFormWithPreview
             onSubmit={handleCreate}
             onCancel={() => setIsCreateOpen(false)}
             submitLabel="Criar Arma"

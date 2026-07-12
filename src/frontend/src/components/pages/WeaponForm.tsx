@@ -9,9 +9,10 @@ interface WeaponFormProps {
   onSubmit: (data: WeaponFormData) => Promise<void>;
   onCancel: () => void;
   submitLabel: string;
+  onDataChange?: (data: WeaponFormData) => void;
 }
 
-const EMPTY_FORM: WeaponFormData = {
+export const EMPTY_FORM: WeaponFormData = {
   name: '',
   weaponClass: WeaponTypeClass.MELEE,
   element: Element.NEUTRAL,
@@ -49,14 +50,17 @@ const fieldClass =
   'w-full bg-calamity-bg-tertiary border border-calamity-border px-3 py-2 text-calamity-text-primary focus:ring-2 focus:ring-calamity-primary focus:outline-none';
 const labelClass = 'block text-sm mb-1 text-calamity-text-secondary font-display';
 
-export const WeaponForm = ({ initialValues, onSubmit, onCancel, submitLabel }: WeaponFormProps) => {
+export const WeaponForm = ({ initialValues, onSubmit, onCancel, submitLabel, onDataChange }: WeaponFormProps) => {
   const [data, setData] = useState<WeaponFormData>(initialValues ?? EMPTY_FORM);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const setField = <K extends keyof WeaponFormData>(field: K, value: WeaponFormData[K]) =>
-    setData((prev) => ({ ...prev, [field]: value }));
+  const setField = <K extends keyof WeaponFormData>(field: K, value: WeaponFormData[K]) => {
+    const next = { ...data, [field]: value };
+    setData(next);
+    onDataChange?.(next);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

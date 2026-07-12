@@ -102,4 +102,22 @@ describe('WeaponsPage', () => {
     const dialog = screen.getByRole('dialog', { name: 'Nova Arma' });
     expect(within(dialog).getByLabelText('Nome')).toBeInTheDocument();
   });
+
+  it('shows a wide preview-capable drawer when creating a new weapon', async () => {
+    mockUseAuth.mockReturnValue({ user: { username: 'Admin', email: 'a@b.com', role: 'ADMIN' } });
+    render(
+      <MemoryRouter>
+        <WeaponsPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '+ Nova Arma' }));
+    const dialog = screen.getByRole('dialog', { name: 'Nova Arma' });
+    expect(dialog).toHaveClass('max-w-3xl');
+
+    fireEvent.change(within(dialog).getByLabelText('Nome'), { target: { value: 'Nova Espada' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Pré-visualização' }));
+
+    expect(within(dialog).getByRole('heading', { name: 'Nova Espada', level: 1 })).toBeInTheDocument();
+  });
 });
