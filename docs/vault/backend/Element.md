@@ -36,6 +36,11 @@ própria constante local `ELEMENT` com a lista de elementos, duplicando o que j�
 existe aqui — se a lista de elementos do backend mudar, o frontend não reflete
 automaticamente.
 
+## Classes (notas de método)
+
+- [[WeaponElementController]] — rotas de listagem/validação/bônus/compatibilidade
+- [[WeaponElementService]] — lógica de domínio sobre o enum `Element`
+
 ## Conexões
 
 - O campo `element` de [[Weapons]] usa este enum.

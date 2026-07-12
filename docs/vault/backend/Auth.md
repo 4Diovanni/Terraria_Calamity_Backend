@@ -36,6 +36,16 @@ Autenticação stateless via JWT (BCrypt para senhas, sem sessão de servidor).
 - `RateLimitFilter.java` — limita taxa de requisições
 - `User.java`, `Role.java` — entidade de usuário e papéis (`ADMIN`, `USER`)
 
+## Classes (notas de método)
+
+- [[AuthController]] — rotas register/login/me
+- [[AuthService]] — orquestra registro e login
+- [[JwtService]] — geração/validação do JWT
+- [[CustomUserDetailsService]] — adapta `User` para o Spring Security
+
+Config/filtros de segurança (`SecurityConfig`, `JwtAuthenticationFilter`,
+`RateLimitFilter`) têm nota própria na rodada 2.
+
 ## Conexões
 
 - Protege escrita em [[Weapons]] (POST/PUT/DELETE exigem JWT).

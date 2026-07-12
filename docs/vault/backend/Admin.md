@@ -25,6 +25,11 @@ sistema.
   total de armas, submissões pendentes/aprovadas/rejeitadas
 - `AdminDashboardResponseDTO.java` — payload de resposta do dashboard
 
+## Classes (notas de método)
+
+- [[AdminController]] — rota `GET /dashboard` (só admin)
+- [[AdminDashboardService]] — agrega as contagens
+
 ## Conexões
 
 - Protegido por [[Auth]] (role `ADMIN` via `@PreAuthorize`).

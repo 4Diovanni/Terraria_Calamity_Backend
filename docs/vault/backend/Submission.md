@@ -41,6 +41,13 @@ autenticado e revisada por um admin: `PENDING` → `APPROVED` | `REJECTED`.
   `isSupportedWeaponType` no controller)
 - Exceções: `InvalidSubmissionStateException`, `ForbiddenActionException`
 
+## Classes (notas de método)
+
+- [[SubmissionController]] — rotas de usuário + rotas só-admin
+- [[SubmissionService]] — criar/aprovar/rejeitar/cancelar
+
+`WeaponPayloadMapper` e `SubmissionRepository` têm nota própria na rodada 2.
+
 ## Conexões
 
 - Opera sobre entidades de [[Weapons]] (aprovar aplica o diff numa `Weapon`).
