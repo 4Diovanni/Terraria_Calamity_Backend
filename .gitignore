@@ -35,8 +35,11 @@ build/
 ### VS Code ###
 .vscode/
 
-### Obsidian ###
-.obsidian/
+### Obsidian ### (versiona apenas config compartilhavel; workspace/cache ficam locais)
+.obsidian/*
+!.obsidian/app.json
+!.obsidian/graph.json
+!.obsidian/core-plugins.json
 
 ### npm (root-level artifacts) ###
 node_modules/
