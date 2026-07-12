@@ -35,6 +35,12 @@ admin ([[AdminPage]]).
   tipo `UPDATE`
 - `submissionService.ts` — client HTTP: criar, listar minhas, cancelar
 
+## Módulos (notas de método)
+
+- [[submissionService-ts]] — client HTTP de submissões (espelha [[SubmissionController]])
+
+O hook `useSubmissionTargetWeapon` tem nota própria na rodada 4.
+
 ## Conexões
 
 - Consome a API descrita em [[Submission]] (nota-índice do backend,

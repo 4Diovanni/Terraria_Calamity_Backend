@@ -32,6 +32,10 @@ peças da armadura ordenadas por slot.
 - `armorService.ts` — client HTTP do `/api/v1/armor`
 - `types/armor.ts` — `Armor`, `ArmorClass`, `ArmorSlot`, `ARMOR_SLOT_ORDER`
 
+## Módulos (notas de método)
+
+- [[armorService-ts]] — client HTTP de armadura (espelha [[ArmorController]])
+
 ## Conexões
 
 - Consome a API descrita em [[Armor]] (nota-índice do backend).

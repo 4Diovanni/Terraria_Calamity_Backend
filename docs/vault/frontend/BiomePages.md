@@ -36,6 +36,10 @@ Sem contraparte no backend. `Biome.name` casa em texto (string, sem FK) com o ca
 `biome` de [[EnemyPages]] e [[BossPages]] — é assim que `BiomeDetailPage` filtra os
 inimigos do bioma.
 
+## Módulos (notas de método)
+
+- [[biomeService-ts]] — client de biomas (dados mockados, sem backend)
+
 ## Conexões
 
 - Consumido junto com [[EnemyPages]] em `BiomeDetailPage.tsx`.

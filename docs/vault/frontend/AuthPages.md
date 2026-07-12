@@ -32,6 +32,12 @@ principal) e o guard de rota usado por [[ProfilePage]].
 - `AuthContext.tsx` — estado global de sessão (`user`, `login`, `register`, `logout`)
 - `authService.ts` — client HTTP de `/api/v1/auth`
 
+## Módulos (notas de método)
+
+- [[authService-ts]] — client HTTP de auth (espelha [[AuthController]])
+
+Hook e context (`useAuth`, `AuthContext`) têm nota própria na rodada 4.
+
 ## Conexões
 
 - Protege o acesso a [[ProfilePage]] via `ProtectedRoute`.

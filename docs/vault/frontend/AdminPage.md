@@ -28,6 +28,10 @@ renderizadas dentro das abas "Contribuições" e "Dashboard" de [[ProfilePage]]
   "Ver preview completo" (`SubmissionPreview`), aprovar/rejeitar (motivo obrigatório)
 - `adminService.ts` — chamada ao endpoint `GET /api/v1/admin/dashboard`
 
+## Módulos (notas de método)
+
+- [[adminService-ts]] — client HTTP do dashboard (espelha [[AdminController]])
+
 ## Conexões
 
 - Consome o endpoint descrito em [[Admin]] (nota-índice do backend em
