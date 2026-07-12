@@ -5,6 +5,7 @@ up: "[[Frontend-MOC]]"
 related:
   - "[[Contributions]]"
   - "[[WeaponsPage]]"
+  - "[[ProfilePage]]"
 status: ativo
 source:
   - src/frontend/src/components/pages/AdminDashboardView.tsx
@@ -12,10 +13,11 @@ source:
   - src/frontend/src/services/adminService.ts
 ---
 
-# Admin — Painel Administrativo (Frontend)
+# Admin — Views Administrativas (Frontend)
 
-Área exclusiva de admin com duas abas: números agregados do sistema e fila de revisão
-de submissões pendentes.
+**Não é uma rota própria** — não existe `/admin` no `App.tsx`. Estas duas views são
+renderizadas dentro das abas "Contribuições" e "Dashboard" de [[ProfilePage]]
+(rota `/perfil`), condicionadas a `user?.role === 'ADMIN'`.
 
 ## Arquivos
 
@@ -32,3 +34,4 @@ de submissões pendentes.
   `docs/vault/backend/Admin.md`).
 - Fila de revisão reaproveita [[Contributions]] (diff, preview, badge de status).
 - Acesso restrito a `role: ADMIN` — ver [[Auth]] (nota-índice do backend).
+- Montado dentro de [[ProfilePage]], não é uma rota independente.

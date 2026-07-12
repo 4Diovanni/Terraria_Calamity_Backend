@@ -19,16 +19,18 @@ React + Vite + TypeScript + Tailwind. Identidade visual descrita em [[visual-ide
 
 - [[Carousel]] — componente de carrossel reutilizável (`layout` fixo por seção)
 - [[WeaponsPage]] — listagem, formulário e preview de armas
-- [[AdminPage]] — painel administrativo (dashboard + fila de revisão)
+- [[AdminPage]] — views administrativas (dashboard + fila de revisão, dentro de [[ProfilePage]])
 - [[Contributions]] — área de contribuições do usuário (nova proposta, minhas propostas, diff)
 - [[ArmorPages]] — listagem e detalhe de armadura
+- [[BossPages]] — listagem e detalhe de boss (dados mockados, sem backend)
+- [[BiomePages]] — listagem e detalhe de bioma (dados mockados, sem backend)
+- [[EnemyPages]] — listagem e detalhe de inimigo (dados mockados, sem backend)
+- [[AuthPages]] — login, registro e rota protegida
+- [[ProfilePage]] — hub da área logada (perfil/contribuições/dashboard)
+- [[UIComponents]] — design system (`components/ui`, exceto Carousel)
+- [[Placeholders]] — Itens, NPCs (em desenvolvimento) e 404
 
-## Módulos ainda não indexados (retrofit futuro)
-
-- Páginas de conteúdo: Boss, Biome, Enemy (`components/pages/*Page.tsx`)
-- Autenticação de UI: `LoginPage`, `RegisterPage`, `ProtectedRoute`
-- Perfil: `ProfilePage`
-- `components/ui/*` — Badge, Button, Card, DetailFooter
+Todos os módulos de frontend estão indexados.
 
 ## Estrutura
 
