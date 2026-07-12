@@ -1,6 +1,11 @@
 ---
-tags: [backend, weapons, submissions]
-aliases: [Armas, Weapons]
+tags:
+  - backend
+  - weapons
+  - submissions
+aliases:
+  - Armas
+  - Weapons
 up: "[[Backend-MOC]]"
 related:
   - "[[Auth]]"
