@@ -41,6 +41,15 @@ JWT (ver [[Auth]]), mais o fluxo de submissão de contribuições da comunidade.
 - `Submission.java` — entidade da proposta em revisão (diff contra a arma atual)
 - `WeaponRepository.java` — acesso a dados JPA
 
+## Classes (notas de método)
+
+- [[WeaponController]] — rotas CRUD + filtros de arma
+- [[WeaponService]] — regra de negócio de arma
+- [[SubmissionController]] / [[SubmissionService]] — fluxo de contribuição (também em [[Submission]])
+
+Mappers (`WeaponMapper`, `WeaponPayloadMapper`) e `WeaponRepository` têm nota própria
+na rodada 2.
+
 ## Conexões
 
 - Escrita protegida por [[Auth]].

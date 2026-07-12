@@ -79,6 +79,14 @@ O repositório é o vault do Obsidian (`.obsidian/` na raiz). Ponto de entrada:
 - Código-fonte (`.java`, `.tsx`) NUNCA vira nó do grafo diretamente — ele é representado
   pela nota-índice do módulo, que aponta para os arquivos via campo `source` no
   frontmatter e lista os caminhos no corpo.
+- Classes com lógica (controllers, services, mappers, filters, hooks, services-ts, lib)
+  também têm nota própria em `docs/vault/backend/classes/` ou `docs/vault/frontend/modules/`,
+  com uma seção `## Métodos` documentando cada método. Template em
+  `docs/vault/_templates/class-note.md`. Ao adicionar/alterar/remover um método de uma
+  classe com nota, atualizar a seção `## Métodos` no mesmo PR; ao criar classe nova em
+  módulo indexado, criar a nota de classe junto e linká-la na seção `## Classes` da
+  nota-índice. Nomes de nota são únicos no vault inteiro e case-insensitive: services do
+  frontend usam sufixo `-ts` (`weaponService-ts.md`) para não colidir com os do backend.
 - Toda nota do vault usa frontmatter (`tags`, `aliases`, `up`, `related`, `status`,
   `source`) e `[[wikilinks]]` no corpo — o frontmatter sozinho não garante aresta no
   grafo em todas as versões do Obsidian.
