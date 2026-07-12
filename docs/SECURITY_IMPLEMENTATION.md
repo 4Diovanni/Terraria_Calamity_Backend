@@ -1,4 +1,16 @@
+---
+tags: [docs, backend, security]
+aliases: [Segurança, SECURITY_IMPLEMENTATION]
+up: "[[INDEX]]"
+related:
+  - "[[Auth]]"
+  - "[[Backend-MOC]]"
+status: ativo
+---
+
 # 🔐 Guia: Public vs Protected Endpoints com Spring Security
+
+> Ver também: [[Auth]] (nota-índice dos arquivos de autenticação) · [[Backend-MOC]]
 
 ## 📋 Estrutura de Segurança Implementada
 

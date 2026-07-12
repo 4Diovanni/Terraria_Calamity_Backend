@@ -1,4 +1,17 @@
+---
+tags: [docs, arquitetura]
+aliases: [Arquitetura, ARCHITECTURE]
+up: "[[INDEX]]"
+related:
+  - "[[Backend-MOC]]"
+  - "[[Frontend-MOC]]"
+  - "[[Infra-MOC]]"
+status: ativo
+---
+
 # 🏗️ Arquitetura do Projeto - Terraria Calamity RPG
+
+> Ver também: [[Backend-MOC]] · [[Frontend-MOC]] · [[Infra-MOC]]
 
 ## 📁 Estrutura de Diretórios
 

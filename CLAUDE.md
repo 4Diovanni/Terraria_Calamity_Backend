@@ -67,3 +67,24 @@ Para tarefas com múltiplos passos:
 - Variáveis carregadas via `spring.config.import: "optional:file:.env[.properties]"` no `application.yml`
 - NÃO usar spring-dotenv (removido — incompatível com Spring Boot 4.x)
 - Erro de conexão com `localhost:5432` → verificar se o arquivo `.env` existe na raiz do projeto
+
+## Documentação — Grafo do Obsidian
+
+O repositório é o vault do Obsidian (`.obsidian/` na raiz). Ponto de entrada:
+`docs/vault/INDEX.md`.
+
+- Ao criar/alterar um módulo relevante de backend ou frontend, criar ou atualizar a
+  nota-índice correspondente em `docs/vault/backend/` ou `docs/vault/frontend/` — no
+  mesmo PR/task, não depois. Template em `docs/vault/_templates/module-note.md`.
+- Código-fonte (`.java`, `.tsx`) NUNCA vira nó do grafo diretamente — ele é representado
+  pela nota-índice do módulo, que aponta para os arquivos via campo `source` no
+  frontmatter e lista os caminhos no corpo.
+- Toda nota do vault usa frontmatter (`tags`, `aliases`, `up`, `related`, `status`,
+  `source`) e `[[wikilinks]]` no corpo — o frontmatter sozinho não garante aresta no
+  grafo em todas as versões do Obsidian.
+- Planos (`docs/superpowers/plans/`) e specs (`docs/superpowers/specs/`) novos também
+  recebem frontmatter + `[[wikilinks]]` ligando aos módulos que afetam.
+- Ao deletar um módulo/arquivo, remover ou marcar `status: obsoleto` na nota-índice
+  correspondente — não deixar nota órfã apontando para código inexistente.
+- `.obsidian/app.json` (`userIgnoreFilters`) deve manter `node_modules/`, `target/`,
+  `dist/` fora do grafo — não reverter esses filtros.

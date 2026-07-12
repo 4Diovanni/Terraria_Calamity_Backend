@@ -1,4 +1,16 @@
+---
+tags: [spec, frontend, submissions]
+aliases: [Preview ao Vivo de Submissões — Design]
+up: "[[INDEX]]"
+related:
+  - "[[WeaponsPage]]"
+  - "[[2026-07-11-preview-submissoes]]"
+status: ativo
+---
+
 # Preview ao Vivo de Submissões — Design
+
+> Ver também: plano: [[2026-07-11-preview-submissoes]] · [[WeaponsPage]]
 
 **Fase:** Fase 2, parte 3 (última) do redesign de contribuições.
 **Depende de:** Fase 1 (PR #62), Fase 2 parte 1 — diff estilo GitHub (PR #63), Fase 2 parte 2 — dashboard admin como aba (PR #64). Todas mergeadas.

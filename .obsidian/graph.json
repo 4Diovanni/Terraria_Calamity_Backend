@@ -1,0 +1,65 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": true,
+  "collapse-color-groups": true,
+  "colorGroups": [
+    {
+      "query": "path:docs/vault/backend",
+      "color": {
+        "a": 1,
+        "rgb": 3888892
+      }
+    },
+    {
+      "query": "path:docs/vault/frontend",
+      "color": {
+        "a": 1,
+        "rgb": 1601897
+      }
+    },
+    {
+      "query": "path:docs/vault/infra",
+      "color": {
+        "a": 1,
+        "rgb": 14638317
+      }
+    },
+    {
+      "query": "path:docs/superpowers/plans",
+      "color": {
+        "a": 1,
+        "rgb": 10233776
+      }
+    },
+    {
+      "query": "path:docs/superpowers/specs",
+      "color": {
+        "a": 1,
+        "rgb": 5419456
+      }
+    },
+    {
+      "query": "-path:docs/vault AND -path:docs/superpowers",
+      "color": {
+        "a": 1,
+        "rgb": 9807270
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.255208333333333,
+  "repelStrength": 20,
+  "linkStrength": 1,
+  "linkDistance": 30,
+  "scale": 0.6316046762907401,
+  "close": true
+}

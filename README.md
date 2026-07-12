@@ -144,6 +144,19 @@ java -jar target/Calamity-0.0.1-SNAPSHOT.jar
 
 ---
 
+## Mapa de Conhecimento (Obsidian)
+
+O projeto usa o [Obsidian](https://obsidian.md) para navegar a documentação como um
+grafo conectado — abra a raiz do repositório como vault e comece por
+[`docs/vault/INDEX.md`](docs/vault/INDEX.md).
+
+Módulos de código (backend e frontend) têm notas-índice em `docs/vault/backend/` e
+`docs/vault/frontend/` que descrevem o módulo e apontam para os arquivos reais; planos
+e specs em `docs/superpowers/` se conectam a essas notas via `[[wikilinks]]`. Ver a
+convenção completa de manutenção no `CLAUDE.md`.
+
+---
+
 ## Documentação
 
 | Arquivo | Conteúdo |
