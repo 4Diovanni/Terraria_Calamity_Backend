@@ -1,4 +1,16 @@
+---
+tags: [spec, frontend, biome]
+aliases: [Páginas de Biomas — Design]
+up: "[[INDEX]]"
+related:
+  - "[[BiomePages]]"
+  - "[[EnemyPages]]"
+status: ativo
+---
+
 # Páginas de Biomas — Design Spec
+
+> Ver também: [[BiomePages]] · [[EnemyPages]] (bioma lista os inimigos escopados por `biome`)
 
 **Data:** 2026-07-03
 **Escopo:** Sub-projeto #5 da decomposição das páginas de conteúdo. Cria a seção **Biomas**

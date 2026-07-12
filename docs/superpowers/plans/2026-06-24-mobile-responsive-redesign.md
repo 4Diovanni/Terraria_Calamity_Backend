@@ -1,4 +1,17 @@
+---
+tags: [plan, frontend, responsive]
+aliases: [Mobile/Desktop Responsive Redesign]
+up: "[[INDEX]]"
+related:
+  - "[[UIComponents]]"
+  - "[[Carousel]]"
+  - "[[2026-06-24-mobile-responsive-redesign-design]]"
+status: ativo
+---
+
 # Mobile/Desktop Responsive Redesign Implementation Plan
+
+> Ver também: [[UIComponents]] · [[Carousel]] · spec: [[2026-06-24-mobile-responsive-redesign-design]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

@@ -1,4 +1,18 @@
+---
+tags: [spec, frontend, submissions]
+aliases: [CRUD Direto de Armas e Fila de Aprovação — Design]
+up: "[[INDEX]]"
+related:
+  - "[[AdminPage]]"
+  - "[[Contributions]]"
+  - "[[WeaponsPage]]"
+  - "[[2026-07-04-frontend-weapon-approval-queue]]"
+status: ativo
+---
+
 # Frontend — CRUD Direto de Armas (ADMIN) + Fila de Aprovação (USER/ADMIN) — Design Spec
+
+> Ver também: plano: [[2026-07-04-frontend-weapon-approval-queue]] · [[AdminPage]] · [[Contributions]] · [[WeaponsPage]]
 
 **Data:** 2026-07-04
 **Escopo:** Frontend (`src/frontend`). Constrói a interface para o backend de roles ADMIN/USER e fila

@@ -1,4 +1,16 @@
+---
+tags: [spec, frontend, submissions]
+aliases: [Diff Estilo GitHub nas Submissões — Design]
+up: "[[INDEX]]"
+related:
+  - "[[Contributions]]"
+  - "[[2026-07-09-diff-submissoes]]"
+status: ativo
+---
+
 # Diff Estilo GitHub nas Submissões (Fase 2, parte 1) — Design Spec
+
+> Ver também: plano: [[2026-07-09-diff-submissoes]] · [[Contributions]]
 
 **Data:** 2026-07-09
 **Escopo:** Frontend apenas. Primeira parte da Fase 2 do redesign de contribuições (a fundação —

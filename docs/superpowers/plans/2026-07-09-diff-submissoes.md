@@ -1,4 +1,16 @@
+---
+tags: [plan, frontend, submissions]
+aliases: [Diff Estilo GitHub nas Submissões]
+up: "[[INDEX]]"
+related:
+  - "[[Contributions]]"
+  - "[[2026-07-09-diff-submissoes-design]]"
+status: ativo
+---
+
 # Diff Estilo GitHub nas Submissões (Fase 2, parte 1) Implementation Plan
+
+> Ver também: [[Contributions]] · spec: [[2026-07-09-diff-submissoes-design]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

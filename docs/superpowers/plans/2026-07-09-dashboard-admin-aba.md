@@ -1,4 +1,17 @@
+---
+tags: [plan, frontend, admin]
+aliases: [Dashboard Admin como Aba Própria]
+up: "[[INDEX]]"
+related:
+  - "[[AdminPage]]"
+  - "[[ProfilePage]]"
+  - "[[2026-07-09-dashboard-admin-aba-design]]"
+status: ativo
+---
+
 # Dashboard Admin como Aba Própria (Fase 2, parte 2) Implementation Plan
+
+> Ver também: [[AdminPage]] · [[ProfilePage]] · spec: [[2026-07-09-dashboard-admin-aba-design]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

@@ -1,4 +1,18 @@
+---
+tags: [plan, backend, frontend, submissions]
+aliases: [Contribuições dentro do Perfil Fundação]
+up: "[[INDEX]]"
+related:
+  - "[[ProfilePage]]"
+  - "[[Contributions]]"
+  - "[[Submission]]"
+  - "[[2026-07-08-perfil-contribuicoes-fundacao-design]]"
+status: ativo
+---
+
 # Contribuições dentro do Perfil + Submissões Genéricas (Fase 1: Fundação) Implementation Plan
+
+> Ver também: [[ProfilePage]] · [[Contributions]] · [[Submission]] · spec: [[2026-07-08-perfil-contribuicoes-fundacao-design]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

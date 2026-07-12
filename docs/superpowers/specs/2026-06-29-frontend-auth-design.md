@@ -1,4 +1,17 @@
-claude# Frontend Auth (Login / Register) — Design Spec
+---
+tags: [spec, frontend, auth]
+aliases: [Frontend Auth Login e Register — Design]
+up: "[[INDEX]]"
+related:
+  - "[[AuthPages]]"
+  - "[[Auth]]"
+  - "[[2026-06-29-frontend-auth-login-register]]"
+status: ativo
+---
+
+# Frontend Auth (Login / Register) — Design Spec
+
+> Ver também: plano: [[2026-06-29-frontend-auth-login-register]] · [[AuthPages]] · [[Auth]]
 
 **Data:** 2026-06-29  
 **Escopo:** Páginas de login e registro no frontend React, consumindo a API de auth do backend (PR #37).

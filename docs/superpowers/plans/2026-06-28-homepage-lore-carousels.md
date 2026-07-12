@@ -1,4 +1,15 @@
+---
+tags: [plan, frontend, homepage]
+aliases: [Homepage Lore e Carrosséis]
+up: "[[INDEX]]"
+related:
+  - "[[Carousel]]"
+status: ativo
+---
+
 # Homepage — Lore, Carrosséis e UX Plan
+
+> Ver também: [[Carousel]]
 
 > **Para execução:** implementar task a task, deixar o usuário validar o front antes de avançar.
 

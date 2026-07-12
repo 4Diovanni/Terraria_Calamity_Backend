@@ -1,4 +1,17 @@
+---
+tags: [spec, frontend, profile]
+aliases: [Página de Perfil do Usuário — Design]
+up: "[[INDEX]]"
+related:
+  - "[[ProfilePage]]"
+  - "[[AuthPages]]"
+  - "[[2026-07-01-user-profile-page]]"
+status: ativo
+---
+
 # Página de Perfil do Usuário — Design Spec
+
+> Ver também: plano: [[2026-07-01-user-profile-page]] · [[ProfilePage]] · [[AuthPages]]
 
 **Data:** 2026-07-01
 **Escopo:** Página `/perfil` com dados do usuário autenticado e botão de logout. Refatoração do Header para transformar o username em link de navegação para o perfil.

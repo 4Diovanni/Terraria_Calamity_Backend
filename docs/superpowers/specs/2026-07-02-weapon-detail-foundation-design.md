@@ -1,4 +1,16 @@
+---
+tags: [spec, frontend, weapons, design-system]
+aliases: [Fundação de Design e Página de Arma — Design]
+up: "[[INDEX]]"
+related:
+  - "[[WeaponsPage]]"
+  - "[[UIComponents]]"
+status: ativo
+---
+
 # Fundação de Design + Redesign da Página de Arma — Design Spec
+
+> Ver também: [[WeaponsPage]] · [[UIComponents]] (fundação reaproveitada por Armor/Boss/Biome/Enemy)
 
 **Data:** 2026-07-02
 **Escopo:** Sub-projeto #1 de uma decomposição maior. Estabelece a **fundação de componentes de

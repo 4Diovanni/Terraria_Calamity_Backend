@@ -1,4 +1,17 @@
+---
+tags: [spec, frontend, admin]
+aliases: [Dashboard Admin como Aba Própria — Design]
+up: "[[INDEX]]"
+related:
+  - "[[AdminPage]]"
+  - "[[ProfilePage]]"
+  - "[[2026-07-09-dashboard-admin-aba]]"
+status: ativo
+---
+
 # Dashboard Admin como Aba Própria (Fase 2, parte 2) — Design Spec
+
+> Ver também: plano: [[2026-07-09-dashboard-admin-aba]] · [[AdminPage]] · [[ProfilePage]]
 
 **Data:** 2026-07-09
 **Escopo:** Frontend apenas. Segunda parte da Fase 2 do redesign de contribuições (a fundação foi
