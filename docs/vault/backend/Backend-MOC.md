@@ -29,7 +29,7 @@ Todos os módulos de backend estão indexados.
 ## Camadas
 
 - `api/controller` — REST controllers
-- `api/exception` — `GlobalExceptionHandler` + exceções de domínio
+- `api/exception` — [[GlobalExceptionHandler]] + exceções de domínio
 - `application/service` — regras de negócio
 - `application/mapper` — Entity ↔ DTO (MapStruct)
 - `domain/entity`, `domain/dto`, `domain/repository` — persistência JPA

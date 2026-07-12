@@ -45,10 +45,9 @@ JWT (ver [[Auth]]), mais o fluxo de submissão de contribuições da comunidade.
 
 - [[WeaponController]] — rotas CRUD + filtros de arma
 - [[WeaponService]] — regra de negócio de arma
+- [[WeaponMapper]] — Entity↔DTO de arma
+- [[WeaponRepository]] — acesso a dados de arma
 - [[SubmissionController]] / [[SubmissionService]] — fluxo de contribuição (também em [[Submission]])
-
-Mappers (`WeaponMapper`, `WeaponPayloadMapper`) e `WeaponRepository` têm nota própria
-na rodada 2.
 
 ## Conexões
 

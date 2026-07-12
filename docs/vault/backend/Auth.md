@@ -42,9 +42,10 @@ Autenticação stateless via JWT (BCrypt para senhas, sem sessão de servidor).
 - [[AuthService]] — orquestra registro e login
 - [[JwtService]] — geração/validação do JWT
 - [[CustomUserDetailsService]] — adapta `User` para o Spring Security
-
-Config/filtros de segurança (`SecurityConfig`, `JwtAuthenticationFilter`,
-`RateLimitFilter`) têm nota própria na rodada 2.
+- [[SecurityConfig]] — cadeia de segurança, CORS, mapa de autorização
+- [[JwtAuthenticationFilter]] — autentica a requisição pelo Bearer token
+- [[RateLimitFilter]] — rate limit por IP (429)
+- [[UserRepository]] — acesso a dados de usuário
 
 ## Conexões
 
