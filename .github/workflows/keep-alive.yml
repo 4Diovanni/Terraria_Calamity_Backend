@@ -1,0 +1,56 @@
+name: Keep Render Awake
+
+# Mantém o backend (plano free do Render) acordado, evitando o "cold start" de
+# hibernação que ocorre após ~15 min sem requisições. Pinga o health endpoint
+# do Actuator em intervalo curto, de forma que o serviço raramente durma.
+#
+# Configuração necessária: criar o secret RENDER_HEALTH_URL em
+# Settings > Secrets and variables > Actions, contendo a URL COMPLETA do health,
+# ex.: https://<seu-servico>.onrender.com/actuator/health
+# (o endpoint /actuator/** já é público no SecurityConfig do backend).
+
+on:
+  schedule:
+    # A cada 10 minutos. O agendador do GitHub Actions é "best effort" e pode
+    # atrasar em horários de pico; 10 min dá margem sobre a janela de ~15 min do
+    # Render. Se ainda assim pegar hibernação, reduza para '*/5 * * * *'.
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {} # permite disparo manual pela aba Actions
+
+# Evita execuções sobrepostas caso um ping demore (um cold start pode levar ~1 min).
+concurrency:
+  group: keep-alive
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Pingar health endpoint
+        env:
+          HEALTH_URL: ${{ secrets.RENDER_HEALTH_URL }}
+        run: |
+          if [ -z "$HEALTH_URL" ]; then
+            echo "::warning::Secret RENDER_HEALTH_URL não configurado — nada a pingar."
+            exit 0
+          fi
+
+          # O primeiro request após uma hibernação dispara o cold start do Spring
+          # Boot, que pode levar bem mais que alguns segundos. Tentamos algumas
+          # vezes com timeout generoso antes de considerar falha.
+          for attempt in 1 2 3 4 5; do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 90 "$HEALTH_URL" || echo "000")
+            echo "Tentativa $attempt — HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "Backend acordado."
+              exit 0
+            fi
+            sleep 20
+          done
+
+          echo "::error::Health não respondeu 200 após 5 tentativas (último status: $code)."
+          exit 1
