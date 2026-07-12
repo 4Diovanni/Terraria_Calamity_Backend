@@ -37,6 +37,9 @@ Banco de dados, deploy e pipelines de CI/CD do projeto.
 - `.github/workflows/codeql.yml` — análise estática de segurança
 - `.github/workflows/dependency-review.yml` — revisão de dependências em PRs
 - `.github/workflows/secret-scan.yml` — varredura de segredos
+- `.github/workflows/keep-alive.yml` — pinga o health do Actuator a cada ~10 min
+  para evitar o cold start de hibernação do plano free do Render; URL no secret
+  `RENDER_HEALTH_URL`. O endpoint `/actuator/**` é público via [[SecurityConfig]].
 
 ## Conexões
 
