@@ -4,7 +4,6 @@ aliases: [Carrossel, Carousel]
 up: "[[Frontend-MOC]]"
 related:
   - "[[WeaponsPage]]"
-  - "[[Calamity visual identity|project_visual_identity]]"
 status: ativo
 source:
   - src/frontend/src/components/ui/Carousel.tsx
@@ -23,12 +22,12 @@ lore/conteúdo (biomas, bosses, inimigos) para exibir cards em cartão retrato.
 ## Regra de design (não óbvia)
 
 A prop `layout` (`portrait-left` | `portrait-right`) é **fixa por seção**, nunca
-alternada por índice de slide — ver [[feedback_carousel_layout]] na memória do
-projeto. Usa apenas tokens `calamity-*` do Tailwind, sem hex hardcoded (exceto cores
-semânticas de gameplay).
+alternada por índice de slide (feedback recorrente do usuário, registrado na memória
+do projeto). Usa apenas tokens `calamity-*` do Tailwind, sem hex hardcoded (exceto
+cores semânticas de gameplay).
 
 ## Conexões
 
-- Segue os tokens definidos na identidade visual do projeto.
+- Segue os tokens da identidade visual do projeto (skill `visual-identity`).
 - Usado como building block nas páginas de listagem — mesmo padrão visual de
   [[WeaponsPage]] para cards.

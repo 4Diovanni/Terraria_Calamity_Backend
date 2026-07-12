@@ -12,8 +12,8 @@ source:
 
 # Frontend — Mapa
 
-React + Vite + TypeScript + Tailwind. Identidade visual descrita em [[visual-identity]]
-(skill `visual-identity`, tokens `calamity-*`).
+React + Vite + TypeScript + Tailwind. Identidade visual descrita na skill
+`visual-identity` (tokens `calamity-*`).
 
 ## Módulos indexados
 
@@ -41,4 +41,4 @@ Todos os módulos de frontend estão indexados.
 ## Conexões
 
 - Consome a API do [[Backend-MOC]].
-- Testes: `npx vitest run` (ver [[feedback_project_workflow]] na memória do projeto).
+- Testes: `npx vitest run` (contagem cresce a cada task, ver `CLAUDE.md`).

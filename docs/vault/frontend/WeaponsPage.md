@@ -18,7 +18,7 @@ source:
 # WeaponsPage — Listagem e Contribuição de Armas
 
 Página que lista armas com filtro (classe, raridade, elemento, busca, ordenação) e
-abre um drawer para criar uma nova arma via [[WeaponFormWithPreview]].
+abre um drawer para criar uma nova arma via `WeaponFormWithPreview`.
 
 ## Arquivos
 
