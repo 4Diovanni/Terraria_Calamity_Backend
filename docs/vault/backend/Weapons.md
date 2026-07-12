@@ -11,6 +11,7 @@ related:
   - "[[Auth]]"
   - "[[WeaponsPage]]"
   - "[[Submission]]"
+  - "[[Element]]"
 status: ativo
 source:
   - src/main/java/com/terraria/calamity/api/controller/WeaponController.java
@@ -46,3 +47,4 @@ JWT (ver [[Auth]]), mais o fluxo de submissão de contribuições da comunidade.
 - Consumido pelo frontend em [[WeaponsPage]] (listagem, formulário, preview).
 - Propostas de criação/edição passam pelo fluxo de [[Submission]] antes de alterar
   uma `Weapon` diretamente.
+- Campo `element` usa o enum descrito em [[Element]].

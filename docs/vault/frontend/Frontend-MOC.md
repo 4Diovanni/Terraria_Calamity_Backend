@@ -21,10 +21,11 @@ React + Vite + TypeScript + Tailwind. Identidade visual descrita em [[visual-ide
 - [[WeaponsPage]] — listagem, formulário e preview de armas
 - [[AdminPage]] — painel administrativo (dashboard + fila de revisão)
 - [[Contributions]] — área de contribuições do usuário (nova proposta, minhas propostas, diff)
+- [[ArmorPages]] — listagem e detalhe de armadura
 
 ## Módulos ainda não indexados (retrofit futuro)
 
-- Páginas de conteúdo: Armor, Boss, Biome, Enemy (`components/pages/*Page.tsx`)
+- Páginas de conteúdo: Boss, Biome, Enemy (`components/pages/*Page.tsx`)
 - Autenticação de UI: `LoginPage`, `RegisterPage`, `ProtectedRoute`
 - Perfil: `ProfilePage`
 - `components/ui/*` — Badge, Button, Card, DetailFooter

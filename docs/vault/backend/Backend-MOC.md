@@ -21,11 +21,10 @@ descrita em [[ARCHITECTURE]].
 - [[Weapons]] — CRUD de armas e submissões de contribuição
 - [[Admin]] — dashboard administrativo (contagens agregadas)
 - [[Submission]] — ciclo de vida das propostas de contribuição
+- [[Armor]] — CRUD de armaduras (todos os endpoints públicos)
+- [[Element]] — API de elementos de arma (não consumida pelo frontend hoje)
 
-## Módulos ainda não indexados (retrofit futuro)
-
-- Armor (`ArmorController`, `ArmorService`, `ArmorMapper`)
-- Element (`WeaponElementController`, `WeaponElementService`)
+Todos os módulos de backend estão indexados.
 
 ## Camadas
 
