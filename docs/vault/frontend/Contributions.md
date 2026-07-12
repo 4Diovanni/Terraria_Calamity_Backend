@@ -38,8 +38,8 @@ admin ([[AdminPage]]).
 ## Módulos (notas de método)
 
 - [[submissionService-ts]] — client HTTP de submissões (espelha [[SubmissionController]])
-
-O hook `useSubmissionTargetWeapon` tem nota própria na rodada 4.
+- [[useSubmissionTargetWeapon]] — busca a arma-alvo de uma submissão UPDATE
+- [[weaponDiff]] — `computeWeaponDiff` (diff campo a campo estilo GitHub)
 
 ## Conexões
 

@@ -35,8 +35,8 @@ principal) e o guard de rota usado por [[ProfilePage]].
 ## Módulos (notas de método)
 
 - [[authService-ts]] — client HTTP de auth (espelha [[AuthController]])
-
-Hook e context (`useAuth`, `AuthContext`) têm nota própria na rodada 4.
+- [[AuthContext]] — estado global de sessão (validação no mount, login/register/logout)
+- [[useAuth]] — hook de acesso ao contexto de sessão
 
 ## Conexões
 

@@ -33,8 +33,9 @@ abre um drawer para criar uma nova arma via `WeaponFormWithPreview`.
 ## Módulos (notas de método)
 
 - [[weaponService-ts]] — client HTTP de arma (espelha [[WeaponController]])
-
-Hook e lib (`useWeapons`, `weaponRarity`) têm nota própria na rodada 4.
+- [[useWeapons]] — hook que carrega a lista (com estado de cold start)
+- [[weaponRarity]] — bucketiza a raridade numérica nos tiers visuais
+- [[weaponPreview]] — monta a `Weapon` de preview a partir do formulário
 
 ## Conexões
 

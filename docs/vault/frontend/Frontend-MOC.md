@@ -39,8 +39,9 @@ Todos os módulos de frontend estão indexados.
 - Services por domínio: [[authService-ts]], [[weaponService-ts]], [[armorService-ts]],
   [[submissionService-ts]], [[adminService-ts]] (batem no backend) e
   [[bossService-ts]], [[biomeService-ts]], [[enemyService-ts]] (mockados)
-
-Hooks, context e lib têm nota própria na rodada 4.
+- Estado/hooks: [[AuthContext]], [[useAuth]], [[useWeapons]],
+  [[useSubmissionTargetWeapon]], [[useFetch]]
+- Lib (funções puras): [[weaponDiff]], [[weaponPreview]], [[weaponRarity]], [[theme]]
 
 ## Estrutura
 
