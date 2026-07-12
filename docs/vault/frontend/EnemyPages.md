@@ -36,6 +36,10 @@ Sem contraparte no backend. Mesmo padrão de mock assíncrono de [[BossPages]] e
 [[BiomePages]] — decisão deliberada de arquitetura (ver `Content pages roadmap` na
 memória do projeto).
 
+## Módulos (notas de método)
+
+- [[enemyService-ts]] — client de inimigos (dados mockados, sem backend)
+
 ## Conexões
 
 - Reaproveitado dentro de [[BiomePages]] (`BiomeDetailPage` lista inimigos do bioma).

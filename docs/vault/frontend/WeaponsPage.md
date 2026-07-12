@@ -30,6 +30,12 @@ abre um drawer para criar uma nova arma via `WeaponFormWithPreview`.
   vivo da proposta antes de enviar)
 - `SubmissionPreview.tsx` — renderiza a página completa da proposta para revisão
 
+## Módulos (notas de método)
+
+- [[weaponService-ts]] — client HTTP de arma (espelha [[WeaponController]])
+
+Hook e lib (`useWeapons`, `weaponRarity`) têm nota própria na rodada 4.
+
 ## Conexões
 
 - Consome a API descrita em [[Weapons]] (`weaponService`).

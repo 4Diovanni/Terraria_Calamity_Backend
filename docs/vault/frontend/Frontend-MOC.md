@@ -32,6 +32,16 @@ React + Vite + TypeScript + Tailwind. Identidade visual descrita na skill
 
 Todos os módulos de frontend estão indexados.
 
+## Camada de serviços (notas de método)
+
+- [[apiClient-ts]] — instância Axios central (JWT, retry/backoff, tratamento de erro)
+  usada por todos os services abaixo
+- Services por domínio: [[authService-ts]], [[weaponService-ts]], [[armorService-ts]],
+  [[submissionService-ts]], [[adminService-ts]] (batem no backend) e
+  [[bossService-ts]], [[biomeService-ts]], [[enemyService-ts]] (mockados)
+
+Hooks, context e lib têm nota própria na rodada 4.
+
 ## Estrutura
 
 - `components/common` — layout, header, footer, rotas protegidas

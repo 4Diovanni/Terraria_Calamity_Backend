@@ -37,6 +37,10 @@ Sem contraparte no backend — ver [[Backend-MOC]] (todos os módulos de backend
 indexados, nenhum cobre boss). `themeColor` é a exceção documentada de hex
 hardcoded para cor semântica de lore (regra do `CLAUDE.md`).
 
+## Módulos (notas de método)
+
+- [[bossService-ts]] — client de bosses (dados mockados, sem backend)
+
 ## Conexões
 
 - `biome` do boss casa em texto com `Biome.name` em [[BiomePages]] (sem FK real,
