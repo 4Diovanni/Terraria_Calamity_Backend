@@ -1,4 +1,16 @@
+---
+tags: [plan, frontend, weapons]
+aliases: [CRUD Direto de Armas ADMIN]
+up: "[[INDEX]]"
+related:
+  - "[[WeaponsPage]]"
+  - "[[Weapons]]"
+status: ativo
+---
+
 # CRUD Direto de Armas (ADMIN) — Implementation Plan
+
+> Ver também: [[WeaponsPage]] · [[Weapons]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

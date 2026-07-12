@@ -1,4 +1,17 @@
+---
+tags: [spec, frontend, armor]
+aliases: [Páginas de Armadura — Design]
+up: "[[INDEX]]"
+related:
+  - "[[ArmorPages]]"
+  - "[[Armor]]"
+  - "[[WeaponsPage]]"
+status: ativo
+---
+
 # Páginas de Armadura — Design Spec
+
+> Ver também: [[ArmorPages]] · [[Armor]] · [[WeaponsPage]] (fundação reaproveitada)
 
 **Data:** 2026-07-02
 **Escopo:** Sub-projeto #2 da decomposição das páginas de conteúdo. Cria a seção **Armaduras**

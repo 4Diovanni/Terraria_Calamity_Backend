@@ -1,4 +1,17 @@
+---
+tags: [plan, frontend, auth]
+aliases: [Frontend Auth Login e Register]
+up: "[[INDEX]]"
+related:
+  - "[[AuthPages]]"
+  - "[[Auth]]"
+  - "[[2026-06-29-frontend-auth-design]]"
+status: ativo
+---
+
 # Frontend Auth — Login e Register — Implementation Plan
+
+> Ver também: [[AuthPages]] · [[Auth]] · spec: [[2026-06-29-frontend-auth-design]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

@@ -1,4 +1,17 @@
+---
+tags: [spec, frontend, enemy]
+aliases: [Páginas de Inimigos — Design]
+up: "[[INDEX]]"
+related:
+  - "[[EnemyPages]]"
+  - "[[BiomePages]]"
+  - "[[BossPages]]"
+status: ativo
+---
+
 # Páginas de Inimigos — Design Spec
+
+> Ver também: [[EnemyPages]] · seguido por [[BossPages]] e [[BiomePages]] (reaproveitam os cards de inimigo)
 
 **Data:** 2026-07-02
 **Escopo:** Sub-projeto #3 da decomposição das páginas de conteúdo. Cria a seção **Inimigos**

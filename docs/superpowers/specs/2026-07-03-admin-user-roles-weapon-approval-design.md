@@ -1,4 +1,18 @@
+---
+tags: [spec, backend, admin, submissions]
+aliases: [Roles ADMIN USER e Fila de Aprovação de Armas — Design]
+up: "[[INDEX]]"
+related:
+  - "[[Admin]]"
+  - "[[Submission]]"
+  - "[[Weapons]]"
+  - "[[2026-07-03-admin-user-roles-weapon-approval-plan]]"
+status: ativo
+---
+
 # Roles ADMIN/USER + Fila de Aprovação de Armas + Rate Limiting — Design Spec
+
+> Ver também: plano: [[2026-07-03-admin-user-roles-weapon-approval-plan]] · [[Admin]] · [[Submission]] · [[Weapons]]
 
 **Data:** 2026-07-03
 **Escopo:** Backend. Introduz roles de verdade (ADMIN/USER) com permissões diferenciadas, um fluxo

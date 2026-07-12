@@ -1,4 +1,18 @@
+---
+tags: [plan, frontend, submissions]
+aliases: [Fila de Aprovação de Armas USER ADMIN]
+up: "[[INDEX]]"
+related:
+  - "[[Contributions]]"
+  - "[[AdminPage]]"
+  - "[[Submission]]"
+  - "[[2026-07-04-frontend-weapon-approval-design]]"
+status: ativo
+---
+
 # Fila de Aprovação de Armas (USER/ADMIN) — Implementation Plan
+
+> Ver também: [[Contributions]] · [[AdminPage]] · [[Submission]] · spec: [[2026-07-04-frontend-weapon-approval-design]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

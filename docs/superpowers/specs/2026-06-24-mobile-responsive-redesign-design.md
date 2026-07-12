@@ -1,4 +1,17 @@
+---
+tags: [spec, frontend, responsive]
+aliases: [Mobile/Desktop Responsive Redesign — Design]
+up: "[[INDEX]]"
+related:
+  - "[[UIComponents]]"
+  - "[[Carousel]]"
+  - "[[2026-06-24-mobile-responsive-redesign]]"
+status: ativo
+---
+
 # Mobile/Desktop Responsive Redesign — Design Spec
+
+> Ver também: plano: [[2026-06-24-mobile-responsive-redesign]] · [[UIComponents]] · [[Carousel]]
 
 Date: 2026-06-24
 Status: Approved for planning

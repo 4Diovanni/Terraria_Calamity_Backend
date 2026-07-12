@@ -1,4 +1,15 @@
+---
+tags: [plan, infra, security]
+aliases: [Pipeline de Segurança]
+up: "[[INDEX]]"
+related:
+  - "[[Infra-MOC]]"
+status: ativo
+---
+
 # Pipeline de Segurança (GitHub Actions)
+
+> Ver também: [[Infra-MOC]]
 
 ## Objetivo
 Adicionar automação de segurança via GitHub Actions para o repositório

@@ -1,4 +1,16 @@
+---
+tags: [plan, frontend, auth]
+aliases: [Validação Real de Sessão]
+up: "[[INDEX]]"
+related:
+  - "[[AuthPages]]"
+  - "[[Auth]]"
+status: ativo
+---
+
 # Frontend: Validação Real de Sessão (bug do "Entrar" sumindo) Implementation Plan
+
+> Ver também: [[AuthPages]] · [[Auth]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

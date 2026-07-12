@@ -1,4 +1,15 @@
+---
+tags: [spec, frontend, boss]
+aliases: [Páginas de Bosses — Design]
+up: "[[INDEX]]"
+related:
+  - "[[BossPages]]"
+status: ativo
+---
+
 # Páginas de Bosses — Design Spec
+
+> Ver também: [[BossPages]]
 
 **Data:** 2026-07-03
 **Escopo:** Sub-projeto #4 da decomposição das páginas de conteúdo (feito por último). Cria a seção

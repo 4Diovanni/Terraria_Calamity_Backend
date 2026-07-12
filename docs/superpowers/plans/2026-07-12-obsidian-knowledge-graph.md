@@ -1,4 +1,16 @@
+---
+tags: [plan, docs, obsidian]
+aliases: [Interligar o Projeto no Obsidian]
+up: "[[INDEX]]"
+related:
+  - "[[Backend-MOC]]"
+  - "[[Frontend-MOC]]"
+status: ativo
+---
+
 # Plano — Interligar o projeto no Obsidian (grafo de conhecimento)
+
+> Ver também: [[Backend-MOC]] · [[Frontend-MOC]]
 
 **Data:** 2026-07-12
 **Branch:** `docs/obsidian-knowledge-graph`

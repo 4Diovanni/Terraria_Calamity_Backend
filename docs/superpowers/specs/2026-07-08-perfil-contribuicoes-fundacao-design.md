@@ -1,4 +1,18 @@
+---
+tags: [spec, backend, frontend, submissions]
+aliases: [Contribuições dentro do Perfil Fundação — Design]
+up: "[[INDEX]]"
+related:
+  - "[[ProfilePage]]"
+  - "[[Contributions]]"
+  - "[[Submission]]"
+  - "[[2026-07-08-perfil-contribuicoes-fundacao]]"
+status: ativo
+---
+
 # Contribuições dentro do Perfil + Submissões Genéricas (Fase 1: Fundação) — Design Spec
+
+> Ver também: plano: [[2026-07-08-perfil-contribuicoes-fundacao]] · [[ProfilePage]] · [[Contributions]] · [[Submission]]
 
 **Data:** 2026-07-08
 **Escopo:** Backend + Frontend. Fase 1 de um redesign maior do fluxo de contribuições. Move a UI de

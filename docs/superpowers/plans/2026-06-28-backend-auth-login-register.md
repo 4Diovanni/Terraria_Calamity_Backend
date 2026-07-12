@@ -1,4 +1,15 @@
+---
+tags: [plan, backend, auth]
+aliases: [Backend Auth Login e Register]
+up: "[[INDEX]]"
+related:
+  - "[[Auth]]"
+status: ativo
+---
+
 # Backend Auth (Login + Register) Implementation Plan
+
+> Ver também: [[Auth]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

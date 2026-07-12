@@ -1,4 +1,17 @@
+---
+tags: [plan, frontend, profile]
+aliases: [Página de Perfil do Usuário]
+up: "[[INDEX]]"
+related:
+  - "[[ProfilePage]]"
+  - "[[AuthPages]]"
+  - "[[2026-07-01-user-profile-design]]"
+status: ativo
+---
+
 # Página de Perfil do Usuário Implementation Plan
+
+> Ver também: [[ProfilePage]] · [[AuthPages]] · spec: [[2026-07-01-user-profile-design]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

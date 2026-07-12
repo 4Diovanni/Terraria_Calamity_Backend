@@ -1,4 +1,18 @@
+---
+tags: [plan, backend, admin, submissions]
+aliases: [Roles ADMIN USER e Fila de Aprovação de Armas]
+up: "[[INDEX]]"
+related:
+  - "[[Admin]]"
+  - "[[Submission]]"
+  - "[[Weapons]]"
+  - "[[2026-07-03-admin-user-roles-weapon-approval-design]]"
+status: ativo
+---
+
 # Roles ADMIN/USER + Fila de Aprovação de Armas + Rate Limiting — Implementation Plan
+
+> Ver também: [[Admin]] · [[Submission]] · [[Weapons]] · spec: [[2026-07-03-admin-user-roles-weapon-approval-design]]
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
