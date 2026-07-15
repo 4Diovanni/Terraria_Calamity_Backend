@@ -29,7 +29,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.7.0",
     "@vitest/coverage-v8": "^4.1.9",
-    "autoprefixer": "^10.5.1",
+    "autoprefixer": "^10.5.3",
     "axios-mock-adapter": "^2.1.0",
     "jsdom": "^29.1.1",
     "postcss": "^8.5.6",
