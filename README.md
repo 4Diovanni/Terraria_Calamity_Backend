@@ -2,6 +2,8 @@
 
 Backend de um RPG inspirado em Terraria Calamity, com API RESTful em **Spring Boot 4.1.0 / Java 21** e frontend em **React + Vite + TypeScript**, banco de dados **PostgreSQL via Supabase**.
 
+*Ao entrar, aguarde no maximo 1 minuto para ativação do backend!!!*
+
 ---
 
 ## Estrutura do Projeto
